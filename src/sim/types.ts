@@ -120,6 +120,19 @@ export interface PlayerSim {
 
 export type MatchPhase = 'playing' | 'over';
 
+/** One tick's worth of notable happenings — consumed by renderer/audio, cleared next tick. */
+export type SimEvent =
+  | { type: 'zako-killed'; seat: number }
+  | { type: 'chain'; seat: number; size: number }
+  | { type: 'attack-sent'; tier: AttackTier; from: number; to: number }
+  | { type: 'reflect'; seat: number }
+  | { type: 'player-hit'; seat: number; source: AttackTier | 'zako' }
+  | { type: 'charge-fired'; seat: number; level: 1 | 2 }
+  | { type: 'bomb'; seat: number }
+  | { type: 'fever-start'; seat: number }
+  | { type: 'eliminated'; seat: number }
+  | { type: 'over'; winner: number };
+
 export interface SimState {
   tick: number;
   phase: MatchPhase;
@@ -133,4 +146,5 @@ export interface SimState {
   transit: TransitAttack[];
   nextId: number;
   nextChainId: number;
+  events: SimEvent[];
 }

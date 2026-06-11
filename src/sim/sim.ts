@@ -50,6 +50,7 @@ export function createSim(cfg: BalanceConfig, seed: number): SimState {
     transit: [],
     nextId: 1,
     nextChainId: 1,
+    events: [],
   };
 }
 
@@ -113,6 +114,7 @@ function queueAttack(
     speed,
   });
   s.players[lastSender]!.stats.attacksSent++;
+  s.events.push({ type: 'attack-sent', tier, from: lastSender, to: target });
 }
 
 /**
@@ -121,6 +123,7 @@ function queueAttack(
  */
 function reflectAttack(s: SimState, cfg: BalanceConfig, rng: Rng, reflector: PlayerSim, a: IncomingAttack): void {
   reflector.stats.reflections++;
+  s.events.push({ type: 'reflect', seat: reflector.seat });
   let target = a.lastSender;
   const targetP = s.players[target];
   if (!targetP || !targetP.alive) {
@@ -170,6 +173,7 @@ function explodeZako(p: PlayerSim, s: SimState, cfg: BalanceConfig, zakoIdx: num
   chain.size++;
   p.explosions.push({ x: z.x, y: z.y, ticksLeft: cfg.chain.explosionTicks, chainId: chain.id });
   p.zako.splice(zakoIdx, 1);
+  s.events.push({ type: 'zako-killed', seat: p.seat });
 }
 
 function circleHit(ax: number, ay: number, ar: number, bx: number, by: number, br: number): boolean {
@@ -181,6 +185,7 @@ function circleHit(ax: number, ay: number, ar: number, bx: number, by: number, b
 
 export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig): void {
   if (s.phase === 'over') return;
+  s.events = [];
   const rng = rngFromState(s.rngState);
   const waveRng = rngFromState(s.waveRngState);
   s.tick++;
@@ -238,6 +243,7 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
           y: p.y - 6,
           halfWidth: lv2 ? cfg.shot.chargeWidthLv2 : cfg.shot.chargeWidthLv1,
         });
+        s.events.push({ type: 'charge-fired', seat: p.seat, level: lv2 ? 2 : 1 });
       }
       p.chargeTicks = -1;
     }
@@ -247,6 +253,7 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
     if (input.bomb && !p.prevBomb && p.bombs > 0) {
       p.bombs--;
       p.iframes = Math.max(p.iframes, cfg.player.iframesTicks);
+      s.events.push({ type: 'bomb', seat: p.seat });
       p.zako = p.zako.filter((z) => !circleHit(z.x, z.y, cfg.waves.zakoRadius, p.x, p.y, cfg.bomb.radius));
       p.incoming = p.incoming.filter((a) => {
         if (a.tier === 'boss') return true; // bombs don't clear bosses (PROVISIONAL)
@@ -390,7 +397,10 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
           cfg.damage.bossHit;
         const hadIframes = p.iframes > 0;
         damagePlayer(s, cfg, p, dmg, a.lastSender);
-        if (!hadIframes && a.tier !== 'boss') p.incoming.splice(ai, 1);
+        if (!hadIframes) {
+          s.events.push({ type: 'player-hit', seat: p.seat, source: a.tier });
+          if (a.tier !== 'boss') p.incoming.splice(ai, 1);
+        }
         continue;
       }
       if (a.tier !== 'boss' && a.y > cfg.field.height + 10) p.incoming.splice(ai, 1);
@@ -402,7 +412,10 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
       if (circleHit(z.x, z.y, cfg.waves.zakoRadius, p.x, p.y, cfg.player.radius)) {
         const hadIframes = p.iframes > 0;
         selfDamageWithLifeSteal(s, cfg, p, cfg.damage.zakoCollision);
-        if (!hadIframes) p.zako.splice(zi, 1);
+        if (!hadIframes) {
+          s.events.push({ type: 'player-hit', seat: p.seat, source: 'zako' });
+          p.zako.splice(zi, 1);
+        }
       }
     }
 
@@ -425,6 +438,7 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
         p.stats.biggestChain = Math.max(p.stats.biggestChain, chain.size);
         p.feverMeter = Math.min(100, p.feverMeter + chain.size * cfg.chain.feverGainPerChainLink);
         if (chain.size >= 2) bigChains++;
+        if (chain.size >= 2) s.events.push({ type: 'chain', seat: p.seat, size: chain.size });
 
         if (chain.size >= cfg.chain.minChainToAttack) {
           const count = Math.min(
@@ -460,6 +474,7 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
       if (p.feverMeter >= 100 && p.feverTicks <= 0) {
         p.feverTicks = cfg.fever.durationTicks;
         p.feverMeter = 0;
+        s.events.push({ type: 'fever-start', seat: p.seat });
       }
     }
   }
@@ -497,6 +512,7 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
     if (p.alive && p.hp <= 0) {
       p.alive = false;
       p.hp = 0;
+      s.events.push({ type: 'eliminated', seat: p.seat });
       p.shots = [];
       p.beams = [];
       p.zako = [];
@@ -518,6 +534,7 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
     for (const p of alive) if (p.hp > best.hp) best = p;
     s.winner = best.seat;
   }
+  if (s.phase === 'over') s.events.push({ type: 'over', winner: s.winner });
 
   s.rngState = rng.state();
   s.waveRngState = waveRng.state();
