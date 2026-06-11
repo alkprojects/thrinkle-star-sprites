@@ -304,8 +304,13 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
       }
     }
 
-    // Explosions propagate chains to touching zako
-    for (const ex of p.explosions) {
+    // Explosions propagate chains to touching zako — but only once old enough,
+    // so cascades ripple outward over time instead of detonating in one tick.
+    // Snapshot first: explosions born this tick must wait for the next one.
+    const matured = p.explosions.filter(
+      (ex) => cfg.chain.explosionTicks - ex.ticksLeft >= cfg.chain.propagationDelayTicks,
+    );
+    for (const ex of matured) {
       for (let zi = p.zako.length - 1; zi >= 0; zi--) {
         const z = p.zako[zi]!;
         if (circleHit(ex.x, ex.y, cfg.chain.explosionRadius, z.x, z.y, cfg.waves.zakoRadius)) {
@@ -346,7 +351,7 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
     }
 
     // Explosions catch incoming attacks → reflected AND credited to the chain (PROVISIONAL)
-    for (const ex of p.explosions) {
+    for (const ex of matured) {
       for (let ai = p.incoming.length - 1; ai >= 0; ai--) {
         const a = p.incoming[ai]!;
         if (a.tier !== 'normal' && a.tier !== 'reverse') continue;

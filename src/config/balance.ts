@@ -42,6 +42,9 @@ export interface BalanceConfig {
   chain: {
     explosionRadius: number;  // blast circle that detonates adjacent zako
     explosionTicks: number;   // how long a blast lingers
+    /** An explosion must be at least this old before it detonates neighbours —
+     *  creates the original's rippling pop-pop-pop cascade instead of one big bang. */
+    propagationDelayTicks: number;
     minChainToAttack: number; // chain size that starts sending attacks (PROVISIONAL: 3)
     /** attacksSent = floor((chain - minChainToAttack) / perExtraChain) + 1 */
     perExtraChain: number;
@@ -138,6 +141,7 @@ export const DEFAULT_BALANCE: BalanceConfig = {
   chain: {
     explosionRadius: 16,
     explosionTicks: 24,
+    propagationDelayTicks: 7,
     minChainToAttack: 3,
     perExtraChain: 1,
     maxAttacksPerChain: 8,

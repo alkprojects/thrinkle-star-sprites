@@ -34,6 +34,11 @@ function shootAt(s: SimState, seat: number, x: number, y: number): void {
   s.players[seat]!.shots.push({ x, y: y + 2 });
 }
 
+/** Ticks for an n-link cascade to ripple out and its last explosion to expire. */
+function settleTicks(n: number): number {
+  return cfg.chain.propagationDelayTicks * n + cfg.chain.explosionTicks + 10;
+}
+
 describe('determinism', () => {
   it('same seed + same inputs ⇒ identical state hash', () => {
     const a = createSim(cfg, 1234);
@@ -70,7 +75,7 @@ describe('chains and attack generation', () => {
     s.waveTimer = 100000; // suppress natural waves
     plantCluster(s, 0, cfg.chain.minChainToAttack);
     shootAt(s, 0, 80, 100);
-    run(s, cfg, cfg.chain.explosionTicks + 5);
+    run(s, cfg, settleTicks(8));
     const toP1 = s.transit.filter((t) => t.target === 1 && t.tier === 'normal');
     const toP2 = s.transit.filter((t) => t.target === 2 && t.tier === 'normal');
     expect(toP1.length).toBeGreaterThan(0);
@@ -83,7 +88,7 @@ describe('chains and attack generation', () => {
     s.waveTimer = 100000;
     plantCluster(s, 0, cfg.chain.minChainToAttack - 1);
     shootAt(s, 0, 80, 100);
-    run(s, cfg, cfg.chain.explosionTicks + 5);
+    run(s, cfg, settleTicks(8));
     expect(s.transit.length).toBe(0);
   });
 
@@ -93,12 +98,12 @@ describe('chains and attack generation', () => {
     s.waveTimer = 100000;
     plantCluster(s, 0, c.chain.minChainToAttack, 40, 100);
     shootAt(s, 0, 40, 100);
-    run(s, c, c.chain.explosionTicks + 5, inputs());
+    run(s, c, settleTicks(8), inputs());
     const firstTargets = new Set(s.transit.map((t) => t.target));
     s.transit = [];
     plantCluster(s, 0, c.chain.minChainToAttack, 40, 100);
     shootAt(s, 0, 40, 100);
-    run(s, c, c.chain.explosionTicks + 5, inputs());
+    run(s, c, settleTicks(8), inputs());
     const secondTargets = new Set(s.transit.map((t) => t.target));
     expect(firstTargets.size).toBe(1);
     expect(secondTargets.size).toBe(1);
@@ -253,7 +258,7 @@ describe('fever', () => {
     s.players[0]!.feverMeter = 99;
     plantCluster(s, 0, cfg.chain.minChainToAttack);
     shootAt(s, 0, 80, 100);
-    run(s, cfg, cfg.chain.explosionTicks + 5);
+    run(s, cfg, settleTicks(8));
     expect(s.players[0]!.feverTicks).toBeGreaterThan(0);
     expect(s.players[0]!.feverMeter).toBe(0);
   });
@@ -264,7 +269,7 @@ describe('fever', () => {
     s.players[0]!.feverTicks = cfg.fever.durationTicks;
     plantCluster(s, 0, cfg.fever.bossChainSize);
     shootAt(s, 0, 80, 100);
-    run(s, cfg, cfg.chain.explosionTicks + 5);
+    run(s, cfg, settleTicks(8));
     const bosses = s.transit.filter((t) => t.tier === 'boss');
     expect(bosses.map((b) => b.target).sort()).toEqual([1, 2]);
   });
