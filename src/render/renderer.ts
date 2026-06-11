@@ -56,6 +56,9 @@ export class Renderer {
       height: this.totalH,
       antialias: true,
     });
+    // The game loop drives rendering explicitly (render()); Pixi's own ticker would
+    // race it and draw one frame behind.
+    this.app.ticker.stop();
     parent.appendChild(this.app.canvas);
     this.app.stage.addChild(this.root);
 
@@ -101,7 +104,13 @@ export class Renderer {
       field.addChild(glow);
       this.feverGlow.push(glow);
 
+      // Clip entities to the field panel — zako/attacks enter from above the visible area
+      const mask = new Graphics();
+      mask.roundRect(0, 0, this.fieldW, this.fieldH, 8).fill(0xffffff);
+      field.addChild(mask);
+
       const fxLayer = new Graphics();
+      fxLayer.mask = mask;
       field.addChild(fxLayer);
       this.fieldFx.push(fxLayer);
 
@@ -210,6 +219,25 @@ export class Renderer {
     }
   }
 
+  /** Advance time-based visuals exactly once per SIM TICK (frame-rate independent). */
+  tickVisuals(): void {
+    for (let seat = 0; seat < 3; seat++) {
+      if (this.shake[seat]! > 0) this.shake[seat]!--;
+      for (const pop of this.popups[seat]!) {
+        pop.ticks--;
+        pop.text.y += pop.vy;
+        pop.text.alpha = Math.min(1, pop.ticks / 18);
+        if (pop.ticks <= 0) pop.text.destroy();
+      }
+      this.popups[seat] = this.popups[seat]!.filter((pop) => pop.ticks > 0);
+    }
+  }
+
+  /** Push the current stage to the GPU — called once per animation frame by the game loop. */
+  render(): void {
+    this.app.renderer.render(this.app.stage);
+  }
+
   private popup(seat: number, x: number, y: number, msg: string, color: number): void {
     const t = new Text({
       text: msg,
@@ -233,27 +261,14 @@ export class Renderer {
       const ch = CHARACTERS[seat]!;
       g.clear();
 
-      // Screen shake
-      if (this.shake[seat]! > 0) {
-        this.shake[seat]!--;
-        field.x = 24 + seat * (this.fieldW + FIELD_GAP) + (Math.random() - 0.5) * this.shake[seat]! * 1.6;
-        field.y = TOP + (Math.random() - 0.5) * this.shake[seat]! * 1.6;
-      } else {
-        field.x = 24 + seat * (this.fieldW + FIELD_GAP);
-        field.y = TOP;
-      }
+      // Screen shake — amplitude decays in tickVisuals; the offset jitter itself is
+      // pure presentation, so per-frame randomness here is fine.
+      const sh = this.shake[seat]!;
+      field.x = 24 + seat * (this.fieldW + FIELD_GAP) + (sh > 0 ? (Math.random() - 0.5) * sh * 1.6 : 0);
+      field.y = TOP + (sh > 0 ? (Math.random() - 0.5) * sh * 1.6 : 0);
 
       this.feverGlow[seat]!.visible = p.alive && p.feverTicks > 0;
       this.statusTexts[seat]!.text = p.alive ? '' : 'K.O.';
-
-      // Popups
-      for (const pop of this.popups[seat]!) {
-        pop.ticks--;
-        pop.text.y += pop.vy;
-        pop.text.alpha = Math.min(1, pop.ticks / 18);
-        if (pop.ticks <= 0) pop.text.destroy();
-      }
-      this.popups[seat] = this.popups[seat]!.filter((pop) => pop.ticks > 0);
 
       this.drawHud(seat, p);
       if (!p.alive) continue;

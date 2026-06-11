@@ -26,7 +26,10 @@ const PARAMS: Record<Difficulty, AiParams> = {
 };
 
 /**
- * AI seat. Deterministic: seeded RNG, decisions are pure functions of sim state.
+ * AI seat. Deterministic under one invariant: getInput is called EXACTLY ONCE per sim
+ * tick per seat (the game loop and headless tests both do this). Decisions re-evaluate
+ * on a fixed tick cadence and all randomness comes from the seeded RNG, so a given
+ * (seed, sim history) always reproduces the same inputs — verified by tests/match.test.ts.
  * Strategy mirrors how the original's story-mode opponents feel: weave between
  * threats near the bottom, park under zako clusters to farm chains, shoot down
  * incoming attacks when they're lined up, charge-beam when the field gets busy.

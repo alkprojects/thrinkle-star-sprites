@@ -30,14 +30,19 @@ export interface BalanceConfig {
     chargeTicksLv2: number;   // hold duration for level-2 charge (wider blast)
     chargeWidthLv1: number;   // beam half-width
     chargeWidthLv2: number;
+    beamSpeedScale: number;   // beam speed = shot speed * this
+    beamDamage: number;       // hp removed per beam touch on an attack
   };
   waves: {
     /** Ticks between wave spawns; identical wave sequence on every field (fairness, as in the original). */
     intervalTicks: number;
     intervalMinTicks: number; // interval shrinks over the match toward this
     rampPerSecond: number;    // interval reduction per second of match time
+    firstWaveTick: number;    // ticks until the opening wave
     zakoSpeed: number;
     zakoRadius: number;
+    swayRate: number;         // phase advance per tick for serpentine zako
+    swayFactor: number;       // horizontal speed = sin(phase) * swayAmp * swayFactor
   };
   chain: {
     explosionRadius: number;  // blast circle that detonates adjacent zako
@@ -62,16 +67,27 @@ export interface BalanceConfig {
     /** Escalation ladder (PROVISIONAL until GAME_MECHANICS.md lands):
      *  normal shot down  -> reflects as 'reverse' back to ORIGINAL SENDER (owner rule)
      *  reverse shot down -> reflects again, faster each time
+     *  at escalation.extraAtReflect reflections the reflection comes back as an EXTRA ATTACK,
+     *  at escalation.bossAtReflect it comes back as a BOSS — escalated tiers route to ALL
+     *  opponents (per routing.extrasToAll/bossToAll), pulling third parties into the duel
      *  extra             -> cannot reflect; can be destroyed (extraHp) or dodged
      *  boss              -> destroyed only by depleting bossHp; can't reflect */
     reverseSpeedScale: number;  // speed multiplier per reflection
     maxReflections: number;     // beyond this, attack is undodgeable-fast but still capped
+    escalation: {
+      extraAtReflect: number;   // reflectCount at which a reflection escalates to an Extra Attack
+      bossAtReflect: number;    // reflectCount at which a reflection escalates to a Boss
+    };
     /** Simultaneous chains resolving in one tick (e.g. via charge shot) send an Extra Attack. */
     simultaneousChainsForExtra: number;
     extraSpeed: number;
     bossHp: number;
     bossSpeed: number;
     bossDurationTicks: number;  // boss leaves after this if not killed
+    bossHoverY: number;         // boss descends to this line and parks
+    bossRainIntervalTicks: number; // boss drops a reflectable shot every N ticks
+    bossHitboxScale: number;    // boss radius = attackRadius * this (contact AND shots)
+    entryMarginFrac: number;    // attacks enter within [frac, 1-frac] of field width
   };
   damage: {
     normalHit: number;
@@ -99,12 +115,16 @@ export interface BalanceConfig {
     /** Reflections return to the attack's ORIGINAL sender (owner rule). If that
      *  player is eliminated: 'drop' the reflection or 'redirect-other'. */
     reflectionToEliminated: 'drop' | 'redirect-other';
-    /** Global pressure valves for 3-player density (1.0 = faithful). */
+    /** Global pressure valves for 3-player density (1.0 = faithful).
+     *  Density gate applies ONLY to chain-generated normal attacks — never to
+     *  reflections, extras, or bosses (a successful reflection must always return). */
     incomingSpeedScale: number;
     incomingDensityScale: number;  // probability scale that a routed attack is actually sent
   };
   match: {
     timerTicks: number;            // round timer (PROVISIONAL: 120s)
+    /** 'most-hp': healthiest player wins on timeout (exact tie = draw).
+     *  'sudden-death': on timeout everyone drops to 1 HP and healing stops working — next hit ends it. */
     onTimeout: 'most-hp' | 'sudden-death';
   };
   bomb: {
@@ -130,13 +150,18 @@ export const DEFAULT_BALANCE: BalanceConfig = {
     chargeTicksLv2: 70,
     chargeWidthLv1: 14,
     chargeWidthLv2: 26,
+    beamSpeedScale: 1.6,
+    beamDamage: 2,
   },
   waves: {
     intervalTicks: 150,
     intervalMinTicks: 70,
     rampPerSecond: 0.5,
+    firstWaveTick: 90,
     zakoSpeed: 0.55,
     zakoRadius: 6,
+    swayRate: 0.04,
+    swayFactor: 0.045,
   },
   chain: {
     explosionRadius: 16,
@@ -157,11 +182,19 @@ export const DEFAULT_BALANCE: BalanceConfig = {
     extraHp: 6,
     reverseSpeedScale: 1.22,
     maxReflections: 7,
+    escalation: {
+      extraAtReflect: 3,
+      bossAtReflect: 6,
+    },
     simultaneousChainsForExtra: 2,
     extraSpeed: 0.9,
     bossHp: 45,
     bossSpeed: 0.35,
     bossDurationTicks: 600,
+    bossHoverY: 56,
+    bossRainIntervalTicks: 90,
+    bossHitboxScale: 3,
+    entryMarginFrac: 0.12,
   },
   damage: {
     normalHit: 8,

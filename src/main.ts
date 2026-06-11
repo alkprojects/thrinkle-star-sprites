@@ -20,6 +20,8 @@ async function start(): Promise<void> {
   let controllers: Controller[] = [];
   let sim: SimState | null = null;
   let screen: Screen = 'title';
+  let last = performance.now();
+  let acc = 0;
   renderer.showTitle();
 
   function newMatch(): void {
@@ -31,17 +33,16 @@ async function start(): Promise<void> {
       new AiController(cfg, 'normal', seed ^ 0x5555eeee),
     ];
     screen = 'playing';
+    acc = 0; // don't fast-forward whatever real time passed on the menu
     renderer.hideOverlay();
   }
 
   window.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
     sfx.unlock();
     if (e.code === 'KeyM') sfx.toggleMute();
     if (e.code === 'Enter' && screen !== 'playing') newMatch();
   });
-
-  let last = performance.now();
-  let acc = 0;
 
   function frame(now: number): void {
     acc += now - last;
@@ -55,6 +56,7 @@ async function start(): Promise<void> {
         tickSim(sim, inputs, cfg);
         sfx.handle(sim.events);
         renderer.applyEvents(sim.events, sim);
+        renderer.tickVisuals();
         if (sim.phase === 'over') {
           screen = 'gameover';
           renderer.showGameOver(sim.winner);
@@ -65,6 +67,7 @@ async function start(): Promise<void> {
     } else if (sim) {
       renderer.draw(sim);
     }
+    renderer.render();
     requestAnimationFrame(frame);
   }
 

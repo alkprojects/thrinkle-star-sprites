@@ -7,6 +7,7 @@ import type { SimEvent } from '../sim/types';
 export class Sfx {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
+  private noiseBuf: AudioBuffer | null = null;
   muted = false;
 
   /** Must be called from a user gesture before sounds can play. */
@@ -19,6 +20,11 @@ export class Sfx {
     this.master = this.ctx.createGain();
     this.master.gain.value = 0.35;
     this.master.connect(this.ctx.destination);
+    // One shared noise buffer — sources are cheap, buffers are not
+    const len = this.ctx.sampleRate;
+    this.noiseBuf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const data = this.noiseBuf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
   }
 
   toggleMute(): void {
@@ -92,18 +98,15 @@ export class Sfx {
 
   private noise(duration: number, peak = 0.3, lowpass = 1200): void {
     const ctx = this.ctx!;
-    const len = Math.floor(ctx.sampleRate * duration);
-    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / len);
     const src = ctx.createBufferSource();
-    src.buffer = buf;
+    src.buffer = this.noiseBuf!;
     const f = ctx.createBiquadFilter();
     f.type = 'lowpass';
     f.frequency.value = lowpass;
     src.connect(f);
-    f.connect(this.env(duration, peak));
+    f.connect(this.env(duration, peak)); // env's decay shapes the burst
     src.start();
+    src.stop(ctx.currentTime + duration + 0.05);
   }
 
   private pop(freq: number): void {
