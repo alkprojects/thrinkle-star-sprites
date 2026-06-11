@@ -23,6 +23,7 @@ async function start(): Promise<void> {
   let last = performance.now();
   let acc = 0;
   renderer.showTitle();
+  sfx.setScene('title');
 
   function newMatch(): void {
     const seed = Date.now() >>> 0; // render-side seeding is fine; the sim itself stays deterministic
@@ -35,6 +36,13 @@ async function start(): Promise<void> {
     screen = 'playing';
     acc = 0; // don't fast-forward whatever real time passed on the menu
     renderer.hideOverlay();
+    sfx.setScene('battle');
+  }
+
+  function endMatch(): void {
+    screen = 'gameover';
+    renderer.showGameOver(sim!.winner);
+    sfx.setScene('gameover');
   }
 
   window.addEventListener('keydown', (e) => {
@@ -43,6 +51,34 @@ async function start(): Promise<void> {
     if (e.code === 'KeyM') sfx.toggleMute();
     if (e.code === 'Enter' && screen !== 'playing') newMatch();
   });
+
+  // DEV-only manual stepping hook. Headless preview pages are `document.hidden`, which
+  // pauses requestAnimationFrame and freezes the rAF-driven loop — so verification tools
+  // drive ticks directly through this instead. No effect on the real (visible) game.
+  if (import.meta.env.DEV) {
+    (window as unknown as { __game: unknown }).__game = {
+      start: newMatch,
+      step(n = 1): void {
+        if (!sim || screen !== 'playing') return;
+        for (let i = 0; i < n; i++) {
+          const inputs = controllers.map((c, seat) => c.getInput(sim!, seat));
+          tickSim(sim!, inputs, cfg);
+          sfx.handle(sim!.events);
+          renderer.applyEvents(sim!.events, sim!);
+          renderer.tickVisuals();
+          if (sim!.phase === 'over') {
+            endMatch();
+            break;
+          }
+        }
+        renderer.draw(sim!);
+        renderer.render();
+      },
+      get sim(): SimState | null {
+        return sim;
+      },
+    };
+  }
 
   function frame(now: number): void {
     acc += now - last;
@@ -58,8 +94,7 @@ async function start(): Promise<void> {
         renderer.applyEvents(sim.events, sim);
         renderer.tickVisuals();
         if (sim.phase === 'over') {
-          screen = 'gameover';
-          renderer.showGameOver(sim.winner);
+          endMatch();
           break;
         }
       }

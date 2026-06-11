@@ -2,6 +2,8 @@
 
 What the current build still does differently from the verified original ([GAME_MECHANICS.md](GAME_MECHANICS.md)). Ordered by how much each gap changes how the game *feels*. This is the default backlog for future sessions — pick from the top.
 
+> **Look & sound are now addressed** (2026-06-11 presentation overhaul — see [VISUAL_AUDIO_IDENTITY.md](VISUAL_AUDIO_IDENTITY.md)): pixel-art renderer, chibi characters, fairy zako, comet fireballs, plush boss, arcade HUD, bitmap font, fantasy skies, chiptune BGM + SFX. The gaps below are now almost entirely **gameplay mechanics**, not presentation. Note several are partially "faked" in the renderer ahead of the sim: zako show durability **colours** (#5) but still die in one sim hit; fireballs render **size tiers** (#6) but all have 2 HP; the boss shows a **white spawn-flash** (#9) but has a hitbox the whole time. Closing the sim side of these will make the existing visuals truthful.
+
 ## High impact
 
 1. **Fever is meter-based, should be orb-based** (§6). Original: a fever orb periodically crosses the field; shooting it grants ~10s fever (chains send hits−1 fireballs, yellow flashing, bubbled zako suppressed). Current: a meter fills from chains and self-triggers. The fever *output* mapping is already faithful.

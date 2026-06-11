@@ -1,423 +1,612 @@
-import { Application, Container, Graphics, Text, TextStyle } from 'pixi.js';
+import { Application, Container, Graphics, Sprite, TilingSprite } from 'pixi.js';
 import type { BalanceConfig } from '../config/balance';
 import { CHARACTERS } from '../config/characters';
 import type { IncomingAttack, PlayerSim, SimEvent, SimState } from '../sim/types';
+import { cloudStripTex, skyTex } from './backgrounds';
+import { textTexture } from './pixelfont';
+import { bake, pixStar, rgba } from './pixutil';
+import {
+  bombTex, bossTex, explosionTex, EXPLO_FRAMES, extraTex, fireballTex, happyStarTex,
+  heartTex, playerTex, sparkleTex, warnTex, zakoTex,
+} from './sprites';
+import { Label, SpritePool } from './ui';
 
-/** Render scale: sim units → pixels. */
-const S = 2.5;
-const FIELD_GAP = 20;
-const TOP = 64;
-const HUD_H = 84;
+// --- Internal low-res layout (1 unit = 1 pixel; upscaled by SCALE with nearest) ---
+const FW = 160; // field width  (sim units)
+const FH = 224; // field height (sim units)
+const HUD_TOP = 34;
+const HUD_BOT = 16;
+const GAP = 6;
+const MARGIN = 8;
+const MARQUEE = 18;
+const COL_H = HUD_TOP + FH + HUD_BOT;
+const INTERNAL_W = MARGIN * 2 + FW * 3 + GAP * 2;
+const INTERNAL_H = MARQUEE + COL_H + MARGIN;
+const SCALE = 3;
+const MAX_BOMBS = 3; // original caps the bomb-stock display at 3
 
-const TIER_OUTLINE = 0xffffff;
+const BEZEL = 0x0b0820;
 
 interface Popup {
-  text: Text;
+  sprite: Sprite;
   ticks: number;
+  life: number;
   vy: number;
+}
+
+interface Field {
+  col: Container; // whole column (shakes)
+  play: Container; // clipped play area (sky/clouds/entities)
+  clouds: TilingSprite;
+  gfx: Graphics; // vector bits: beams, charge ring, fever glow, bars
+  pool: SpritePool; // textured entities
+  popups: Popup[];
+  hearts: Sprite[];
+  bombs: Sprite[];
+  score: Label;
+  koLabel: Label;
+  anim: number;
 }
 
 export class Renderer {
   app = new Application();
   private cfg: BalanceConfig;
-  private fields: Container[] = [];
-  private fieldFx: Graphics[] = [];
-  private hud: Graphics[] = [];
-  private nameTexts: Text[] = [];
-  private statusTexts: Text[] = [];
-  private popups: Popup[][] = [[], [], []];
-  private shake: number[] = [0, 0, 0];
-  private feverGlow: Graphics[] = [];
-  private timerText!: Text;
-  private overlay!: Container;
-  private overlayTitle!: Text;
-  private overlayBody!: Text;
   private root = new Container();
-  private fieldW: number;
-  private fieldH: number;
+  private fields: Field[] = [];
+  private shake = [0, 0, 0];
+  private timer!: Label;
+  private overlay = new Container();
+  private overlayDim = new Graphics();
+  private overlayItems = new Container();
+  private tickCount = 0;
 
   constructor(cfg: BalanceConfig) {
     this.cfg = cfg;
-    this.fieldW = cfg.field.width * S;
-    this.fieldH = cfg.field.height * S;
-  }
-
-  get totalW(): number {
-    return this.fieldW * 3 + FIELD_GAP * 2 + 48;
-  }
-  get totalH(): number {
-    return TOP + this.fieldH + HUD_H + 24;
   }
 
   async init(parent: HTMLElement): Promise<void> {
     await this.app.init({
-      background: 0x0a0a1a,
-      width: this.totalW,
-      height: this.totalH,
-      antialias: true,
+      background: BEZEL,
+      width: INTERNAL_W * SCALE,
+      height: INTERNAL_H * SCALE,
+      antialias: false, // pixel-art: hard edges
+      roundPixels: true,
+      preserveDrawingBuffer: import.meta.env.DEV,
     });
-    // The game loop drives rendering explicitly (render()); Pixi's own ticker would
-    // race it and draw one frame behind.
-    this.app.ticker.stop();
+    if (import.meta.env.DEV) (window as unknown as { __app: Application }).__app = this.app;
+    this.app.ticker.stop(); // the game loop drives render() explicitly
     parent.appendChild(this.app.canvas);
+
+    this.root.scale.set(SCALE);
     this.app.stage.addChild(this.root);
 
-    const title = new Text({
-      text: '✦ THRINKLE STAR SPRITES ✦',
-      style: new TextStyle({ fill: 0xffe9f7, fontSize: 30, fontFamily: 'Verdana', fontWeight: 'bold', letterSpacing: 4 }),
-    });
-    title.anchor.set(0.5, 0);
-    title.x = this.totalW / 2;
-    title.y = 12;
-    this.root.addChild(title);
+    // Starry bezel behind the columns
+    const bezel = new Sprite(bezelTex());
+    this.root.addChild(bezel);
 
-    this.timerText = new Text({
-      text: '',
-      style: new TextStyle({ fill: 0x9fb4ff, fontSize: 20, fontFamily: 'Verdana', fontWeight: 'bold' }),
-    });
-    this.timerText.anchor.set(0.5, 0);
-    this.timerText.x = this.totalW / 2;
-    this.timerText.y = 44;
-    this.root.addChild(this.timerText);
+    // Marquee
+    const marquee = new Sprite(textTexture('THRINKLE STAR SPRITES', { color: '#ffe9f7', shadow: '#7a2a6a' }));
+    marquee.anchor.set(0.5, 0);
+    marquee.scale.set(1);
+    marquee.position.set(INTERNAL_W / 2, 6);
+    this.root.addChild(marquee);
+    const ml = new Sprite(sparkleTex(0xffe06a, 6));
+    ml.anchor.set(0.5);
+    ml.position.set(INTERNAL_W / 2 - 78, 9);
+    this.root.addChild(ml);
+    const mr = new Sprite(sparkleTex(0xffe06a, 6));
+    mr.anchor.set(0.5);
+    mr.position.set(INTERNAL_W / 2 + 78, 9);
+    this.root.addChild(mr);
 
-    for (let seat = 0; seat < 3; seat++) {
-      const fx = 24 + seat * (this.fieldW + FIELD_GAP);
-      const field = new Container();
-      field.x = fx;
-      field.y = TOP;
-      this.root.addChild(field);
-      this.fields.push(field);
+    // Timer (Death-reaper stand-in) tucked at the right; no centre overlap with the marquee.
+    this.timer = new Label(this.root, { color: '#9fe8ff', shadow: '#1a2a5a', anchor: 1 });
+    this.timer.at(INTERNAL_W - MARGIN, 7);
 
-      // Static background: dark panel + starfield
-      const bg = new Graphics();
-      bg.roundRect(0, 0, this.fieldW, this.fieldH, 8).fill(0x12122b).stroke({ width: 2, color: 0x32325e });
-      for (let i = 0; i < 70; i++) {
-        const sx = Math.random() * this.fieldW;
-        const sy = Math.random() * this.fieldH;
-        bg.circle(sx, sy, Math.random() * 1.4 + 0.4).fill({ color: 0xffffff, alpha: 0.12 + Math.random() * 0.25 });
-      }
-      field.addChild(bg);
+    for (let seat = 0; seat < 3; seat++) this.fields.push(this.buildField(seat));
 
-      const glow = new Graphics();
-      glow.roundRect(0, 0, this.fieldW, this.fieldH, 8).stroke({ width: 5, color: 0xffd75e, alpha: 0.9 });
-      glow.visible = false;
-      field.addChild(glow);
-      this.feverGlow.push(glow);
-
-      // Clip entities to the field panel — zako/attacks enter from above the visible area
-      const mask = new Graphics();
-      mask.roundRect(0, 0, this.fieldW, this.fieldH, 8).fill(0xffffff);
-      field.addChild(mask);
-
-      const fxLayer = new Graphics();
-      fxLayer.mask = mask;
-      field.addChild(fxLayer);
-      this.fieldFx.push(fxLayer);
-
-      // HUD under the field
-      const hud = new Graphics();
-      hud.x = fx;
-      hud.y = TOP + this.fieldH + 8;
-      this.root.addChild(hud);
-      this.hud.push(hud);
-
-      const ch = CHARACTERS[seat]!;
-      const name = new Text({
-        text: `${ch.name}${seat === 0 ? '  (YOU)' : '  (CPU)'}`,
-        style: new TextStyle({ fill: ch.color, fontSize: 17, fontFamily: 'Verdana', fontWeight: 'bold' }),
-      });
-      name.x = fx + 4;
-      name.y = TOP + this.fieldH + 10;
-      this.root.addChild(name);
-      this.nameTexts.push(name);
-
-      const status = new Text({
-        text: '',
-        style: new TextStyle({ fill: 0xffffff, fontSize: 34, fontFamily: 'Verdana', fontWeight: 'bold', align: 'center' }),
-      });
-      status.anchor.set(0.5);
-      status.x = fx + this.fieldW / 2;
-      status.y = TOP + this.fieldH / 2;
-      this.root.addChild(status);
-      this.statusTexts.push(status);
-    }
-
-    // Title / game-over overlay
-    this.overlay = new Container();
-    const dim = new Graphics();
-    dim.rect(0, 0, this.totalW, this.totalH).fill({ color: 0x05050f, alpha: 0.82 });
-    this.overlay.addChild(dim);
-    this.overlayTitle = new Text({
-      text: '',
-      style: new TextStyle({ fill: 0xffe9f7, fontSize: 44, fontFamily: 'Verdana', fontWeight: 'bold', align: 'center' }),
-    });
-    this.overlayTitle.anchor.set(0.5);
-    this.overlayTitle.x = this.totalW / 2;
-    this.overlayTitle.y = this.totalH * 0.38;
-    this.overlay.addChild(this.overlayTitle);
-    this.overlayBody = new Text({
-      text: '',
-      style: new TextStyle({ fill: 0xc9d4ff, fontSize: 19, fontFamily: 'Verdana', align: 'center', lineHeight: 30 }),
-    });
-    this.overlayBody.anchor.set(0.5, 0);
-    this.overlayBody.x = this.totalW / 2;
-    this.overlayBody.y = this.totalH * 0.48;
-    this.overlay.addChild(this.overlayBody);
+    // Overlay (title / game over / banners)
+    this.overlayDim.rect(0, 0, INTERNAL_W, INTERNAL_H).fill({ color: 0x05030f, alpha: 0.62 });
+    this.overlay.addChild(this.overlayDim);
+    this.overlay.addChild(this.overlayItems);
     this.root.addChild(this.overlay);
 
+    // Subtle CRT scanlines at device resolution (above everything, uniform & faint).
+    const scan = new Sprite(scanlineTex(INTERNAL_W * SCALE, INTERNAL_H * SCALE));
+    scan.alpha = 0.1;
+    this.app.stage.addChild(scan);
+
     const resize = () => {
-      const scale = Math.min(window.innerWidth / this.totalW, window.innerHeight / this.totalH);
-      this.app.canvas.style.width = `${this.totalW * scale}px`;
-      this.app.canvas.style.height = `${this.totalH * scale}px`;
+      const availW = window.innerWidth || INTERNAL_W * SCALE;
+      const availH = window.innerHeight || INTERNAL_H * SCALE;
+      const scale = Math.max(0.1, Math.min(availW / (INTERNAL_W * SCALE), availH / (INTERNAL_H * SCALE)));
+      this.app.canvas.style.width = `${INTERNAL_W * SCALE * scale}px`;
+      this.app.canvas.style.height = `${INTERNAL_H * SCALE * scale}px`;
     };
     window.addEventListener('resize', resize);
     resize();
+    // Headless/early-layout guard: window dims can be 0 at init; re-fit next frame.
+    requestAnimationFrame(resize);
+  }
+
+  private buildField(seat: number): Field {
+    const ch = CHARACTERS[seat]!;
+    const colX = MARGIN + seat * (FW + GAP);
+    const col = new Container();
+    col.position.set(colX, MARQUEE);
+    this.root.addChild(col);
+
+    // --- Play area (sky + clouds + frame), clipped ---
+    const play = new Container();
+    play.position.set(0, HUD_TOP);
+    col.addChild(play);
+
+    const sky = new Sprite(skyTex(ch.theme, FW, FH));
+    play.addChild(sky);
+    const clouds = new TilingSprite({ texture: cloudStripTex(ch.theme, FW, 48), width: FW, height: FH });
+    clouds.alpha = 0.9;
+    play.addChild(clouds);
+
+    const mask = new Graphics();
+    mask.rect(0, 0, FW, FH).fill(0xffffff);
+    play.addChild(mask);
+    play.mask = mask;
+
+    const gfx = new Graphics();
+    play.addChild(gfx);
+    const pool = new SpritePool(play);
+
+    // Frame border (the field "walls")
+    const frame = new Graphics();
+    frame.rect(0, 0, FW, FH).stroke({ width: 2, color: 0x2a1a4a, alignment: 0 });
+    frame.rect(-1, -1, FW + 2, FH + 2).stroke({ width: 1, color: 0x6a4a9a, alignment: 0 });
+    col.addChild(frame);
+
+    // --- Top HUD: portrait, name, score, hearts ---
+    const portrait = new Container();
+    portrait.position.set(2, 2);
+    const pBg = new Graphics();
+    pBg.rect(0, 0, 20, 28).fill(0x140a26).stroke({ width: 1, color: ch.color, alignment: 0 });
+    portrait.addChild(pBg);
+    const pMask = new Graphics();
+    pMask.rect(1, 1, 18, 26).fill(0xffffff);
+    portrait.addChild(pMask);
+    const pHead = new Sprite(playerTex(ch, 0));
+    pHead.anchor.set(0.5, 0.4);
+    pHead.position.set(10, 15);
+    pHead.scale.set(1);
+    pHead.mask = pMask;
+    portrait.addChild(pHead);
+    col.addChild(portrait);
+
+    const name = new Sprite(textTexture(`${ch.name}${seat === 0 ? ' (YOU)' : ' (CPU)'}`, { color: cssOf(ch.color), shadow: '#1a0a2a' }));
+    name.position.set(24, 3);
+    col.addChild(name);
+
+    const score = new Label(col, { color: '#fff6d0', shadow: '#3a1a2a' });
+    score.at(24, 12);
+
+    const hearts: Sprite[] = [];
+    for (let i = 0; i < this.cfg.player.maxHp; i++) {
+      const s = new Sprite(heartTex('full'));
+      s.position.set(24 + i * 12, 21);
+      col.addChild(s);
+      hearts.push(s);
+    }
+
+    // --- Bottom HUD: charge gauge (left) + bombs (right) ---
+    const botY = HUD_TOP + FH + 2;
+    const cg = new Graphics();
+    cg.position.set(2, botY);
+    col.addChild(cg);
+    (col as unknown as { __cg: Graphics }).__cg = cg;
+
+    const bombs: Sprite[] = [];
+    for (let i = 0; i < MAX_BOMBS; i++) {
+      const s = new Sprite(bombTex());
+      s.anchor.set(1, 0);
+      s.position.set(FW - 2 - i * 13, botY);
+      col.addChild(s);
+      bombs.push(s);
+    }
+
+    const koLabel = new Label(col, { color: '#ff6b6b', outline: '#3a0a0a', scale: 2, anchor: 0.5 });
+    koLabel.at(FW / 2, HUD_TOP + FH / 2);
+    koLabel.visible = false;
+
+    return { col, play, clouds, gfx, pool, popups: [], hearts, bombs, score, koLabel, anim: 0 };
+  }
+
+  // ----------------------------------------------------------------------
+  // Title / overlay
+  // ----------------------------------------------------------------------
+
+  /** Tear down overlay sprites between screens — destroy the Sprites but KEEP their
+   *  textures (they're shared, cached textures from textTexture()/playerTex()/etc). */
+  private clearOverlay(): void {
+    for (const c of this.overlayItems.removeChildren()) {
+      c.destroy({ children: true, texture: false, textureSource: false });
+    }
   }
 
   showTitle(): void {
     this.overlay.visible = true;
-    this.overlayTitle.text = '✦ THRINKLE STAR SPRITES ✦';
-    this.overlayBody.text =
-      'Three sprites enter. One sprite twinkles.\n\n' +
-      'Chain explosions to bombard BOTH rivals — shoot incoming attacks\n' +
-      'to hurl them back where they came from. Crash into critters and\n' +
-      'your rivals drink your pain.\n\n' +
-      'MOVE  arrows / WASD      FIRE (hold to charge)  X / Space\n' +
-      'BOMB  Z / Shift      MUTE  M\n\n' +
-      'Press ENTER to play';
+    this.clearOverlay();
+
+    const star = new Sprite(happyStarTex());
+    star.anchor.set(0.5);
+    star.scale.set(1.6);
+    star.position.set(INTERNAL_W / 2, 30);
+    this.overlayItems.addChild(star);
+    this.titleStar = star;
+
+    const logo = new Sprite(textTexture('THRINKLE STAR SPRITES', { color: '#ffe9f7', outline: '#b02a8a' }));
+    logo.anchor.set(0.5);
+    logo.scale.set(2);
+    logo.position.set(INTERNAL_W / 2, 66);
+    this.overlayItems.addChild(logo);
+
+    const sub = new Sprite(textTexture('THREE SPRITES ENTER - ONE SPRITE TWINKLES', { color: '#ffd86a', shadow: '#5a2a1a' }));
+    sub.anchor.set(0.5);
+    sub.position.set(INTERNAL_W / 2, 86);
+    this.overlayItems.addChild(sub);
+
+    // Character line-up
+    for (let i = 0; i < 3; i++) {
+      const s = new Sprite(playerTex(CHARACTERS[i]!, 0));
+      s.anchor.set(0.5);
+      s.scale.set(2);
+      s.position.set(INTERNAL_W / 2 + (i - 1) * 70, 140);
+      this.overlayItems.addChild(s);
+      const nm = new Sprite(textTexture(CHARACTERS[i]!.name, { color: cssOf(CHARACTERS[i]!.color), shadow: '#1a0a2a' }));
+      nm.anchor.set(0.5);
+      nm.position.set(INTERNAL_W / 2 + (i - 1) * 70, 168);
+      this.overlayItems.addChild(nm);
+    }
+
+    const lines = [
+      'MOVE: ARROWS / WASD    FIRE: X / SPACE  (HOLD=CHARGE)',
+      'BOMB: Z / SHIFT    MUTE: M',
+    ];
+    lines.forEach((t, i) => {
+      const l = new Sprite(textTexture(t, { color: '#cfe0ff', shadow: '#10204a' }));
+      l.anchor.set(0.5);
+      l.position.set(INTERNAL_W / 2, 196 + i * 12);
+      this.overlayItems.addChild(l);
+    });
+
+    const press = new Sprite(textTexture('PRESS ENTER TO PLAY', { color: '#ffffff', outline: '#6a1a4a' }));
+    press.anchor.set(0.5);
+    press.position.set(INTERNAL_W / 2, 240);
+    this.overlayItems.addChild(press);
+    this.blinker = press;
   }
+
+  private blinker: Sprite | null = null;
+  private titleStar: Sprite | null = null;
 
   showGameOver(winner: number): void {
     this.overlay.visible = true;
+    this.titleStar = null;
+    this.clearOverlay();
     const name = winner >= 0 ? CHARACTERS[winner]!.name : 'NOBODY';
-    this.overlayTitle.text = winner === 0 ? '★ YOU WIN! ★' : `${name} WINS`;
-    this.overlayBody.text = 'Press ENTER for a rematch';
+    const title = winner === 0 ? 'YOU WIN!' : `${name} WINS!`;
+    const logo = new Sprite(textTexture(title, { color: '#ffe06a', outline: '#7a3a1a' }));
+    logo.anchor.set(0.5);
+    logo.scale.set(3);
+    logo.position.set(INTERNAL_W / 2, INTERNAL_H * 0.42);
+    this.overlayItems.addChild(logo);
+    if (winner >= 0) {
+      const s = new Sprite(playerTex(CHARACTERS[winner]!, 0));
+      s.anchor.set(0.5);
+      s.scale.set(3);
+      s.position.set(INTERNAL_W / 2, INTERNAL_H * 0.58);
+      this.overlayItems.addChild(s);
+    }
+    const press = new Sprite(textTexture('PRESS ENTER FOR A REMATCH', { color: '#ffffff', shadow: '#3a1a2a' }));
+    press.anchor.set(0.5);
+    press.position.set(INTERNAL_W / 2, INTERNAL_H * 0.78);
+    this.overlayItems.addChild(press);
+    this.blinker = press;
   }
 
   hideOverlay(): void {
     this.overlay.visible = false;
+    this.blinker = null;
+    this.titleStar = null;
   }
+
+  // ----------------------------------------------------------------------
+  // Events → transient visuals
+  // ----------------------------------------------------------------------
 
   applyEvents(events: SimEvent[], state: SimState): void {
     for (const e of events) {
-      if (e.type === 'player-hit') this.shake[e.seat] = 10;
-      if (e.type === 'bomb') this.shake[e.seat] = 14;
-      if (e.type === 'chain' && e.size >= 3) {
-        const p = state.players[e.seat]!;
-        this.popup(e.seat, p.x * S, (p.y - 24) * S, `CHAIN x${e.size}!`, 0xfff3c4);
-      }
-      if (e.type === 'reflect') {
-        const p = state.players[e.seat]!;
-        this.popup(e.seat, p.x * S, (p.y - 36) * S, 'REVERSE!', 0x9fe8ff);
-      }
-      if (e.type === 'fever-start') {
-        this.popup(e.seat, this.fieldW / 2, this.fieldH * 0.3, 'FEVER!!', 0xffd75e);
-      }
-      if (e.type === 'attack-sent' && e.tier === 'boss') {
-        this.popup(e.to, this.fieldW / 2, this.fieldH * 0.2, 'BOSS INCOMING!', 0xff8a8a);
+      switch (e.type) {
+        case 'player-hit':
+          this.shake[e.seat] = 9;
+          break;
+        case 'bomb':
+          this.shake[e.seat] = 14;
+          this.popup(e.seat, FW / 2, FH * 0.5, 'BOMB!', '#ffd86a', 2);
+          break;
+        case 'chain':
+          if (e.size >= 4) {
+            const p = state.players[e.seat]!;
+            this.popup(e.seat, p.x, p.y - 22, `CHAIN ${e.size}`, '#fff3c4', e.size >= 8 ? 2 : 1);
+          }
+          break;
+        case 'reflect': {
+          const p = state.players[e.seat]!;
+          this.popup(e.seat, p.x, p.y - 30, 'REVERSE!', '#9fe8ff', 1);
+          break;
+        }
+        case 'fever-start':
+          this.popup(e.seat, FW / 2, FH * 0.32, 'FEVER!!', '#ffe06a', 3);
+          break;
+        case 'attack-sent':
+          if (e.tier === 'boss') this.popup(e.to, FW / 2, FH * 0.2, 'BOSS!', '#ff8a8a', 2);
+          break;
+        case 'eliminated':
+          this.popup(e.seat, FW / 2, FH * 0.5, 'K.O.', '#ff6b6b', 2);
+          break;
       }
     }
   }
 
-  /** Advance time-based visuals exactly once per SIM TICK (frame-rate independent). */
+  private popup(seat: number, x: number, y: number, msg: string, color: string, scale: number): void {
+    const f = this.fields[seat]!;
+    const tex = textTexture(msg, { color, outline: '#2a0a1a' });
+    const s = new Sprite(tex);
+    s.anchor.set(0.5);
+    s.scale.set(scale);
+    s.position.set(Math.round(MARGIN + seat * (FW + GAP) + x), Math.round(MARQUEE + HUD_TOP + y));
+    this.root.addChild(s);
+    f.popups.push({ sprite: s, ticks: 50, life: 50, vy: -0.5 });
+  }
+
+  /** Advance time-based visuals once per SIM TICK (frame-rate independent). */
   tickVisuals(): void {
+    this.tickCount++;
     for (let seat = 0; seat < 3; seat++) {
+      const f = this.fields[seat]!;
       if (this.shake[seat]! > 0) this.shake[seat]!--;
-      for (const pop of this.popups[seat]!) {
+      f.anim++;
+      f.clouds.tilePosition.y += 0.25; // gentle downward parallax
+      for (const pop of f.popups) {
         pop.ticks--;
-        pop.text.y += pop.vy;
-        pop.text.alpha = Math.min(1, pop.ticks / 18);
-        if (pop.ticks <= 0) pop.text.destroy();
+        pop.sprite.y += pop.vy;
+        pop.sprite.alpha = Math.min(1, pop.ticks / 14);
+        if (pop.ticks <= 0) pop.sprite.destroy();
       }
-      this.popups[seat] = this.popups[seat]!.filter((pop) => pop.ticks > 0);
+      f.popups = f.popups.filter((p) => p.ticks > 0);
     }
   }
 
-  /** Push the current stage to the GPU — called once per animation frame by the game loop. */
+  private frameCount = 0;
+
   render(): void {
+    // Per-frame (not per-tick) so the title/game-over overlay animates even when the sim
+    // isn't running (draw() is skipped on those screens).
+    this.frameCount++;
+    if (this.overlay.visible) {
+      if (this.blinker) this.blinker.visible = Math.floor(this.frameCount / 30) % 2 === 0;
+      if (this.titleStar) {
+        this.titleStar.y = 30 + Math.sin(this.frameCount * 0.05) * 2;
+        this.titleStar.rotation = Math.sin(this.frameCount * 0.025) * 0.08;
+      }
+    }
     this.app.renderer.render(this.app.stage);
   }
 
-  private popup(seat: number, x: number, y: number, msg: string, color: number): void {
-    const t = new Text({
-      text: msg,
-      style: new TextStyle({ fill: color, fontSize: 20, fontFamily: 'Verdana', fontWeight: 'bold' }),
-    });
-    t.anchor.set(0.5);
-    t.x = Math.max(40, Math.min(this.fieldW - 40, x));
-    t.y = y;
-    this.fields[seat]!.addChild(t);
-    this.popups[seat]!.push({ text: t, ticks: 55, vy: -0.7 });
-  }
+  // ----------------------------------------------------------------------
+  // Per-frame draw
+  // ----------------------------------------------------------------------
 
   draw(state: SimState): void {
     const cfg = this.cfg;
-    this.timerText.text = formatTimer(cfg.match.timerTicks - state.tick);
+    const secs = Math.max(0, Math.ceil((cfg.match.timerTicks - state.tick) / 60));
+    this.timer.set(`${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`);
 
     for (let seat = 0; seat < 3; seat++) {
       const p = state.players[seat]!;
-      const g = this.fieldFx[seat]!;
-      const field = this.fields[seat]!;
+      const f = this.fields[seat]!;
       const ch = CHARACTERS[seat]!;
-      g.clear();
-
-      // Screen shake — amplitude decays in tickVisuals; the offset jitter itself is
-      // pure presentation, so per-frame randomness here is fine.
+      const colX = MARGIN + seat * (FW + GAP);
       const sh = this.shake[seat]!;
-      field.x = 24 + seat * (this.fieldW + FIELD_GAP) + (sh > 0 ? (Math.random() - 0.5) * sh * 1.6 : 0);
-      field.y = TOP + (sh > 0 ? (Math.random() - 0.5) * sh * 1.6 : 0);
-
-      this.feverGlow[seat]!.visible = p.alive && p.feverTicks > 0;
-      this.statusTexts[seat]!.text = p.alive ? '' : 'K.O.';
+      f.col.position.set(
+        colX + (sh > 0 ? Math.round((Math.random() - 0.5) * sh) : 0),
+        MARQUEE + (sh > 0 ? Math.round((Math.random() - 0.5) * sh) : 0),
+      );
 
       this.drawHud(seat, p);
-      if (!p.alive) continue;
+      f.koLabel.visible = !p.alive;
 
-      // Incoming-attack warnings at the top edge
+      const g = f.gfx;
+      g.clear();
+      f.pool.begin();
+
+      if (!p.alive) {
+        f.clouds.alpha = 0.25;
+        f.pool.end();
+        continue;
+      }
+      f.clouds.alpha = p.feverTicks > 0 ? 0.5 : 0.9;
+
+      // Fever field glow
+      if (p.feverTicks > 0) {
+        const pulse = 0.5 + Math.sin(this.tickCount * 0.4) * 0.2;
+        g.rect(0, 0, FW, FH).fill({ color: 0xffe06a, alpha: 0.12 * pulse });
+        g.rect(1, 1, FW - 2, FH - 2).stroke({ width: 2, color: 0xffe06a, alpha: 0.7 * pulse, alignment: 0 });
+      }
+
+      // Incoming-attack warnings (top edge)
       for (const t of state.transit) {
-        if (t.target !== seat || t.ticksLeft > 30) continue;
-        const x = t.entryX * S;
-        const blink = Math.floor(state.tick / 4) % 2 === 0;
-        if (blink) {
-          g.poly([x - 8, 4, x + 8, 4, x, 18]).fill(t.tier === 'boss' ? 0xff5a5a : t.tier === 'extra' ? 0xffa94f : 0xff8ab8);
+        if (t.target !== seat || t.ticksLeft > 36) continue;
+        if (Math.floor(this.tickCount / 4) % 2 === 0) {
+          const color = t.tier === 'boss' ? 0xff5a5a : t.tier === 'extra' ? 0xffa94f : CHARACTERS[t.originalSender]!.color;
+          f.pool.put(warnTex(color), t.entryX, 6);
         }
       }
 
-      // Zako — round critters with little faces
+      // Zako
       for (const z of p.zako) {
-        const zx = z.x * S;
-        const zy = z.y * S;
-        const r = cfg.waves.zakoRadius * S * 0.95;
-        g.circle(zx, zy, r).fill(0x8d7bff).stroke({ width: 2, color: 0xc9bfff });
-        g.circle(zx - r * 0.35, zy - r * 0.15, r * 0.16).fill(0xffffff);
-        g.circle(zx + r * 0.35, zy - r * 0.15, r * 0.16).fill(0xffffff);
-        g.circle(zx - r * 0.35, zy - r * 0.15, r * 0.07).fill(0x222244);
-        g.circle(zx + r * 0.35, zy - r * 0.15, r * 0.07).fill(0x222244);
+        const tier = zakoTier(z.id);
+        const s = f.pool.put(zakoTex(tier, Math.floor((f.anim + z.id * 7) / 8)), z.x, z.y);
+        s.scale.set(1);
       }
 
-      // Shots
+      // Player shots
       for (const shot of p.shots) {
-        g.circle(shot.x * S, shot.y * S, 3).fill(ch.accent);
-        g.circle(shot.x * S, shot.y * S + 5, 2).fill({ color: ch.accent, alpha: 0.4 });
+        f.pool.put(sparkleTex(ch.accent, 4), shot.x, shot.y).scale.set(0.8);
       }
 
-      // Beams
+      // Charge beams — bright vertical lasers shooting up the field (Attack Stopper)
       for (const beam of p.beams) {
-        const bw = beam.halfWidth * S;
-        g.rect(beam.x * S - bw, beam.y * S - 26, bw * 2, 34)
-          .fill({ color: ch.color, alpha: 0.55 })
-          .stroke({ width: 2, color: 0xffffff, alpha: 0.8 });
+        const bw = beam.halfWidth;
+        const topY = Math.max(0, beam.y - 110);
+        const h = beam.y - topY + 4;
+        g.rect(beam.x - bw, topY, bw * 2, h).fill({ color: ch.color, alpha: 0.28 });
+        g.rect(beam.x - bw * 0.5, topY, bw, h).fill({ color: ch.accent, alpha: 0.55 });
+        g.rect(beam.x - 1.5, topY, 3, h).fill({ color: 0xffffff, alpha: 0.9 });
+        f.pool.put(sparkleTex(0xffffff, 7), beam.x, beam.y).scale.set(1.1);
       }
 
-      // Explosions — expanding rings
+      // Explosions
       for (const ex of p.explosions) {
         const t = 1 - ex.ticksLeft / cfg.chain.explosionTicks;
-        const r = cfg.chain.explosionRadius * S * (0.5 + t * 0.6);
-        g.circle(ex.x * S, ex.y * S, r).stroke({ width: 4, color: 0xffc46b, alpha: 1 - t * 0.7 });
-        g.circle(ex.x * S, ex.y * S, r * 0.55).fill({ color: 0xfff0b8, alpha: (1 - t) * 0.5 });
+        f.pool.put(explosionTex(Math.floor(t * EXPLO_FRAMES)), ex.x, ex.y);
       }
 
       // Incoming attacks
-      for (const a of p.incoming) {
-        this.drawAttack(g, a, state);
+      for (const a of p.incoming) this.drawAttack(f, a);
+
+      // Player
+      const flick = p.iframes > 0 && Math.floor(this.tickCount / 3) % 2 === 0;
+      if (!flick) {
+        const frame = Math.floor(f.anim / 16) % 2;
+        const ps = f.pool.put(playerTex(ch, frame), p.x, p.y + 2);
+        ps.anchor.set(0.5, 0.62); // feet-ish anchor so the body sits over the hitbox
+        // Fever: the character flashes yellow (spec §6).
+        if (p.feverTicks > 0 && Math.floor(this.tickCount / 4) % 2 === 0) ps.tint = 0xffe04d;
+        // Charge ring
+        if (p.chargeTicks >= cfg.shot.chargeTicksLv1) {
+          const lv2 = p.chargeTicks >= cfg.shot.chargeTicksLv2;
+          const rs = f.pool.put(sparkleTex(lv2 ? 0xffe06a : ch.accent, 8), p.x, p.y);
+          const pulse = 1 + Math.sin(this.tickCount * 0.4) * 0.2;
+          rs.scale.set(pulse * (lv2 ? 1.3 : 1));
+          rs.alpha = 0.85;
+          rs.rotation = this.tickCount * 0.1;
+        }
       }
 
-      // Player — five-point star with charge ring
-      const px = p.x * S;
-      const py = p.y * S;
-      const flicker = p.iframes > 0 && Math.floor(state.tick / 3) % 2 === 0;
-      if (!flicker) {
-        drawStar(g, px, py, 5, 11, 5.5, ch.color, TIER_OUTLINE);
-        g.circle(px, py - 1, 3).fill(0xffffff);
-      }
-      if (p.chargeTicks >= cfg.shot.chargeTicksLv1) {
-        const lv2 = p.chargeTicks >= cfg.shot.chargeTicksLv2;
-        const pulse = 1 + Math.sin(state.tick * 0.35) * 0.12;
-        g.circle(px, py, (lv2 ? 17 : 13) * pulse).stroke({ width: 3, color: lv2 ? 0xffd75e : ch.accent, alpha: 0.9 });
-      }
+      f.pool.end();
     }
   }
 
-  private drawAttack(g: Graphics, a: IncomingAttack, state: SimState): void {
-    const ax = a.x * S;
-    const ay = a.y * S;
-    const sender = CHARACTERS[a.originalSender] ?? CHARACTERS[0]!;
+  private drawAttack(f: Field, a: IncomingAttack): void {
+    const senderColor = CHARACTERS[a.originalSender]?.color ?? 0xffffff;
     if (a.tier === 'boss') {
-      const r = this.cfg.attacks.attackRadius * 3 * S;
-      const wob = Math.sin(state.tick * 0.1) * 3;
-      g.circle(ax - r * 0.5, ay + wob, r * 0.62).fill(0x5a3d8a).stroke({ width: 3, color: 0xb38aff });
-      g.circle(ax + r * 0.5, ay - wob, r * 0.62).fill(0x5a3d8a).stroke({ width: 3, color: 0xb38aff });
-      g.circle(ax, ay, r * 0.8).fill(0x6f4aa8).stroke({ width: 3, color: 0xd8bfff });
-      g.circle(ax - r * 0.25, ay - r * 0.15, r * 0.12).fill(0xff5a5a);
-      g.circle(ax + r * 0.25, ay - r * 0.15, r * 0.12).fill(0xff5a5a);
-      // HP ring
-      const frac = a.hp / this.cfg.attacks.bossHp;
-      g.rect(ax - r, ay - r - 12, r * 2 * frac, 5).fill(0xff8a8a);
+      const bs = f.pool.put(bossTex(Math.floor(f.anim / 18) % 2), a.x, a.y);
+      // Spawn telegraph: a brief white flash as the boss materialises (spec §6).
+      if (a.age < 48 && Math.floor(this.tickCount / 4) % 2 === 0) {
+        bs.tint = 0xffffff;
+        bs.alpha = 0.7;
+      }
+      // HP bar
+      const frac = Math.max(0, a.hp / this.cfg.attacks.bossHp);
+      f.gfx.rect(a.x - 18, a.y - 30, 36, 4).fill({ color: 0x2a0a1a, alpha: 0.8 });
+      f.gfx.rect(a.x - 17, a.y - 29, 34 * frac, 2).fill(0xff6b8a);
     } else if (a.tier === 'extra') {
-      drawStar(g, ax, ay, 7, this.cfg.attacks.attackRadius * S * 1.6, this.cfg.attacks.attackRadius * S * 0.8, 0xff9a3d, 0xffe2bb);
-      g.circle(ax, ay, 4).fill(0xffffff);
+      f.pool.put(extraTex(Math.floor(f.anim / 10) % 2), a.x, a.y);
     } else {
-      const r = this.cfg.attacks.attackRadius * S * 0.9;
-      // trail
-      for (let i = 1; i <= 3; i++) {
-        g.circle(ax, ay - i * 7, r * (1 - i * 0.22)).fill({ color: sender.color, alpha: 0.35 - i * 0.09 });
-      }
-      g.circle(ax, ay, r).fill(sender.color).stroke({ width: 2, color: TIER_OUTLINE });
-      if (a.tier === 'reverse') {
-        // speed chevrons mark a reversed (angrier) attack
-        g.poly([ax - r, ay - r - 4, ax, ay - r + 2, ax + r, ay - r - 4]).stroke({ width: 2, color: 0x9fe8ff });
-      }
+      const size = a.hp <= 2 ? 0 : a.hp <= 3 ? 1 : a.hp <= 4 ? 2 : 3;
+      f.pool.put(fireballTex(senderColor, size, a.tier === 'reverse'), a.x, a.y);
     }
   }
 
   private drawHud(seat: number, p: PlayerSim): void {
     const cfg = this.cfg;
-    const h = this.hud[seat]!;
-    const w = this.fieldW;
-    h.clear();
+    const f = this.fields[seat]!;
+    f.score.set(numStr(p.stats.damageDealt * 100 + p.stats.attacksSent * 250 + p.stats.chains * 50));
 
-    // HP bar
-    const hpFrac = Math.max(0, p.hp / cfg.player.maxHp);
-    h.roundRect(0, 26, w, 16, 5).fill(0x1c1c38).stroke({ width: 1, color: 0x3a3a68 });
-    if (hpFrac > 0) {
-      const color = hpFrac > 0.5 ? 0x6fe87f : hpFrac > 0.25 ? 0xffd75e : 0xff6b6b;
-      h.roundRect(1, 27, (w - 2) * hpFrac, 14, 5).fill(color);
+    // Hearts
+    for (let i = 0; i < cfg.player.maxHp; i++) {
+      const remaining = p.hp - i;
+      const kind = remaining >= 1 ? 'full' : remaining >= 0.5 ? 'half' : 'empty';
+      f.hearts[i]!.texture = heartTex(kind);
     }
 
-    // Fever meter
-    h.roundRect(0, 48, w * 0.7, 9, 4).fill(0x1c1c38).stroke({ width: 1, color: 0x3a3a68 });
+    // Bombs (display caps at MAX_BOMBS)
+    for (let i = 0; i < MAX_BOMBS; i++) f.bombs[i]!.visible = i < p.bombs;
+
+    // Charge gauge with 1 / 2 / MAX sections + fever overlay
+    const cg = (f.col as unknown as { __cg: Graphics }).__cg;
+    cg.clear();
+    const gw = 64;
+    const gh = 6;
+    cg.rect(0, 4, gw, gh).fill(0x1a1030).stroke({ width: 1, color: 0x5a3a7a, alignment: 0 });
+    const lv1 = cfg.shot.chargeTicksLv1;
+    const lv2 = cfg.shot.chargeTicksLv2;
+    const chargeFrac = Math.min(1, p.chargeTicks <= 0 ? 0 : p.chargeTicks / lv2);
+    if (chargeFrac > 0) {
+      const col = p.chargeTicks >= lv2 ? 0xffe06a : p.chargeTicks >= lv1 ? 0xff8a3d : 0xff4d6a;
+      cg.rect(1, 5, (gw - 2) * chargeFrac, gh - 2).fill(col);
+    }
+    // section dividers at Lv1 / Lv2(MAX)
+    cg.rect(Math.round((lv1 / lv2) * gw), 3, 1, gh + 2).fill(0xfff0c0);
+    // fever meter as a thin underline of the gauge (our meter-based fever stand-in)
     const fever = p.feverTicks > 0 ? 1 : p.feverMeter / 100;
-    if (fever > 0) {
-      h.roundRect(1, 49, (w * 0.7 - 2) * fever, 7, 4).fill(p.feverTicks > 0 ? 0xffd75e : 0xb38aff);
-    }
-
-    // Bomb pips
-    for (let i = 0; i < p.bombs; i++) {
-      h.circle(w * 0.7 + 18 + i * 18, 52, 6).fill(0xff8ab8).stroke({ width: 2, color: 0xffffff });
-    }
-
-    // Charge bar (small, under fever)
-    if (p.chargeTicks > 0) {
-      const frac = Math.min(1, p.chargeTicks / cfg.shot.chargeTicksLv2);
-      h.rect(0, 62, w * 0.7 * frac, 4).fill(frac >= 1 ? 0xffd75e : 0x9fe8ff);
-    }
+    cg.rect(0, 4 + gh + 1, gw * Math.min(1, fever), 2).fill(p.feverTicks > 0 ? 0xffe06a : 0xb38aff);
   }
 }
 
-function drawStar(
-  g: Graphics, cx: number, cy: number, points: number,
-  outer: number, inner: number, fill: number, stroke: number,
-): void {
-  const path: number[] = [];
-  for (let i = 0; i < points * 2; i++) {
-    const r = i % 2 === 0 ? outer : inner;
-    const ang = (i / (points * 2)) * Math.PI * 2 - Math.PI / 2;
-    path.push(cx + Math.cos(ang) * r, cy + Math.sin(ang) * r);
-  }
-  g.poly(path).fill(fill).stroke({ width: 2, color: stroke });
+// ---------------------------------------------------------------------------
+// One-off baked textures used by the chrome.
+// ---------------------------------------------------------------------------
+
+let _bezel: ReturnType<typeof bake> | null = null;
+function bezelTex() {
+  if (_bezel) return _bezel;
+  _bezel = bake(INTERNAL_W, INTERNAL_H, (ctx, w, h) => {
+    ctx.fillStyle = rgba(BEZEL);
+    ctx.fillRect(0, 0, w, h);
+    // faint vertical gradient + sparse twinkles in the bezel
+    for (let i = 0; i < 60; i++) {
+      const x = (i * 71) % w;
+      const y = (i * 43) % h;
+      pixStar(ctx, x, y, 4, 1.2, 0.5, rgba(0xffffff, 0.18 + ((i * 17) % 10) / 50));
+    }
+  });
+  return _bezel;
 }
 
-function formatTimer(ticksLeft: number): string {
-  const sec = Math.max(0, Math.ceil(ticksLeft / 60));
-  return `⏱ ${sec}`;
+let _scan: ReturnType<typeof bake> | null = null;
+function scanlineTex(w: number, h: number) {
+  if (_scan && _scan.width === w && _scan.height === h) return _scan;
+  _scan = bake(w, h, (ctx, cw, ch) => {
+    ctx.fillStyle = 'rgba(0,0,0,1)';
+    for (let y = 0; y < ch; y += 2) ctx.fillRect(0, y, cw, 1);
+  });
+  return _scan;
+}
+
+function cssOf(n: number): string {
+  return '#' + (n & 0xffffff).toString(16).padStart(6, '0');
+}
+
+function numStr(n: number): string {
+  return String(Math.floor(n)).padStart(6, '0');
+}
+
+// Deterministic-ish per-zako durability tier purely for VISUALS (sim kills in 1 hit).
+// Uses the zako id so a given critter keeps its colour across frames.
+function zakoTier(id: number): number {
+  const r = (id * 2654435761) >>> 0;
+  const roll = r % 100;
+  if (roll < 50) return 1; // red (most common)
+  if (roll < 74) return 2; // yellow
+  if (roll < 89) return 3; // green
+  if (roll < 97) return 4; // blue
+  return 5; // purple (rare)
 }
