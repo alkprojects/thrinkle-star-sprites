@@ -1,0 +1,41 @@
+
+The default control layout in Twinkle Star Sprites is:
+7 8 9
+4 (5) 6 A B
+1 2 3
+Additionally, ensure that a button is set to P1 Coin and P1 Start (usually Select and Start, respectively). You must "insert" a coin and hit Start to begin playing. 
+The emulator in Fightcade2 allows each button to be freely remapped, but does not support macros for any button combination.
+ Controls 
+ Direction : Your joystick moves the player. Every different Direction on the joystick moves the character in a different way. Pressing Left on the Joystick makes your character move left, while on the other hand Pressing Right on the Joystick makes your character move right.
+ Buttons: A is the Shoot or Attack button. Pressing the button once will grant a shot from the Character's weapon, pressing it twice makes the character shoot twice. Holding it charges your shot. The Gauge gets stronger when you destroy enemy zako. You can charge the attack to level 2 or 3 to send EX attacks or your boss respectively.
+ The Bomb: Your Bomb/B Button is the MOST IMPORTANT part of your Arsenal! the bomb is very good to use and is pretty strong for each character,
+ Twinkle Star Sprites 
+ | 
+ General 
+ | 
+ System Mechanics 
+ Controls 
+ Glossary 
+ FAQ 
+ Formations 
+ | 
+ | 
+ Characters 
+ | 
+ Arthur Schmitt 
+ Griffon 
+ Kim 
+ Load Ran/Dark Ran 
+ Macky & Pentell 
+ Nanja Monja 
+ Really Till 
+ Sprites 
+ Tinker & Linker 
+ Yan Yang 
+ | 
+ | 
+ Boss Characters 
+ | 
+ Mevious 
+ Memory 
+ | 

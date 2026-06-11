@@ -1,0 +1,3448 @@
+0123456789012345678901234567890123456789012345678901234567890123456789012345678
+-------------------------------------------------------------------------------
+Twinkle Star Sprites Versus FAQ Version 1.0 (I can't do ASCII)
+by Mike Uyama
+mikwuyma AT gmail DOT com
+-------------------------------------------------------------------------------
+
+Table of Contents:
+
+The text in the brackets is for quick ctrl+f searching. Anything with (TSSXXX) 
+should be converted to [TSSXXX] when you're searching. The parentheses are used
+to prevent the same item popping up multiple times with ctrl+f
+
+1. Introduction  [TSS001]
+    -Disclaimer
+    -Copyright Junk
+    -Version History
+    -Controls
+    -Legend and Terminology
+2. Basic Concepts [TSS002] 
+    -Enemies
+    -Life Bar
+    -Death
+    -Coins
+    -Bombs
+    -Charge Attacks
+    -Combos
+    -Perfects
+    -Fever
+    -Normal Attacks and Reverse Attacks
+    -Extra Attacks
+    -Bosses [TSSBOSS]
+    -Boss Stun
+    -Boss patterns
+         -Mysterious Phenomenon
+         -Escape Phase Details
+         -Ignoring Bosses
+3. Basic Gameplay and Tips [TSS003]
+4. Characters [TSS004]
+    -Rating System
+    -Load Ran [TSSRAN]
+    -Kim/Do Kesubei [TSSKIM]
+    -Nanja Monja [TSSNANJ]
+    -Tinker and Linker [TSSTIN]
+    -Realy Till [TSSTIL]
+    -Griffon [TSSGRI]
+    -Yan Yanyung [TSSYAN]
+    -Arthur Schmitt [TSSART]
+    -Macky and Pentell [TSSMAC]
+5. Secret Characters [TSS005]
+    -Sprites [TSSSPR]
+    -Memory [TSSMEM]
+    -Mevious [TSSMEV]
+    -Dark Ran [TSSDAR]
+6. Character rankings [TSS006]
+    -Actual Ranking (tier list for you SRK guys)
+    -Points Ranking
+7. Advanced concepts and Strategy [TSS007]
+    -Baiting Attacks and Surviving Fevers
+    -Dodging Extra Attacks
+    -Dodging Death
+8. Frame Data [TSS008]
+9. Thanks [TSS009]
+
+
+-------------------------------------------------------------------------------
+Introduction  [TSS001]
+-------------------------------------------------------------------------------
+
+Disclaimer:
+
+This FAQ is focused on gameplay. I don't care when Load Ran was born, what
+Arthur Schmitt likes (little girls), or how Kim sniffs panties in his free 
+time. If you want to read about those sorts of things, look in some other faqs 
+or find a TSS fansite. 
+
+I am interested in game mechanics, how each character stacks up, good 
+strategies, and advanced techniques/knowledge. If you don't like reading about 
+these concepts in an FAQ, I have a simple solution: DON'T READ THIS FAQ.
+
+Also, I don't claim to be the best or most knowledgeable person about Twinkle
+Star Sprites, especially since some of the best information in this FAQ was 
+directly lifted from Japanese sites, but I want to share what I know about this
+game with others, as there is a lack of good, detailed information about this 
+game.
+
+Oh, one more thing. This FAQ has zero single-player strategies, because 
+everyone knows the single-player game is lame compared to versus mode.
+
+Copyright Junk: 
+
+Unpublished work Copyright (c) 2009 Mike Uyama
+
+The rules for distributing this FAQ are simple, don't distribute it without my
+permission, and don't sell it for profit. If you want to host my FAQ outside of
+GameFAQs, ask me before hosting. My email is mikwuyma AT gmail DOT com.
+
+Version History
+
+Version 1.0 - All basic concepts and character information covered, along with
+some advanced concepts. Certain concepts are still lacking, but they can be 
+covered later.
+
+Controls:
+
+Control pad/Joystick - Like most games, this moves your character. You can 
+move in all 8 directions.
+
+A button - Tap to fire a shot. Hold, then release for a charge attack.
+
+B button - Bomb, you start off with two every round.
+
+
+Legend and Terminology:
+
+Character names:
+
+Ran = Load Ran
+Schmitt = Arthur Schmitt
+Macky = Macky and Pentell
+Till = Realy Till
+Tinker = Tinker and Linker
+Yanyan = Yan Yanyung
+Nanja = Nanja Monja
+
+Game terminology:
+
+Special = extra attack
+Fireball = normal attack
+Flashing fireball = reverse attack (not fever!)
+Enemies/Popcorn enemies = zako (the multicolored birds/stars/whatever you shoot
+in each stage)
+
+Just so you know, I tend to use the above terms interchangeably.
+
+Charge bar:
+
+     This is the clear gauge with a red bar on the bottom of the screen. If you
+look more closely, you will see that the bar is partitioned into three 
+sections, 1, 2, and MAX. The red bar will extend as you create combos and 
+perfects. The red bar will decrease if you use a level 2 or MAX charge attack.
+
+Offense:
+
+     This just refers to how good a character's extra attack and/or boss is.
+Basically, how good a character is at filling up the opponent's screen, not 
+counting fireballs.
+
+Firepower and Defense:
+
+     Firepower refers to how good a character's shot and/or charge attack 
+is. It's really how well a character can get out of a flurry of fireballs 
+without dodging. Defense is the same as firepower, except it also includes 
+movement speed. It's basically how well a character can avoid attacks, either 
+by shooting them down or evading them.
+
+Outer wall:
+
+     Refers to the wall on the edge of the screen. This wall is on player 1's 
+left side and player 2's right side.
+
+Inner wall:
+
+     Refers to the wall near the middle of the screen. This wall is on player 
+1's right side and player 2's left side.
+
+Reflect/Reflecting:
+
+     This is what happens when you shoot a fireball back to the opponent's side
+of the screen.
+
+Straight and angled fireballs/reverse attacks:
+
+     Straight fireballs are fireballs that travel to the top of the screen then
+fall straight down. Straight fireballs usually track your horizontal position 
+before falling straight down.
+
+     Angled fireballs are fireballs that travel through your screen at a 
+downwards angle by going through the inner wall. Angled fireballs typically 
+head straight for your character and travel faster than straight fireballs.
+
+Aimed attack:
+
+     Aimed attacks are extra attacks that head straight for your opponent the 
+moment they are on the opponent's side. Aimed attacks have no homing 
+capability, they just head straight for the opponent. Because of their lack of
+homing, aimed attacks can be baited by standing in one place, then moving away
+when the aimed attack starts heading towards you. Sprites, Memory, Load Ran 
+(sort of), and Macky and Pentell have aimed attacks.
+
+Back-attack pattern/formation:
+
+     This is the only formation that comes from the bottom corners, and has 
+killed (or at least crippled) many an unsuspecting player. It's the formation 
+on the right in the fifth row of this webpage. 
+http://www.geocities.jp/r13_5034/7000/7200.html 
+
+-------------------------------------------------------------------------------
+Basic concepts [TSS002]
+-------------------------------------------------------------------------------
+
+Enemies:
+
+The default enemies come in a variety of forms, ranging from fat little birds 
+to stars. After you shoot an enemy a certain number of times, it will explode.
+The size of the explosion depends on the size of the enemy.  The number of 
+times you have to shoot an enemy before it explodes depends on the enemy's 
+color. Here is a list of each color and how many shots are required to destroy
+an enemy of a particular color.
+
+Purple = 5
+Blue = 4
+Green = 3
+Yellow = 2
+Red = 1
+
+Each time you shoot an enemy it will go "down" one color until it is destroyed.
+For example, if a blue enemy is shot three times in rapid succession, it will
+turn green, yellow, then red. Shooting the enemy one more time will destroy it.
+
+Enemies come in 36 formations. All of the formations are shown in the site 
+below.
+
+http://www.geocities.jp/r13_5034/7000/7200.html
+
+You will probably see enemies in bubbles flying around from time to time. Shoot
+a bubble (normal shot or charge shot works) once to destroy it. Once a bubble 
+is hit, it takes about half a second for it to disappear. It is impossible to
+destroy an enemy while its bubble disappearing. If every enemy in a formation 
+will be in a bubble, then the game will display two exclamation points as a 
+warning, then a star coin will appear. 
+
+Enemies speed up around 100 seconds into a round, around the time when Death 
+appears.
+
+Life bar:
+
+Your life is displayed as hearts at the top of the screen right below your 
+score. You start each round with five hearts. You lose a round when you run
+out of hearts. There are three things that can deplete your life bar. 
+
+1. Running into popcorn enemies - You will lose a heart and your character will
+be stunned for a short time. It's possible to be hit again when stunned, but 
+after recovering from being hit a second time your character will blink with 
+invincibility. You can recover from the stun faster by mashing buttons and 
+wiggling the joystick. After recovering from stun, your character and shot are 
+slowed down for roughly five seconds before returning to normal speed. You 
+cannot die from running into popcorn enemies, you can only go down to half a 
+heart.
+
+2. Running into your opponent's attacks (normal and reverse attacks, bosses, 
+and extra attacks) - You lose three hearts when you collide into your 
+opponent's attacks, afterwards you blink with invincibility for roughly a 
+second. 
+
+3. Running into Death - As his name would suggest, running into Death instantly
+kills you no matter how many hearts you have.
+
+Your opponent gains life when you are hit by popcorn enemies or your opponent's
+attacks, and vice versa. Collisions with popcorn enemies give the opponent half
+a heart, whereas collisions with anything else that isn't death gives the 
+opponent one heart. Your life cannot be above five hearts, no matter how many 
+times the opponent has run into enemies. Furthermore, if your your life 
+decreases to three hearts or less, the only way you can recover more than three
+hearts is hit your opponent with an attack.
+
+Death:
+
+There are two situations where death will appear:
+
+1. Don't fire a single shot for a while, the time seems to vary, so it could
+be based on the number of formations passing by without firing a shot. If death
+is summoned this way, he'll just disappear after you destroy him once. 
+Honestly, the only way this situation will happen in a real match is if both 
+players have maxed out charge gauges, and they end up charging a charge attack 
+simultaneously (Mexican standoff situation where neither person wants
+to boss first).
+
+2. Last for about 100 seconds according to the in-game clock, which is slower 
+than real-time. Death won't always appear at 100 seconds, he will sometimes 
+take 110 or 120 seconds to appear. No, I'm not sure why the amount of time
+passed before death appears varies. If death is summoned this way, he 
+constantly reappears until someone loses the round.
+
+Touching death kills you instantly, no exceptions.
+
+Death has four life during his first appearance, and gains 3 life for every 
+subsequent appearance. For example, death will have 13 life during his fourth
+appearance (4+3+3+3). As far as I know, there is no limit to how much life 
+Death can have. Bombing kills death instantly, regardless of how much life
+he has. If you start a combo by killing death you will not get a perfect 
+unless if you fire a subsequent shot into a popcorn enemy (and the shot doesn't
+end up killing the enemy).
+
+As time passes by, Death becomes faster and faster, eventually equalling Load
+Ran's movement speed (and other characters with the same speed). Yes, this 
+means Death becomes faster than Yanyan and Macky, but that doesn't mean it's
+impossible for those two characters to dodge death-- they can circle around 
+death because their diagonal movement is faster than Death's, and death has
+difficulty moving in tight circles.
+
+Coins:
+
+There are two types of coins. They both flip between an item and a dollar 
+sign. 
+
+Star coins: These usually appear when every enemy in a formation is covered 
+in bubbles. If you collect the coin star side up, then all bubbles on your 
+screen will disappear.
+
+Bomb coins: Collecting this coin bomb side up gives you an extra bomb. Its 
+appearance is determined by the number of formations that have cycled through 
+your side of the screen. The first bomb coin usually appears after 50-60 
+seconds, and the second one typically appears soon after death shows up.
+
+If you collect a coin dollar side up, you collect 10 points. Seeing how points 
+have no benefit whatsoever in a match, you never want to collect coins dollar 
+side up.
+
+Bombs:
+
+You start each round with two bombs, and you can hold as many bombs as you 
+collect, though having more than three or four bombs is rare. You can see your 
+current bomb stock by looking at how many circles with a "B" there are at the 
+bottom of your side of the screen. The game only displays up to four bombs, but
+it's possible to hold more.
+
+When you use a bomb your character will flash and an animation will play on
+your side of the screen. Your character is invincible until the flashing is 
+over. There is a very slight lag, roughly one frame, between pressing the bomb 
+button and the invincibility occuring. Bombs inflict damage for a short period 
+of time after the button is pressed.
+
+All of your shots, charge attacks, and some attacks from the opponent's boss 
+vanish when you use a bomb. In general, anything beam-like from a boss won't 
+disappear (lightning, lasers). You can't shoot or use charge attacks while the 
+bomb is in effect, but you can charge meter. If you try a level 2 or MAX 
+charge attack during this time, nothing will happen to your meter.
+
+Bombs hit everything on your side of the screen, even if a bomb's graphic
+looks like it doesn't hit everything. Bombs also destroy popcorn enemies 
+(including those in bubbles) and death in one hit, regardless of life. 
+
+Almost everyone's bomb deals 13 damage against bosses; the only exception is 
+Kim, whose bomb deals 16 damage. No, I don't know why Kim's bomb is more 
+powerful than everyone else's. Damage is dealt gradually over time. If you use
+a bomb while a boss is stunned, or if the bomb caused stun, you won't inflict 
+13 or 16 damage, the most you can inflict is 9 or 12. 
+
+Charge attacks:
+
+To perform a charge attack, hold the fire button until the 1 right above the 
+charge bar is flashing.  Depending on your character, you will fire anything 
+from a large wave to three punches with enlarged fists.
+
+Level 2 and max level charge attacks:
+
+You might notice the red charge bar increasing as you play. Combos and perfects
+(mentioned later in this guide) increase this bar. 
+
+Once the red bar reaches the "2" mark (the 2 will light up), you can charge a 
+level 2 charge attack. A level 2 charge attack sends 2-4 extra attacks to the 
+opponent's side.  The number of extra attacks sent depends on the character.
+
+2 extra attacks: Nanja Monja
+
+3 extra attacks: Load Ran/Darkran, Realy Till, Mevious, Kim, Sprites, 
+Yan Yanyung, Macky and Pentell, Tinker and Linker
+
+4 extra attacks: Arthur Schmitt, Griffon, Memory
+
+Once the red bar reaches "MAX", you can charge up a boss attack.  If there is
+already a boss on the opponent's screen, then you will send 2 more extra 
+attacks in addition to the extra attacks your character would normally send. 
+For example, Arthur Schmitt sends 6 rockets, while Nanja Monja sends 4 
+furballs.
+
+Combos:
+
+Combos occur when one enemy explosion causes nearby enemies and fireballs to 
+explode. Once a combo is started, each fireball and enemy caught in the chain 
+reaction is counted as one extra hit in the combo. Combos can cause a lot of 
+fireballs (and occasionally an extra attack) to appear on the opponent's 
+screen. It's easier to create big combos when both players have fever, because 
+both players can feed each other with fireballs to extend their combos.
+
+As your combos get bigger, so do the size of the fireballs you send to your
+opponent. Here is a list of combo counts with corresponding fireball sizes.
+
+* The 2nd-5th hits in a combo sends small fireballs (2 hits to destroy).
+* The 6th-10th hits in a combo sends medium-sized fireballs (3 hits).
+* The 11th-15th hits in a combo sends big fireballs (4 hits).
+* 16+ hits in a combo sends the biggest fireballs (5 hits).
+
+In a match, the game will display up to 32 hits before saying "MAX" for each 
+subsequent hit. The maximum number of hits the game will keep track off is 99
+(in the round results screen).
+
+Occasionally a combo will create an extra attack in place of a couple of 
+fireballs. There is no known explanation for this phenomenon.
+
+Perfects:
+
+Perfects occur when you destroy one enemy in a formation, and the destroyed 
+enemy's explosion causes a chain reaction that destroys the rest of the 
+enemies. If you shoot an enemy and destroy it while the chain 
+reaction is occuring, then you cannot get a perfect-- you can only destroy one 
+enemy if you want a perfect. However, you can shoot another enemy while a chain
+reaction is occuring and still acquire a perfect if shooting said enemy doesn't
+destroy it. 
+
+If you successfully acquired a perfect, then the game will display, "PERFECT!" 
+in large, multicolored flashing letters near the bottom of the screen. A 
+successful perfect will give you extra charge bar and makes the fever orb 
+appear earlier than usual. Each perfect also makes your offense slightly 
+faster, while possibly slowing down your opponent's offense a little (the 
+latter part is unconfirmed).
+
+If explosions from a previous formation destroy some, but not all of the 
+enemies in the current formation, you can still acquire a perfect if you
+destroy the remaining enemies from one enemy explosion. You might notice that 
+you can sometimes acquire perfects by shooting nothing after this happens. I 
+have no idea why this phenomenon exists or how it occurs.
+
+Fever:
+
+Fevers are an important aspect of Twinkle Star Sprites - with fevers you can
+make it rain fireballs.  Fevers more than double the amount of normal attacks 
+you send over.
+
+To activate fever mode, you need to destroy the fever orb. How can you tell 
+when the fever orb will appear?  Before the fever orb appears, some exclamation
+marks will appear on the screen (note: the exclamation points may also indicate
+enemies in bubbles are about to appear). Then a round blue orb will replace one
+of the enemies in the next formation. To destroy the orb, an enemy explosion 
+must touch the fever orb. Shooting and charge attacking the fever orb have no 
+effect. If you're successful, the game will pause for a split second and yell, 
+"FEEVAHHHHHH!". Your character and normal attacks will flash yellow while in 
+fever mode.
+
+When your character has fever, every hit in a combo after the first gives you 
+an extra normal attack. The equation is below:
+
+# of hits - 1 = # of fever (normal) attacks
+
+For example, if you get a 9 hit combo, you will send over 8 normal attacks.
+
+Normal attacks (A.K.A. fireballs) and Reverse attacks:
+
+Get a 4+ hit combo to send fireballs to your opponent's side. Normal attacks
+are either orange (1st player) or purple (2nd player). The fourth hit in a 
+combo sends one fireball, and every 2 hits after the fourth sends an extra 
+fireball. For example, if you made a nine hit combo, you would send over 3 
+fireballs: one from the fourth hit, one from the sixth hit, and one from the 
+eighth hit. The equation is below:
+
+(# of hits - 2)/2 = # of normal attacks (rounded down)
+
+If you reflect a normal fireball, it is sent back to the opponent's side of the
+screen as a reverse attack (multicolored flashing fireball). If you reflect a
+reverse attack, it's sent back to your opponent's side as an extra attack.
+
+Fever fireballs act exactly the same as normal fireballs, even though fever
+fireballs flash yellow.
+
+Extra Attacks:
+
+There are two ways to send over extra attacks.
+
+1. Raise your charge bar up to level 2, then charge up to the "2" and release. 
+You will unleash 2-4 extra attacks, depending on the character. Look at the 
+charge attack section for more information.
+
+2. Reflect a reverse attack (the multi-colored fireballs that flash colors 
+other than yellow). Each reverse attack you reflect will be converted to
+one extra attack.
+
+There is no limit to the number of extra attacks you can send, aside from how 
+many reverse attacks you can reflect.
+
+For more information about each character's extra attack, go to the Characters 
+section. (TSS004)
+
+Bosses: [TSSBOSS]
+
+There are two ways to send a boss to the opponent:
+
+1. Charge up an attack until it reaches "MAX" level, which requires a full
+charge bar.
+
+2. Reflect 3 reverse attacks back to the opponent with a combo. Reflecting
+reverse attacks with a direct attack will not work, the reverse attacks need to
+be reflected by an explosion. However, three separate enemy explosions can 
+trigger a boss attack, as long as if the explosions are part of the same combo.
+
+Bosses appear in the top-center of the screen, where they flash white for about
+a second. During this time, shots and enemy explosions cannot damage the boss, 
+but you can fly through the boss (I STRONGLY recommend against this). In fact, 
+any shots fired at the boss during this period will just go through the boss. 
+Bosses become vulnerable after they stop flashing white.
+
+To shoot a boss, aim for the center area. If the boss isn't flashing red, 
+you're not damaging it, even if you're hitting its side. If you're a little 
+confused by this, look at Schmitt's boss's laser attack. You can just barely 
+shoot the boss outside of the lasers, but the boss won't flash red, making 
+your efforts useless. If you kill a boss, any attacks from the boss will
+instantly disappear. 
+
+If both players activate a boss attack around the same time (within a second of
+each other), then the boss attacks cancel each other out. This situation only
+applies if there is no boss currently on the screen. If there is a boss on
+someone's screen, then the boss will simply move to the empty side, and the
+person who had a boss on their screen will receive a multitude of extra 
+attacks.
+
+Each boss has three basic phase, wander, attack, and escape.
+
+Wander: This is what the boss usually does right after it appears. The boss 
+will move in a predetermined path. 
+
+Attack: This phase isn't just the attack itself. This phase starts when the 
+boss starts moving in position to attack, and ends when the boss starts moving
+after attacking. Body ram attacks also count as an attack phase.
+
+Escape: As the name would suggest, this is when the boss leaves the screen.
+
+The most typical sequence of actions is:
+
+Wander --> Attack --> Wander --> Escape
+
+However, it's not uncommon for some bosses to skip the first or second wander
+phase. For example, when most bosses use a dive attack, they skip the first 
+wander phase and go straight into the attack phase. The two exceptions being 
+Kim and Griffon.
+
+Though boss patterns might seem random, their patterns are actually determined 
+by which attack a boss uses. For example, if Kim's boss decided to 
+fire triangles in two separate instances, his boss would go through the same 
+sequence of actions and the same wander time, and both instances would take up 
+nearly the same amount of time.
+
+Boss stun:
+
+Sometimes when you damage bosses, they stop in place while wincing in pain, 
+then immediately yelp. This phenomenon is called boss stun.
+
+Boss stun is caused by hitting the boss with 5+ damage while it is in wander 
+phase. If the boss is in attack or escape phase, it can't be stunned. However, 
+if you hit a boss with 5+ damage while it is in attack phase, it will be 
+stunned if you hit it during the next wander phase.
+
+There are two important things to know about boss stun.
+
+1. Bosses are invincible while they're stunned - That's right, even if you use
+a bomb while a boss is stunned, the boss will take zero damage. This property
+means that charge attacks that dish out a lot of damage in a short period of 
+time, like Kim and Schmitt's, have trouble damaging bosses quickly, as the 
+first part of a charge attack in this situation would stun the boss while the 
+rest of the attack would do nothing, doing little damage in the process.
+
+2. Boss stun cancels the wander phase. Bosses immediately go into attack phase 
+instead - If it seems like bosses are random, this is why. Also, stunning a 
+boss makes the amount of time it stays on the screen shorter, since the 
+wander phase is skipped. WARNING: Since the boss skips the wander phase, it 
+might attack you immediately after it recovers. For example, Kim's boss and its
+bullet spread.
+
+Here are some examples of how boss stun works. The character used was Kim, 
+whose charge attack does 18 damage (3 hits x 6 damage), and the boss used was
+Schmitt's (17 life). Thanks go to NMT8.2i's site for these tests.
+
+Example 1: First thing after the boss appears, Kim hits the boss with five 
+shots, which causes the boss to go into stun. After being stunned, the boss
+immediately shoots two lasers because it's in attack phase. Kim uses a charge
+attack, and on the second punch the boss dies (5+6+6=17 damage).
+
+Example 2: This time Kim uses a charge attack after the boss appears. Since 
+each punch does 6 damage, the boss is stunned on the first punch, and the
+second and third punches do no damage. After the boss is stunned, it goes into
+attack phase. Kim uses a charge attack again, and the boss dies on the second 
+punch, taking 18 damage (6+6x2=18 damage).
+
+Example 3: Kim shoots the boss three times while it is wandering. The boss
+doesn't go into stun because it only took 3 damage. When the boss is in attack 
+phase, Kim fires a charge attack, killing the boss on the third punch with 21
+damage (3+6x3=21 damage)
+
+Example 4: Kim doesn't fire at the boss while it's wandering. Once the boss 
+goes into attack phase, Kim uses a charge attack and kills the boss on the
+third punch with 18 damage (6x3 = 18 damage).
+
+Schmitt's boss is one of the few bosses without a full body charge; it also
+doesn't have have a second wander phase. The next three examples use a boss 
+that is more representative of the average boss, Load Ran's (22 life).
+
+Example 5: During the the first wander phase, Kim shoots the boss twice. During
+attack phase, Kim hits the boss with his charge attack, dealing 20 damage 
+overall (2 from the shots, 18 from the charge attack). During the second wander
+phase, Kim shoots the boss once and stuns it, because of the 18 damage the boss
+took while it was in attack phase. After being stunned, the boss is escaping, 
+and one more shot kills it (2+6x3+1+1=22 damage).
+
+Example 6: During the first wander phase, Kim uses a charge attack, which stuns
+the boss on the first hit, dealing 6 damage. When the boss attacks, Kim only 
+manages to shoot the boss twice, putting the boss at 8 damage. When the boss
+enters its second wander phase, Kim tries to finish it off with a second charge
+attack. However, the charge attack stuns on its first hit again, letting the 
+boss escape with only 14 damage (6+2+6=14 damage) and 8 life (22-14=8 life).
+
+Example 7: The first thing Ran's boss does is freeze in place. Afterwards, the 
+boss uses a full body charge, meaning the first wander phase was skipped 
+entirely. While the boss is charging, Kim fires off 10 shots. Since the boss
+is in the attack phase, it's not stunned. However, Kim fires off a bomb as the
+attack is ending. Since the bomb was fired as the boss was transitioning from 
+the attack phase to the wander phase, the bomb stuns the boss and the wander
+phase is skipped. Since the boss was stunned and the wander phase was skipped,
+the bomb only hits a few times (once before stun, a couple of times after stun)
+and the boss immediately escapes.
+
+The purpose of those examples is to demonstrate how bosses work. Here are the 
+important points you should take with you:
+
+1. Bosses follow a couple of fixed patterns (one per attack), their patterns 
+only change if you stun them.
+
+2. Learn boss patterns and visual cues, or else you will have a lot of trouble 
+tellling which attack the boss will use.
+
+3. It's best to unleash all of your firepower while a boss is in its attack 
+phase, but before it attacks. Trying to kill the boss before the attack phase 
+merely results in stun. For example, Schmitt will only inflict 5 damage, 
+instead of the full 13 damage, if he fires his charge attack while a boss is in
+its wander phase.
+
+For characters with strong charge attacks, like Kim and Sprites, it's a good 
+idea to cause boss stun quickly by shooting the boss five times, then charging 
+up an attack to kill the boss after it recovers from stun.
+
+4. If you can't kill a boss during its attack phase and it still has a lot of
+life, then you're usually better off letting it escape rather than killing it.
+Killing the boss after it attacks doesn't have much of a point (unless if it's
+going to run into you otherwise) because the boss already used up its most 
+threatening move, the attack.
+
+Once you start to internalize these pointers, it should become easier to handle
+bosses. You won't get hit as much, and you'll know when to shoot bosses for
+quick kills.
+
+Boss Patterns:
+
+You should read the boss section (TSSBOSS) before reading this section, or 
+else you will be confused.
+
+If you want to see information about boss movement with pictures, then go to 
+the site below (warning: it's in Japanese).
+
+http://nmt.cside.com/twinkle/boss.htm
+
+If you want videos of all of the boss patterns, then go to the link below. 
+WARNING: There is some skipping because my computer isn't well-equipped for 
+recording video.
+
+http://mikwuyma.quandra.org/TSSBossvids.zip
+
+Many bosses have similar movement patterns in wander phase. However, boss 
+movement can be mirrored. For instance, if a boss moves counterclockwise for a 
+certain attack one time, it could easily move clockwise the next time. There is
+no difference in the pattern other than the movement. There is no way to 
+predict whether a boss will move clockwise or counterclockwise (or left or 
+right), because the direction chosen is random. The only bosses that follow 
+significantly different movement patterns (i.e. non-circular) are Kim's, 
+Arthur's and Nanja Monja's.
+
+Many bosses will move in a full circle while returning to the opposite wall, 
+half of that circle is part of the wander phase, but the second half is part of
+the attack phase. You can see this in the first two pictures at the site above 
+(the dotted line in the second picture is attack phase).
+
+The attack a boss uses is most likely randomly determined, which means knowing
+boss patterns is important, so you can know what attack a boss likely to use.
+
+You can tell which attack a boss will use by looking at its movement and 
+positioning.
+
+For example, Yanyan's boss has three attacks, a spread of small waves, a big
+wave, and a bullet spray. The boss uses the small wave spread after only a
+quarter circle of movement, the big wave after slightly over a half-circle of 
+movement, and the bullet spray after almost a full circle of movement.
+
+Now if you stun the boss, you can sometimes guess which attack the boss will
+use. If you stun the boss right after it appears, there is no way you can 
+guess which attack the boss will use. If you stun the boss after it makes a 
+quarter-circle, then it will either fire the big wave or the bullet spray. If
+you stun the boss after it makes a half-circle, then it will fire the bullet
+spray.
+
+Mysterious Phenomenon:
+
+There's a bit of an odd phenomenon concerning Macky and Pentell's boss. If you
+bomb it during its first wander phase, the boss will be stunned, but instead of
+attacking afterwards, it will escape. This oddity happens every single time.
+
+Other bosses will attack after being stunned, even though their attacks are 
+usually erased from the lingering bomb.
+
+Escape phase details:
+
+When most bosses escape, they head diagonally downwards towards your 
+character. When bosses initially enter the escape phase, they typically jump up
+a bit before heading downwards.
+
+There are three bosses that don't follow the above guidelines, they are listed
+below.
+
+Schmitt: His boss will actually rise diagonally for a split second heading 
+towards your character before heading straight downwards.
+
+Yanyan and Mevious: Their bosses head downwards while zig-zagging left and
+right. The direction they are headed towards is unrelated to where your 
+character is.
+
+Ignoring bosses:
+
+With the exception of Kim's, Nanja's, and Schmitt's bosses, bosses tend to 
+escape to the edges of the screen if you ignore them because most attack 
+patterns tend to occur on the sides of the screen. In this case, it's fine if
+you ignore the boss, because it won't be much of a nuisance when escaping. 
+However, if a boss attacks in the center of the screen, or if you stun the boss
+while it's in the center, then it will escape from the center and could be an
+obstacle.
+
+-------------------------------------------------------------------------------
+Basic Gameplay and Tips [TSS003]
+-------------------------------------------------------------------------------
+
+Note: Some of these concepts will be repeated from the basic concepts section 
+for emphasis. If you don't want summarized or repeated info, then skip to the 
+characters section (TSS004). However, I strongly suggest you read this section
+if you're a beginner, since some of these concepts are essential for getting
+better.
+
+General:
+
+The purpose of the game is to survive the longest. To accomplish this, you need
+to dodge all of your opponent's attacks while sending a barrage of your own. 
+Obviously, this is easier said than done.
+
+Evasion:
+
+Evasion is the single most important thing you need to learn. Yes, a good 
+offense is very important, but to create an offense you need to stay alive.
+
+Here are a couple of evasion pointers. 
+
+-Don't make big movements unless if you need to. Flying all over the screen not
+only looks dumb, it causes crap to fly all over the screen, cutting off your 
+evasion options. Yes, I do realize you will have to make big movements a lot
+anyways, but what I'm saying is try to minimize them as much as possible.
+
+-Learn the popcorn enemy formations and movement patterns. Memorizing the 
+patterns will significantly decrease the number of times you collide into 
+enemies. You will also achieve quicker perfects.
+
+-Don't mash the fire button constantly. You can only have two shots on the 
+screen at once, and if you're mashing the fire button constantly, you might
+get hit by a fireball you could have easily reflected. Only shoot when you want
+to hit something.
+
+-Don't charge attack constantly. You're vulnerable while charging, and you'll 
+never get consistent perfects.
+
+-Diagonal movement is faster than non-diagonal movement, a little over 1.4 
+times faster to be exact. Diagonal movement is especially important for slow 
+characters like Yanyan, who have difficulty dodging attacks. However, 
+diagonal movement shouldn't be the only way you move, it's only faster because
+you maintain the same vertical and horizontal speed as if you moved in a 
+cardinal direction. In other words, diagonal movement won't help you outrun 
+things you couldn't outrun before.
+
+-If you have a choice, it's better to go up and towards the outer wall, rather 
+than down and towards the inner wall. If you go down and towards the inner 
+wall, then you don't have many options to escape once you reach the bottom, and
+you'll have trouble dodging angled fireballs because they will approach very 
+quickly. But if you go up and towards the outer wall, you can go back 
+downwards and you'll have more time to react to fireballs.
+
+-All objects have smaller hitboxes than what their sprites (no pun intended)
+display. For example, all characters have hitboxes that are either shorter, 
+skinnier, or in most cases shorter and skinnier than their sprites.
+
+-Never stay in corners unless if you'll get hit otherwise. Corners are the 
+single worst places to be in because there is almost no room to maneuver (only 
+two directions to move in, as opposed to 4). Also, if you're in the bottom 
+corner near the inner wall, you can sometimes get hit by quick fireballs.
+
+-Learn to peek at the middle and your opponent's side of the screen. Peeking in
+those two locations gives you a heads up for how many attacks are coming your
+way, their speed, and their trajectory.
+
+-Straight fireballs, angled fireballs, and some extra attacks and boss attacks 
+will head for your current location. You can bait these attacks by sitting in
+a spot you want them to head towards, then moving away once they're locked on 
+you. You generally want to move later rather than earlier, to prevent attacks
+coming your way from being too spread out.
+
+-One way to bait fireballs is to brush up against the inner wall, then move 
+away when fireballs start to move. This prevents fireballs from taking up a lot
+of room since they'll all end up near the inner wall, instead of taking up 
+space in the middle of the screen. However, using this bait is risky because 
+you can sometimes be hit by attacks before you can react. As a result, it's 
+best to use this bait either when there isn't much going on, or during heavy
+slowdown.
+
+-If you really can't dodge what's coming after you, then use a bomb. However,
+don't bomb just because you think you can't dodge what is coming up (boss or
+barrage of attacks). Bombing should be reactive, not predictive. If you're 
+getting hit by boss attacks all the time, then you need to learn boss patterns
+and bombing won't help you learn.
+
+-If you have to ignore these pointers to dodge an attack, then do so. Getting 
+hit is the worst thing that can happen.
+
+Offense:
+
+Though good dodging is the most important skill in Twinkle Star Sprites, 
+without a good offense you will have a difficult time hitting your opponent.
+
+There are two very important things you need to know for a good offense.
+
+1. The normal attack, reverse attack, extra attack relationship.
+
+2. Enemy formations and perfects.
+
+Note: The relationship I'm about to describe below is VERY VERY IMPORTANT. This
+relationship is probably one of the, if not the most important things you 
+should know about TSS.
+
+1. Normal attack -> Reverse attack -> Extra attack relationship.
+
+The short version:
+
+Reflect fireballs that flash green or purple, but don't reflect fireballs that
+don't flash or flash yellow. If you reflect the two latter types of fireballs, 
+they can be reflected back as extra attacks, or even worse, a boss with extra 
+attacks.
+
+The long version:
+
+When you create a combo, you usually send forth normal attacks. If the opponent
+reflects a normal attack, it will return to your side as a reverse attack. You 
+can reflect this reverse attack, and it will return to your opponent's side as
+an extra attack, which cannot be reversed. 
+
+What this relationship means is that you should dodge normal attacks and 
+reflect reverse attacks. If you reflect normal attacks, the opponent can 
+reflect them back as an extra attack. And if you dodge reverse attacks, you 
+miss an easy chance to send an extra attack to the opponent. However, if there
+is a high chance of getting hit when reflecting a reverse attack, then just let
+it pass by. As mentioned earlier, getting hit is the worst thing that can 
+happen. If you're thinking this quick thinking is a matter of judging risk 
+against reward, that's exactly what it is.
+
+The relationship also means you need to be aware of what your opponent is 
+sending towards you before destroying enemies. If you destroy a bunch of 
+enemies while normal attacks are heading your way, then there is a high chance
+you will have to deal with a bunch of extra attacks soon. If your opponent
+sends a bunch of reverse attacks, then you want to time enemy explosions so 
+that they hit the reverse attacks. Sometimes managing your combos is 
+impossible, but it's still good to keep the relationship in mind as a rule of
+thumb.
+
+If you're still wondering why this relationship is important:
+
+Extra attacks are the second most common attack (fireballs are the first). 
+Unlike fireballs, extra attacks absorb shots and cannot be destroyed, making 
+them a crucial aspect of offense. Characters with good extra attacks can make 
+it very difficult for the opponent to maneuver (Nanja Monja), they can force 
+your opponent into moving (Load Ran, Sprites), or they can just be plain 
+difficult to dodge (Tinker and Linker). Characters with bad extra attacks (Kim,
+Griffon) tend to be weaker as their attacks are easy to dodge and don't add 
+much pressure (at least not by themselves).
+
+2. Enemy Formations and Perfects
+
+It's very important to know enemy formations well enough in order to acquire 
+perfects consistently and quickly. Why do you want perfects? I explained why 
+in the perfects section, but let me repeat myself.
+
+A. You build charge meter more quickly, which allows you to use more level 2
+and MAX charge attacks.
+
+B. The fever orb comes earlier, which is important for building a strong 
+offense quickly.
+
+C. Your offense becomes slightly faster with each perfect.
+
+If you get perfects quickly and consistently, you will have a significant 
+offensive advantage.
+
+If you want to see videos on how to get perfects from any formation, go to this
+website.
+
+http://www.geocities.jp/r13_5034/7000/7200.html
+
+If you don't want to bother looking at each perfect individually, you can 
+download a rar with all of the files here.
+
+http://mikwuyma.quandra.org/TSSperfects.rar
+
+I'm not going to bother explaining each perfect formation in this FAQ because
+perfects are best demonstrated by video.
+
+Meter Management:
+
+How you use your meter really depends on who you're playing. Some characters
+do well burning through meter whenever they have a good chance to use an extra
+attack, other characters should save their meter until they have a good chance 
+for a boss attack, and for a lot of characters, it depends.
+
+Characters who want to burn through meter - These characters either have such
+ridiculously awesome extra attacks, or such ridiculously bad boss attacks that
+it would be stupid to use their boss attacks for any situation except for a
+reversal.
+
+Nanja Monja, Tinker and Linker, Realy Till, Yanyan, Macky and Pentell, and 
+Mevious all fit in this category. All of these characters except for Realy Till
+have great extra attacks you want to repeatedly abuse. Realy Till and Macky and
+Pentell both have godawful bosses you never want to use.
+
+Characters who want to save their meter for boss attacks - Well, this is more 
+like "character", because there is only one character who never wants to extra
+attack, Kim. On top of his extra attack being so bad, Kim has one of the best
+bosses in the game, so there isn't much reason to use his meter for anything
+other than bosses.
+
+Characters where it depends - These characters have bosses and extra attacks
+that are roughly on par with each other. Whether you want to use one or the 
+other is mostly your choice, though a couple of these characters have good
+extra attacks that could potentially be spammed (Sprites, Load Ran).
+
+Characters who fall in this category are Load Ran/Darkran, Griffon, 
+Arthur Schmitt, Sprites, and Memory.
+
+There are four situations where using MAX charge attacks (bosses) is a good 
+idea. WARNING: Look at your opponent's meter before sending boss attacks. Your
+opponent can easily counter-boss you if he has full meter.
+
+
+1. You're playing Kim. Kim's charge attack charges fairly quickly, and his boss
+is much better than his extra attack.
+
+2. There's a boss on your end of the screen, and there aren't enough reverse 
+attacks to reflect in one explosion. Bosses are quite annoying and take up a 
+big chunk of space, so sending a boss to your opponent's side is much more
+favorable than actually fighting one. 
+
+3. You just activated fever mode. Fever + Boss = lots of stuff on your 
+opponent's screen. This isn't effective with all characters, as some characters
+have really terrible boss attacks (Macky and Pentell, Realy Till), or extra
+attacks that are much better than the boss attack (Tinker and Linker, Nanja
+Monja). Bossing in this situation can still be effective for characters with
+bad bosses, since the main purpose of bosses is to be fat and take up lots of
+space.
+
+4. Your opponent has fever, and you don't have it. Sending a boss during this
+time prevents your opponents from making big combos easily, making it easier 
+to dodge your opponent's fireballs without sending over a multitude of reverse
+attacks. This tactics works best with high stamina bosses such as Griffon's.
+
+Ideally, you want to time extra attacks and/or boss attacks while you send over
+a bunch of fireballs at the same time. Yes, this means fever is an ideal time
+to use meter.
+
+-------------------------------------------------------------------------------
+Characters [TSS004]
+-------------------------------------------------------------------------------
+
+Rating System:
+
+Characters are rated in five categories on a scale of 1 to 10. One being
+the worst and 10 being the best. These ratings DO NOT determine tiers, they
+merely point out each character's strengths and weaknesses. I realize that some
+of the ratings, such as movement speed, aren't on a consistent scale, so don't
+bug me about it.
+
+Movement speed, shot, and charge attack ratings all have frame data attached
+so you can see how fast they are. For more information, refer to the frame data
+section (TSS008).
+
+The categories are:
+
+-Movement speed 
+
+Horizontal movement speed: How many frames it takes a character to move from 
+the left side of the screen to the right side of the screen, and vice versa.
+
+Vertical movement speed: How many frames it takes a character to move from the 
+bottom of the screen to the top of the screen.
+
+-Shot
+
+Shot speed: How many frames it takes for a shot to move from the bottom of the
+screen to the top of the screen.
+
+-Charge attack 
+
+Charge time: The amount of time it takes to fire off a charge attack. To figure
+out level 2 and MAX charge up time, simply multiply the charge time number by 2
+or 3, respectively.
+
+Charge attack types: Single-hit, multi-hit, and special.
+
+Single-hit: This is a charge attack that only hits once per attack for instant 
+damage. This name is a little misleading, because some charge attacks, like 
+Kim's, hit more than once, but each punch only hits once. Therefore Kim's 
+charge attack is a single-hit attack.
+
+Multi-hit: This is a charge attack that hits multiple times while the charge 
+attack is on the screen.
+
+Special: This charge attack doesn't fit in the other categories. This charge
+attack is either a mix of the other two categories, or doesn't fit in somehow.
+
+Charge attack damage: How many shots worth of damage the charge attack does. 
+For example, Tinker's charge attack does five damage, which means it would
+take five shots to deliver the same amount of damage as her charge attack.
+
+Note: If there is something unique about the charge attack, it will be noted
+here.
+
+-Extra attack
+
+Number fired from a level 2 charge attack: This is the number of extra attacks
+thrown at the opponent when you use a level 2 charge attack.
+
+-Boss attack
+
+Each boss section will list the boss's name, how much life it has, explain the 
+boss's attacks in detail, and have comments describing how useful the boss 
+attack is.
+
+Here is the legend on how to read the letters after each attack. If you need 
+more information about each phase, then go to the boss section (TSSBOSS) under
+basic concepts.
+
+W = Wander phase
+A = Attack phase
+E = Escape phase
+
+After being rated in each category, every character will have a section 
+describing how charge meter should be used, a "how to deal with bosses" 
+section, an overview, and miscellaneous notes (only for some characters).
+
+-------------------------------------------------------------------------------
+
+Load Ran [TSSRAN]
+
+Movement speed: 5/10
+
+Horizontal movement speed: 56 frames
+Vertical movement speed: 80 frames
+
+Comments: Load Ran's movement speed is average, tying with three other 
+characters (Tinker and Linker, Nanja Monja, and Sprites).
+
+Shot: 5/10
+
+Loadran shoots two light blue, miniature comets with sparkles on the bottom.
+
+Shot speed: 34 frames
+
+Comments: Again, average. Load Ran's shot has average speed and decent width.
+
+Charge attack: 7/10
+
+Loadran shoots a large, light blue comet.
+
+Charge time: 65 frames
+Type: Multi-hit 
+Damage: Varies, it does 2 damage per hit, though it usually does 8 damage on a 
+direct hit. It can do 10 damage if a boss is traveling upwards as you fire.
+
+Comments: A strong, fairly wide charge attack that is good for killing bosses 
+and reflecting fireballs. Its only weaknesses are that it takes a little long 
+to charge, and that you have to connect on its center to do a signifcant amount
+of damage.
+
+Extra attack: 7/10
+
+A rabicat comes out from Ran's derriere and flies over to the opponent's side 
+before exploding.
+
+Number fired from a level 2 charge attack: 3
+
+Comments: This extra attack is quite good, and fairly unique. Unlike most extra
+attacks, Ran's rabicats always fly towards the opponent in an arc. The rabicats
+always aim for the opponent, forcing them to move. Occasionally, the rabicats 
+will fly so quickly the opponent cannot react in time. Also, the explosion 
+lingers for about half a second (if there is no slowdown), even if it looks
+like the explosion has mostly disappeared, it can still hit the opponent.
+
+This attack's big weakness is that it always heads towards the opponent in the 
+same arc. This weakness makes the attack somewhat predictable and makes it 
+worse than other aimed attacks, as it doesn't cut off dodging options from 
+multiple angles. Aside from that weakness, this is a good extra attack.
+
+Boss attack - Super Rabicat/Special Dark Rabi (Darkran): 6/10
+
+Life: 22
+
+A giant rabicat. It has four attacks.
+
+Body Ram - A->w->E: The boss pauses for a split second, jumps up a bit, then
+dives down as if it is trying to sit on you. The moment the boss starts rising,
+it's in wander phase. If you can't kill the boss before it charges, then it's 
+better to make it dive diagonally so you can predict which way it will rise 
+(always in the opposite horizontal direction of where it fell). If the boss 
+dives straight down, then it's impossible to predict which direction the boss 
+will move upward.
+
+Star spread - W->A->W->E: The Rabicat moves in nearly a full circle, and while
+it is halfway through the circle, it lifts its butt and fires a five-way star 
+spread with a stray star immediately following. The spread's center is always 
+focused on your current position.
+
+Carrot barrage W->A->E: The Rabicat moves in a near full circle, back to the 
+opposite wall, then throws six carrots while moving from one side of the screen
+to the other. If you stun Super Rabicat while it is in wander phase, it won't 
+go to the opposite wall, instead, it will go to the wall it was already 
+advancing towards. The carrots can block shots. Once the boss is done firing 
+carrots, it'll go up a bit, then float downwards until it exits the screen.
+
+Dual bunny bombs - W->A->E: Rabicat moves in nearly a full circle, circles 
+downwards in the opposite direction, then at the circle's peak, it fires two 
+bunny bombs towards your current position. Afterwards, the boss jumps up a bit,
+then lowers itself off the screen.
+
+Comments: A fairly good boss. Like almost everything else about Load Ran, it's 
+decent. Even its life (22) is average. Body ram attacks are always good for 
+taking up space, and the star spread cuts off a good amount of space if it's
+baited correctly. The carrot barrage also cuts off a good chunk of space, but
+Super Rabicat is quite vulnerable while firing the carrots. By the way, if the 
+boss moves more than a half circle (the point where it fires the star spread), 
+you can follow the boss while firing at it because it won't immediately shoot 
+you in the face.
+
+Best use of meter:
+
+Depends - Ran can use her meter for either extra attacks or bosses, though it's
+probably better to go with extra attacks when in doubt.
+
+Best way to kill bosses:
+
+One charge attack, then shoot constantly - Load Ran's charge attack doesn't
+charge quickly enough, nor is it powerful enough to warrant two charge
+attacks, but it is powerful enough to soften up a boss for normal shots. If you
+want to maximize damage, then wait until the boss is in attack phase before
+releasing the charge shot.
+
+Overview:
+
+Load Ran is a solid character with no big weakness.  She has a strong charge 
+attack, and a good extra attack that can catch people off guard at both low 
+and high-level play. Low-level players will have trouble with the fact the 
+attack sneaks up from behind, and high-level players will have trouble with the
+attack's big explosion and occasional ridiculous speed. 
+
+However, Ran is average in the other categories. Ran's speed and shot are dead
+average, meaning she can have trouble with intense barrages because she can't 
+dodge super fast or fire through fireballs like crazy. Aside from that 
+weakness, Load Ran is a good beginner's character who is also effective at high
+level play.
+
+Miscellaneous note:
+
+Ran flips whenever she bombs. She is unable to move while flipping.
+
+-------------------------------------------------------------------------------
+
+Kim/Do Kesubei [TSSKIM]
+
+Movement speed: 8/10
+
+Horizontal movement speed: 41 frames
+Vertical movement speed: 59 frames
+
+Comments: Kim is tied with Mevious as the third fastest character.
+
+Shot: 3/10
+
+Kim fires a cat head-shaped shot.
+
+Shot speed: 38 frames
+
+Comments:  This is the second slowest shot in the game. You should use charge
+attacks against bosses.
+
+Charge Attack: 9/10
+
+Kim punches with his right fist, left fist, then right fist again, all in rapid
+succession. The third punch is significantly larger than the other punches.
+
+Charge time: 58 frames
+Type: Single-hit
+Damage: 6 x 3 - Each fist does 6 damage, so if all three fists hit, this attack
+does 18 damage, making it the second most powerful charge attack in the game.
+
+Comments:  This is a great charge attack. It's precise, charges up fairly 
+quickly, and great for killing bosses (two charge attacks is almost guaranteed 
+to kill any boss). The only drawback is its short range.
+
+Extra Attack: 1/10
+
+A fist materializes on the opponent's screen and slowly flies downward before 
+exploding. When and where the fist explodes is random. 
+
+Number fired from a level 2 charge attack: 3
+
+Comments:  Easily the worst extra attack in the entire game, and it's what
+cripples Kim's offense. The fists are slow, predictable, narrow, and don't make
+it to the bottom of the screen half of the time. The only excuse for being hit 
+by this attack is if you're being pelted by a fever and boss at the same time.
+
+Boss Attack - Magical Cat: 9/10
+
+Life: 19
+
+A giant, robotic cat with a large eye on its chest. It has four attacks.
+
+Kim's boss moves left and right instead of a circle. The boss will move towards
+your position (horizontally) the moment it appears. If the boss moves 3 times,
+it will fire lasers. If it only moves once, then it will use one of the other
+attacks.
+
+Bouncy Ball - W->A->W->E: The cat moves around a bit, then turns into a ball
+and falls down towards your character. The boss bounces four times before 
+turning back to normal. Afterwards, the boss moves around once, then lowers 
+itself off the screen.
+
+Bullet spread - W->A->W->E: After moving a bit, the cat quivers, then almost
+immediately fires a quick 6-way spread shot. The cat then moves around for a 
+second or two before lowering itself off the screen. This attack strikes
+incredibly fast, so be careful if you're trying to point-blank this boss.
+
+Bouncing triangles - W->A->W->E: The boss moves around for bit, then fires two
+triangles that cross each other and bounce off the inner and outer walls. If 
+the boss wasn't stunned beforehand, the boss fires the triangles center screen.
+The boss continues to move after firing the triangles, but once the triangles 
+leave the screen, the boss exits the screen.
+
+Lasers - W->A->E: The boss moves three times, moves slightly upwards, pauses, 
+then fires two FULL SCREEN LASERS OF DEATH out of its eyes while moving left or
+right (depends on which side the boss starts from). After firing the lasers, 
+the boss pauses for a half second, then lowers itself off the screen.
+
+Notes: Very strong boss. Even though the boss has low life, all of its attacks 
+are strong, and it's very difficult to kill the boss before it fires (except
+for the bouncy ball attack, which is pretty easy to kill before it moves).
+
+Best use of meter:
+
+Boss attacks - Kim charges up pretty quickly and his boss is way better than 
+his extra attack. However, using level 2's when you have fever and you already
+have a boss on the opponent's screen isn't a bad idea, since you want to fill 
+up the screen as much as possible during fever.
+
+Best way to kill bosses:
+
+Two charge attacks if you miss a punch or two from the first charge attack, or
+if you stun the boss with your first charge attack. Otherwise, one charge 
+attack, then constantly fire. Kim's charge attack is ridiculously powerful and 
+charges quickly, so it's a good idea to soften up bosses with a charge attack 
+before shooting. 
+
+Overview:
+
+If characters were only rated based on their numbers, then Kim would actually
+be a strong character. However, Kim is only good if you live in theoryland.
+He would be a great character if his extra attack wasn't so terrible. He's
+fast, has a great charge attack and a good boss attack. However, his extra 
+attack is by far the worst in the game, none the other extra attacks even 
+compare. 
+
+Why is this flaw so crippling? Look up the normal attack, reverse attack, 
+extra attack relationship in (TSS003) for more details, and this is how it 
+applies to Kim. Since Kim's extra attack is so bad, the only thing he can 
+regularly threaten you with is fireballs, and every character can throw 
+fireballs. You could say his boss makes up for this weakness, but boss attacks
+are nowhere near as frequent as extra attacks.
+
+Kim is a great character if you want to dodge, turtle and defend yourself, but 
+his lack of good offensive options make hitting the opponent difficult. If you
+pick Kim, expect some long matches unless if your opponent isn't very good.
+
+Miscellaneous note:
+
+Kim has the most powerful bomb in the game. It inflicts 16 damage on bosses, 
+whereas everyone else's inflicts 13 damage on bosses.
+
+-------------------------------------------------------------------------------
+
+Nanja Monja [TSSNANJ]
+
+Movement speed: 5/10
+
+Horizontal movement speed: 56 frames
+Vertical movement speed: 80 frames
+
+Comments: Nanja Monja's movement speed is average, tying with Load Ran and two 
+other characters.
+
+Shot: 9/10
+
+Two little mini furballs come out with bulging eyes.
+
+Shot speed: 27 frames
+
+Comments: This is a great shot. It's fast and easy to spam. What else could 
+you want? This shot doesn't get a 10 because Mevious has an even better shot.
+
+Charge attack: 9/10
+
+Nanja fires a lightning bolt that travels across the screen instantly.
+
+Charge time: 46 frames
+Type: Special (technically single-hit)
+Damage: Either 3, 6, or 9 (usually 9) - The damage on this charge attack is a 
+little weird. It normally does 9 damage, but if it pierces through something,
+then it loses at least 3 damage, and can only do 6 damage maximum.
+
+Note: This charge attack can be directed by tapping left or right as soon as 
+you let go of the fire button.
+
+Comments: Plenty of good things to say about this charge attack - it charges up 
+quickly (second fastest in the game), it can be aimed, and it does a decent
+amount of damage to bosses. It doesn't get a 10 because there are better 
+charge attacks for killing bosses, and its damage can be inconsistent.
+
+Extra Attack: 9/10
+
+An enormous blue, heart-shaped furball slowly bounces downwards while following
+the opponent.
+
+Number fired from a level 2 charge attack: 2
+
+Comments: Incredibly annoying. This extra attack is not only huge, but it also
+lasts on the screen forever. The furballs are huge obstacles that block the
+opponent's shots, screwing up his or her perfects. Furthermore, they can trap 
+the opponent because the furballs track horizontally.
+
+This extra attack's only (slight) weakness is that it is slow. One or two 
+furballs don't pose much of a threat, since they're slow and can easily be 
+passed through. When there are at least 3 or 4 furballs, then your opponent 
+will have a lot of trouble maneuvering, especially characters without piercing
+charge attacks like Macky and Pentell and Realy Till.
+
+Boss - King Nanja: 4/10
+
+Life: 18
+
+A pink giant furball with an evil mustache and goatee. It has three attacks.
+
+King Nanja's horns can hurt you, so beware.
+
+Instead of moving in a circle, King Nanja bounces four times before attacking, 
+unless if he is body ramming.
+
+Body Ram - A->W->E: Right after King Nanja appears, it pauses in place for a 
+split second, twitches its hands and heads straight for your current position.
+Afterwards, the boss bounces around the top of the screen three times, then
+makes a small jump and exit downwards.
+
+Spikes - W->A->E: King Nanja bounces four times before freezing in place and
+summoning six spikes protruding from his body. The spikes slowly shoot 
+outwards. Once the spikes disappear from the screen, the boss jumps up then 
+heads downwards until exiting the screen.
+
+Lightning - W->A->E: King Nanja bounces four times, pauses while raising his
+hands, then emits two beams of lightning that instantly cover the screen and 
+head towards your character. The lightning aims more downwards than sideways,
+so you can dodge it by staying fairly high and off to the side.
+
+Comments: The lightning is great - difficult to dodge and it's instant. On the 
+other hand, the other attacks are really lame. The spikes are slow and easy to 
+dodge, and King Nanja's body ram is slow and telegraphed. Use meter for extra 
+attacks instead.
+
+Best use of meter: 
+
+Extra attacks - Though his (its?) boss's lightning attack is great, there is
+a chance his boss will use a crappy attack, like the spikes. Either way, Nanja 
+Monja's extra attack is just too big and obnoxious to pass up on. 
+
+Best way to kill bosses:
+
+One or two charge attacks, then shoot the boss. This method applies regardless 
+of whether you've stunned the boss with your first charge attack or not.
+
+Overview:
+
+With many strengths and only two minor weaknesses, Nanja Monja is a great 
+beginner's character, and definitely one of the easiest characters in the game 
+to pick up and play. Nanja's quick shot and quick, flexible charge attack makes
+his defense very strong, while Nanja's huge extra attack is a solid offense. 
+Nanja's only significant weakness is movement speed, as it's only average. 
+Nanja Monja's boss isn't too hot either, but its extra attack more than makes 
+up for a lame boss. With a strong shot, charge attack, and boss, Nanja Monja is
+easily one of the strongest characters in the game.
+
+
+-------------------------------------------------------------------------------
+
+Tinker and Linker [TSSTIN]
+
+Movement speed: 5/10
+
+Horizontal movement speed: 56 frames
+Vertical movement speed: 80 frames
+
+Comments: Yet another character with average speed.
+
+Shot: 4/10
+
+Tinker and Linker fire two light blue, diamond-shaped crystalline bullets.
+
+Shot speed: 35 frames
+
+Comments: This shot is slightly slower than average (very slightly, only 1 
+frame slower than Load Ran's) and has average width, hence the slightly 
+below-average score.
+
+Charge attack: 8/10
+
+Tinker and Linker fire a large, blue crystal.
+
+Charge time: 58 frames
+Type: Single-hit
+Damage: 5
+
+Note: The crystal can be fired in any direction by holding a direction as you 
+let go of the fire button.
+
+Comments: Great charge attack. It charges quickly and can be fired in eight 
+directions, giving it more flexibility than other charge attacks. It can 
+acquire perfects, reflect a cluster of reverse attacks, or hit enemies behind 
+you. This charge attack's only weakness is its lack of damage, it's not good 
+for killing bosses.
+
+Extra Attack:  10/10
+
+A tallish purple or yellow fairy travels from your side to the opponent's side
+of the screen. Depending on the angle it is approaching from, the fairy will 
+bounce off the floor or outer wall before exiting the screen.
+
+Number fired from a level 2 charge attack: 3
+
+Comments: This attack is one of the best extra attacks in the game, only 
+Mevious's bats come close. This extra attack is one of those extra attacks that
+can travel so quickly that the opponent cannot react in time. And when the 
+fairies travel slowly, they stay on the screen for a long time while covering 
+the width of the screen, making them an obnoxious obstacle. Furthermore, the 
+fairies take up a decent chunk of the screen, making them difficult to evade.
+
+Boss - Magical Fairy: 5/10
+
+Life: 19
+
+A large purple fairy with a sword. It has three attacks.
+
+Starfall - W->A->W->E: The fairy moves in a quarter circle, then continues to
+move in a circle while spouting stars. Once the fairy reaches the wall, stars
+fall as the fairy orbits in circles. After the stars fall, the fairy jumps up
+a bit, then lowers itself off the screen. The wall the stars come from is 
+determined by which wall the fairy heads towards. For example, if the fairy
+headed towards the left, then the stars would come from the left and fall 
+diagonally down-right.
+
+Dual Fairies - W->A->E: The fairy moves in a nearly full circle, then it 
+circles downwards while summoning two fairies that zigzag while traveling 
+downwards. Once the dual fairies leave the screen, the boss exits downward.
+
+Pinball shot- W->A->E: After moving in a nearly full circle, the fairy places
+itself center screen, then summons 4 randomly placed crystals. After summoning 
+the cyrstals, the fairy fires a flashing, multi-colored ball that bounces 
+through each crystal once before falling straight down on the fourth crystal.
+
+You can take damage from the crystals. Also, the crystals block shots, but 
+shots will pass through the ball.
+
+Comments: This boss takes a while to attack, and it has low life (19), making 
+it easy to destroy (especially if it uses the starfall attack). If it manages 
+to fire an attack, it's quite effective since all of the attacks take up a good
+chunk of space. Not worth sacrificing extra attacks for this boss especially 
+since it's easy to destroy when there is nothing supporting it, but it's 
+definitely effective when paired up with extra attacks.
+
+Best use of meter:
+
+Extra attacks - Tinker's boss is only okay and her extra attack is godlike. 
+There is almost never any reason to summon the boss. 
+
+Best way to kill bosses:
+
+Charge attack, then shoot the boss. Even though Tinker's charge attack isn't 
+strong, it charges up quickly, allowing her to fire off a shot the moment a 
+boss appears. The crystal will stun a boss, so be careful.
+
+Overview:
+
+Tinker and Linker have a strong offense with their extra attack, but their 
+defense and firepower is only slightly above average. What mostly saves 
+their defense is their charge attack - it charges quickly and can be shot in 
+any direction.
+
+Fortunately for their opponents, Tinker and Linker only have average movement 
+speed and firing rate, so they're definitely beatable. They have trouble 
+dealing with a fast flurry of attacks. However, Tinker and Linker's extra 
+attack is so good, it is all Tinker and Linker need to dominate in this game. 
+It's big, difficult to maneuver around, and either incredibly hard to dodge on
+reaction or lasts on the screen forever, meaning it's more likely that Tinker
+and Linker will be the ones sending the flurry of attacks, not their opponents.
+The extra attack is so good, it's what single-handedly makes Tinker and Linker
+top tier.
+
+Pick Tinker and Linker if you want a character who is insanely annoying. Don't
+pick Tinker and Linker if you want a character who is good for dodging attacks
+or turtling, defense isn't Tinker and Linker's strong suit.
+
+
+-------------------------------------------------------------------------------
+
+Realy Till [TSSTIL]
+
+Movement speed: 7/10
+
+Horizontal movement speed: 45 frames
+Vertical movement speed: 64 frames
+
+Comments: Till is the fifth fastest character in the game.
+
+Shot: 5/10
+
+Till's dragon shoots a long, yellowish fireball.
+
+Shot speed: 34 frames
+
+Comments: Slightly skinny, but other than that, nothing exceptional.
+
+Charge attack: 1/10
+
+Till's dragon breathes 13 short-range flames from his mouth.
+
+Charge time: 70 frames
+Type: Single-hit - This attack actually consists of 13 individual flames that 
+each hit once.
+Damage: 1x13
+
+Comments: Takes way too long to charge, has almost no range, and doesn't do 
+very much damage to boot (you can easily do more mashing the fire button). The 
+only purpose of this attack is for extra attacks, it's no good as a charge 
+attack.
+
+Extra Attack: 5/10
+
+A large, fat dragon flies downwards from the top of the opponent's screen, then
+turns left or right at a random height.
+
+Number fired from a level 2 charge attack: 3
+
+Comments: Fairly good extra attack. It takes up a lot of space, which is quite 
+annoying when there are three of them on screen at once. It also has a slight 
+trapping effect, since the dragons turn left or right. However, the dragons fly
+in a predictable pattern, and their turning is very telegraphed, since they
+brake for half a second before turning. Overall, good at taking up space, but
+not too threatening unless if there are a lot of them, or there are a lot other
+attacks on the screen too.
+
+Boss - Super Drapy: 2/10
+
+Life: 21
+
+A large, rotund baby dragon, it has three attacks.
+
+Body Ram - A->W->E: After appearing, Super Drapy twiches for a split second,
+then heads straight for your character. Out of all of the body ram attacks, 
+this one is pretty strong since it's fairly fast. Afterwards, Super Drapy acts
+just like Super Rabicat (wanders around the screen a bit, then leaves).
+
+Flames - W->A->E: After moving in 3/4ths of a circle, Super Drapy heads to the 
+opposite wall then slowly moves back to the original wall slightly downwards 
+while spewing some very short range flames from its mouth. If you stun Super 
+Drapy, it will head towards the wall it was advancing towards instead of the 
+wall it was moving away from.
+
+Bullet Spray - W->A->E: After moving in 3/4ths of a circle, Super Drapy sprays
+six bullets while laughing. Once Super Drapy has finished firing, it lowers 
+itself off the screen.
+
+Comments: Aside from the body ram attack, this boss is terrible. The flame 
+breath is easily one of the worst attacks in the game, and the bullet spray 
+only fires 6 bullets that aren't very tough to dodge. 
+
+Best use of meter:
+
+Extra attacks - Till's boss is nearly useless, and it takes forever for Till to
+charge up (charging for a boss takes slightly over 3 and a half seconds). 
+Furthermore, Till's extra attack is quite good in groups of three or more, 
+since the dragons take up a lot of space.
+
+Best way to kill bosses:
+
+Press fire a lot - As said before, Till's charge attack is complete crap, and 
+you can do more damage mashing the fire button.
+
+Overview:
+
+Till is a decent character with some big problems. She's fast and has a 
+fairly strong extra attack (especially when it's in groups), but her boss 
+attack and charge attack are useless. She also has a lot of trouble with extra 
+attacks that slowly descend from the top, such as Nanja Monja's, because her 
+charge attack can't pierce through due to its lack of range. Till is an easy 
+charcter to learn, but her lack of options when in a jam (mash the fire button 
+or bomb) prevent her from being a great character.
+
+
+-------------------------------------------------------------------------------
+
+Griffon [TSSGRI]
+
+Movement speed: 6/10
+
+Horizontal movement speed: 50 frames
+Vertical movement speed: 72 frames
+
+Comments: Griffon is faster than the four characters with average movement
+speed, but slower than Realy Till, granting him (them?) a 6/10.
+
+Shot: 3/10
+
+Griffon fires a circular blade comprised of nine feathers.
+
+Shot speed: 37 frames
+
+Comments: Tied with Yanyan for the third slowest shot in the game.
+
+Charge attack: 4/10
+
+Griffon fires two larger versions of his regular shot outwards at a 45-degree
+angle, the blades return to Griffon about half a second later, unless if he
+moves out of the way.
+
+Charge time: 75 frames
+Type: Multi-hit
+Damage: Each blade does 1 point of damage every 8 frames.
+
+Note: After going diagonally up, the blades will return to Griffon. You can
+make them circle around you by traveling in small circles.
+
+Comments: This charge attack isn't bad, but it's nothing wow-worthy. It's good 
+for tacking on a little extra damage against bosses, and if you master how the 
+blades work, you can destroy enemies or fireballs you normally can't destroy
+with any other character.
+
+Unfortunately, this charge attack has two very big things going against it, 
+damage and charge speed. The damage isn't very good to be honest, you can't 
+rely on the blades for taking out big, quick fireballs - they'll most likely
+pass through the blades unless if you shoot the fireballs a bit. Also, the 
+charge speed is quite slow, it takes a while just to get a level 1 charge. 
+All in all, a decent support attack, but it's not something to be constantly 
+relied upon.
+
+Extra attack: 3/10
+
+A short, wide griffon dives straight down.
+
+Number fired from a level 2 charge attack: 4
+
+Comments: Unlike Kim's extra attack, Griffon's extra attack at least has the 
+decency to travel all the way down the screen, too bad there isn't much else 
+good about it. It's a very predictable attack - the griffons travel at a slow 
+pace, and they always travel straight down. What really saves this extra attack
+from being complete garbage is its width. The griffons spread their wings, and 
+a group of them spread out in the right spots can actually cut off a lot of
+space. However, the griffons are rarely spread out in the right places.
+
+Boss - Griffon Eaglet: 7/10
+
+Life: 25
+
+A giant griffon, it has four attacks.
+
+Body Ram - A->W->E: This Body ram attack has a special property, if you do 
+nothing, the giant griffon moves exactly as if it was in wander phase, making 
+it impossible to distinguish this attack from the wander phase. However, if you
+get under the griffon, it will dive straight down to the bottom of the screen. 
+If you don't get under the griffon, it will dive from one of three places.
+Afterwards, the boss moves a lot like Super Rabicat (Load Ran's boss), it 
+wanders around for about 2-3 seconds before heading downwards and leaving the 
+screen.
+
+Cutter blades - W->A->E: The griffon moves in 3/4ths of a circle, then moves to
+a fixed position in the top center of the screen. Then the boss sends out four 
+blades that reach the bottom center of the screen, then boomerang back upwards
+while heading towards the sides of the screen. You can dodge the attack by 
+staying to the side, then moving into the center, or you can stay near a wall
+while at height of the "VS" sign.
+
+Bullet Spray - W->A->E: The griffon moves in nearly a full circle, then heads
+back to the opposite wall while spraying six bullets out of its mouth. Once the
+griffon is done firing bullets, it immediately leaves the screen.
+
+Swords - W->A->E: The griffon moves in nearly a full circle, then heads back to
+the opposite wall while summoning four swords out of its back. Once all four 
+swords are summoned, they head towards your character. This attack is really
+easy to dodge, and it's also easy to kill the boss while it's summoning the 
+swords, but the swords do block shots, so be careful.
+
+Comments: Fairly good boss. It has the highest life in the game (25), and it 
+has some attacks that are good at taking up space, like the cutter blades and 
+bullet spray. The body ram attack is also good because the boss has high life, 
+so it won't die easily from a bullet+charge attack barrage. The only lame
+attack is the swords, which are easy to dodge due to how slow they are.
+
+Best use of meter:
+
+Depends - Griffon's extra attack isn't very good, but his boss attack is. Four 
+extra attacks can actually take up a decent amount of space, but the boss has
+some good attacks. Which attack to use really just depends on situation.
+
+Best way to kill Bosses:
+
+If you have a charge attack ready, then fire it off before you pelt the boss
+with bullets. If you don't have a charge attack ready, then it's not worth 
+charging one up just to take down a boss.
+
+Overview:
+
+Griffon is without a doubt, the worst character in the game. He has one of 
+the slowest shots, worst charge attacks, and worst extra attacks in the game.
+His best statistic is the fact his boss has the highest life in the game. The 
+two best things about him are his speed and boss, but they're only slightly 
+above average. I'm not saying Griffon is unplayable, solid fundamentals, such 
+as dodging, are more important than the character you play, but playing as 
+Griffon can be a real uphill battle.
+
+
+-------------------------------------------------------------------------------
+
+Yan YanYung [TSSYAN]
+
+Movement speed: 1/10
+
+Horizontal movement speed: 69 frames
+Vertical movement speed: 99 frames
+
+Comments: Yan yanyung is by far the slowest character in the game.
+
+Shot: 3/10
+
+Yanyan fires a small green wave.
+
+Shot speed: 37 frames
+
+Comments: Tied with Griffon for the third slowest shot in the game.
+
+Charge shot: 5/10
+
+Yanyan fires an incredibly wide green wave (more than half a screen's width).
+
+Charge time: 41 frames
+Type: Single-hit
+Damage: 4
+
+Comments: At first you might think this shot is great because it's so huge,
+but that isn't always a good thing. The shot's width means it catches 
+a lot of things, including things you might not want to catch, such as a batch 
+of fever fireballs. The attack also doesn't destroy the largest fireballs, as 
+the largest fireballs have five hp, so don't assume this attack will destroy 
+everything in your way. On the plus side, this is the fastest charging charge 
+attack in the game, and the width is great if there are a bunch of a reverse 
+attacks flying your way, or if you just need breathing room.
+
+Extra attack: 9/10
+
+A pigbird (yes, pigbird) flies in a curve towards your opponent.
+
+Number fired from a level 2 charge attack: 3
+
+Comments: Great extra attack. It's a decent size, homes in on your opponent, 
+forcing them to move, and it's also fast. A cluster of them can be incredibly 
+hard to dodge. It's only weakness is that it will sometimes be in a place where
+it won't end up anywhere near the opponent, and the homing capabilities can be
+baited (move in one direction, then turn suddenly when the pigbird is near),
+though baiting is easier said than done.
+
+Boss attack - Papa Pig: 7/10
+
+Life: 22
+
+A giant Pigbird (a pig with white wings). It has three attacks.
+
+Small waves - W->A->W->E: After moving in a quarter circle, Papa pig moves to 
+the top-center of the screen and fires six small waves that cross each other. 
+This is quite an effective attack since it covers a lot of space. This attack 
+can be dodged by staying near the bottom on either the left or right. If you 
+can manage, you should try to shoot Papa pig as much as possible during this 
+attack, as he is a sitting target while firing the waves. However, this is much
+easier said than done. Afterwards, Papa pig will move either to the left or 
+right.
+
+Large wave - W->A->E: After moving in a half-circle, Papa pig goes into a long,
+exaggerated sneezing animation. This is the easiest attack to dodge out of Papa
+pig's attacks. Simply make sure you are not under Papa pig's sprite.
+
+Bullet spray - W->A->E: After moving in nearly a full circle, Papa Pig starts
+firing a spread of 11 bullets while circling in the opposite direction. 
+Compared to most bullet spray, this one lasts a while, making it pretty 
+effective. Furthermore, when going into the attack phase, Papa pig almost 
+immediately starts firing these bullets, so be careful if you stunned the boss.
+
+Comments: Strong boss, especially when compared to most bosses. The wave attack
+is especially effective if you're sending fireballs simultaneously since it
+takes up a TON of space. Papa pig's bullet spray is especially good for a 
+bullet spray, since it has more bullets than most (11). On top of those two 
+attacks, this boss has the most annoying way of moving off the screen - it 
+zigzags left and right while heading down. The only bad thing about this boss
+is the large wave attack, which is incredibly telegraphed and easy to dodge.
+
+Best use of meter:
+
+Extra attacks - Yanyan's extra attack, especially three of them, is simply too
+good to pass up. Yanyan's boss is good, but her extra attack is better.
+
+Best way to kill bosses:
+
+Charge attack, then mash the fire button - Though her charge attack is weak, 
+Yanyan's charge attack charges up so quickly that it's not troublesome for 
+her to prepare a charge attack when a boss appears. Do be careful though, you 
+might not want to use a charge attack if there are a lot of normal attacks 
+coming your way. Also, Yanyan's charge attack is the only charge attack that 
+won't trigger boss stun on its own, which has its advantages.
+
+Overview:
+
+Yanyan is basically saved by her offense; her extra attack can give any 
+character a lot of trouble with its speed and homing capabilities, and her boss
+has some great attacks and is a real nuisance when leaving the screen. However,
+her other stats aren't very impressive - she's the slowest character in the 
+game, she is tied with Griffon for the third slowest shot in the game, and her
+charge attack is average. Her lack of speed, slow shot, and weak charge attack 
+means she has trouble getting out of pinch situations that require a lot of 
+dodging and/or shooting fireballs. Yanyan is a character for people who want to
+harass the opponent with constant offense who don't really care about anything 
+else. Well that, and she's also a great character for bacon lovers :P
+
+
+-------------------------------------------------------------------------------
+
+Arthur Schmitt [TSSART]
+
+Movement speed: 10/10
+
+Horizontal movement speed: 36 frames
+Vertical movement speed: 52 frames
+
+Comments: Schmitt is the fastest character in the game, even beating out Memory
+(though not by a large margin).
+
+Shot: 1/10
+
+Schmitt shoots three light blue mini-lasers.
+
+Shot speed: 41 frames
+
+Comments: Arthur Schmitt has the slowest shot in the game.
+
+Charge shot: 5/10
+
+Schmitt fires a thick, blue and white flashing laser that instantly covers the 
+screen.
+
+Charge time: 80 frames
+Type: Multi-hit
+Damage: 1x13 over 38 frames (timed from the first appearance of the laser, to
+when the laser disappears). The laser deals slightly more than 1 damage every 
+three frames).
+
+Comments: First, let's go over the good. The laser instantly covers the height
+of the screen, goes through extra attacks, and does good damage if focused on a
+boss the entire time. You can also travel from one side of the screen to 
+another while firing, if you want to sweep over bunch of small reverse attacks.
+
+On the other hand, the laser takes forever to charge (almost a second and a 
+half). Also, if the laser isn't focused on a boss the entire time, it will 
+usually do pitiful damage. Even if the laser is focused on a boss, usually the
+boss is stunned because the laser has a high rate of fire. Furthermore, the 
+laser won't destroy really fast, big fireballs before they hit you, as the 
+laser does damage over a period of time rather than instantly. 
+
+Schmitt's laser is a good charge attack if you're prepared in advance, but it's
+not an attack you can bust out in a clutch situation.
+
+Extra attack: 3/10
+
+A short, narrow rocket pod with a green cockpit materializes on the bottom of 
+the opponent's screen and flies upward.
+
+Number fired from a level 2 charge attack: 4
+
+Commments: This extra attack flies from the bottom, creating a trapping effect 
+if there are a lot of fireballs on the screen (attacks coming from above,
+below, and at an angle). And the rocket's flame actually makes the attack's 
+hitbox quite tall, making it linger on the screen for a while. However, each 
+rocket's hitbox is very narrow - the side guns cannot hit the opponent, making 
+the attack easy to dodge. 
+
+Schmitt's extra attack is also gimmicky. Initially, people have trouble dodging
+the attack because it comes from behind, but once people start training their 
+eyes on the bottom of the screen, the attack becomes much easier to dodge, 
+since it travels slowly in a straight line upwards. 
+
+Overall, the rockets are good in clusters with a fever attack, or if five or 
+six of them are lined up horizontally. This isn't too difficult to pull off 
+since Schmitt's level 2 charge attack sends four rockets. In small numbers
+the rockets are merely an easily dodged minor annoyance.
+
+Boss attack - Magical Cannon: 3/10
+
+Life: 17
+
+A giant version of the extra attack, with two large gun on the sides instead of
+two small ones. It has 3 attacks.
+
+Arthur's boss moves exactly like Kim's boss, except that all of its attacks 
+begin after the cannon moves twice.
+
+Dual lasers - W->A->E: After moving, the boss places itself center screen, then
+goes up to the top of the screen before firing lasers out of both cannons while
+firing 4 slow bullets. This would be the best boss attack in the game if the
+boss wasn't so vulnerable before firing its lasers; the opponent is granted at 
+least 2 seconds to kill the boss while it's getting into position. However, if 
+this attack does come out, it cuts off a ton of space.
+
+Black bullets - W->A->E: The cannon fires 3 bullets in succession that tend to 
+head towards you. The bullets block shots, but since they're fairly slow and 
+don't reach the bottom of the screen, they're quite easy to dodge. The most 
+annoying part about this attack is how difficult it is to kill the boss, since 
+the bullets will usually block your shots.
+
+Bullet Spray - W->A->E: The cannon fires 8 bullets (4 from each cannon) while
+moving side by side. The bullets are slow, so there isn't much need to worry
+about dodging them.
+
+Comments: Other than the lasers, this boss is pretty bad. Its bullet spray is 
+slow, and the black bullets are incredibly easy to dodge (simply stay on the 
+bottom or off to the side). In addition, despite the laser attack's 
+effectiveness, it's easy to kill the boss before it can even fire the laser,
+as the boss leaves itself vulnerable for at least a second before it fires. To 
+make things even worse, Arthur's boss has the lowest life in the game (17),
+Kim and Sprites can easily destroy the boss in one charge attack.
+
+Best use of meter:
+
+Depends - Extra attacks are better when you have fever, or when you don't have 
+time to charge for a boss attack (charging for a boss attack takes Schmitt 
+four seconds). Boss attacks are better when there isn't much happening, and 
+there isn't much on the screen to be harassed by. Warning, characters with
+strong charge attacks, such as Kim and Sprites, can easily kill Schmitt's boss
+before it can act, it's better to only send extra attacks against those 
+characters.
+
+Best way to kill bosses:
+
+Charge attack, then mash the fire button - Though Schmitt's charge attack 
+charges slowly, it still does good damage (faster than any human could mash at
+least). Though after using a charge attack, it's a better to mash the fire 
+button, as another charge attack would take too long to prepare. Don't use the
+charge attack while the boss is in wander phase, or else you won't get full 
+damage.
+
+Overview:
+
+Arthur Schmitt is a weak character who has one really great thing going for
+him, speed. On defense, Schmitt can just rely on his quick speed to dodge
+everything. Offense is a different story. Schmitt's extra and boss attack are
+both incredibly weak. His extra is too slow and skinny, while his boss has some
+crappy attacks and dies too easily.
+
+His high speed and lack of abuseable tech means he isn't a character for 
+beginners. Beginners will probably probably spend more time running into 
+enemies than playing the game if they pick Schmitt. He's more in mind for 
+players who want to be able to dodge attacks easily and don't need firepower 
+for crowded situations. Overall, Schmitt requires more effort than most 
+charcters because you have to outlast your opponent while being unable to mount
+much of an offense.
+
+-------------------------------------------------------------------------------
+
+Macky and Pentell [TSSMAC]
+
+Movement speed: 3/10
+
+Horizontal movement speed: 64 frames
+Vertical movement speed: 92 frames
+
+Comments: Second slowest character in the game.
+
+Shot: 8/10
+
+Macky and Pentell fire two large colored pencils.
+
+Shot speed: 29 frames
+
+Comments: Macky and Pentell are tied with Sprites for the fourth fastest shot 
+in the game.
+
+Charge shot: 4/10
+
+Macky and Pentell fire a small beige round creature that transforms into a
+blinking giant girl with pink hair and green and yellow uniform when it hits.
+
+Charge time: 87 frames
+Type: Multi-hit
+Damage: 1x11
+
+Note: This charge attack can be manually detonated by pressing the fire button 
+after the creature is fired.
+
+
+Comments: This charge shot would be better if it didn't charge so slowly. 
+It doesn't do a good amount of damage, considering how long it takes to charge
+the shot (second longest in the game). But the shot does have a big hitbox when
+detonated.
+
+What's unique about this charge attack is the fact you can detonate it manually
+by pressing the fire button after you fire the charge. This lets you fire a 
+charge attack towards a group of reverse attacks, while you're free to do 
+whatever you want. This technique doesn't make the charge attack incredibly 
+good, but it does make the attack more flexible.
+
+Extra attack: 9/10
+
+A light brown (or blue if you pick the alternate color) round little monster
+with a big mouth and large teeth travels from your side of the screen to the 
+opponent's side of the screen. Once on the opponent's side of the screen, the 
+monster will pause for a second, then head towards the opponent.
+
+Number fired from a level 2 charge attack: 3
+
+Comments: Incredible extra attack. It's fast, lasts on the screen forever, 
+has a fairly large hitbox, and it forces the opponent to move because it heads
+towards them. There are no real flaws with this attack, but it gets a 9 
+because Tinker and Linker and Mevious have better extra attacks, and her slow
+charge attack makes it difficult to find time to fire some out.
+
+Boss - Plush Doll Special: 1/10
+
+Life: 20
+
+A giant version of the extra attack monster appears. It has 3 attacks.
+
+Body Ram - A->W->E: Immediately after it appears, the doll moves in a couple of
+small circles, then charges towards you. Afterwards, the boss goes up and to
+the opposite direction of where it charged, (if it went to the right, then it 
+goes up and to the left) does half a figure 8, then runs off the screen. Not a 
+difficult attack to deal with. First off, you can shoot the boss a crapload 
+while it's spinning in circles. Secondly, the boss's charge is fairly slow, 
+it's pretty easy to dodge the attack on reaction.
+
+Punch: The plush doll floats around in a nearly full circle until it's near an 
+upper corner, then it pauses in place and launches a fist while moving to the
+opposite wall. Finally, the boss immediately escapes downwards.
+
+Pencils: The plush doll floats in a nearly full circle until it's near an upper
+corner, then it summons two pencils, one on each side, while moving towards the
+opposite wall. The boss throws the pencils, moves up a bit, then escapes
+downwards.
+
+Comments: Worst boss in the game. Even if you ignore its attacks, you probably 
+won't get hit. I can't think of a single good thing about this boss.
+
+Best use of meter:
+
+Extra attacks - Macky and Pentell take forever to charge up their attacks, and
+the extra attack is too good to ignore. That's not even taking how bad the boss
+is into consideration.
+
+Best way to kill bosses:
+
+If you know a boss is coming, charge attack, then mash the fire button. If 
+taken by surprise, just mash the fire button - Macky and Pentell's charge 
+attack does decent damage, but it takes too long to charge up if you're 
+taken by surprise. Mackey and Pentell have a good shot, so they can handle 
+bosses without a charge attack.
+
+Overview:
+
+Macky and Pentell are strong characters with one crippling weakness. Even 
+though their charge shot and boss are bad, they have a great shot and extra 
+attack that more than make up for those weaknesses. However, there is nothing
+that can make up for their terrible speed. Macky and Pentell are the second 
+slowest characters in the game, and that weakness means they have a lot of 
+trouble dodging attacks that most characters would have no trouble dodging.
+In addition, their extra attack doesn't pierce, which means they have a lot of
+trouble against Nanja Monja's extra attack (huge and lasts on the screen 
+forever). Despite their bad movement speed, Macky and Pentell are still quite
+a viable choice since their extra attack provides a great offense, and their 
+shot provides great firepower.
+
+
+-------------------------------------------------------------------------------
+Secret Characters [TSS005]
+-------------------------------------------------------------------------------
+
+Sprites [TSSSPR]
+
+To select Sprites, put the cursor on Load Ran, press up four times, then press 
+shot or bomb.
+
+Movement speed: 5/10
+
+Horizontal movement speed: 56 frames
+Vertical movement speed: 80 frames
+
+Comments: Sprites is tied with 3 other characters, including Load Ran, for an 
+average movement speed.
+
+Shot: 8/10
+
+Sprites fires two light blue fairies that leave a sparkling trail behind them.
+
+Shot speed: 29 frames
+
+Comments: Tied with Macky and Pentell for the fourth fastest shot in the game
+(or third, depending on how you view ties).
+
+Charge shot: 10/10
+
+Sprites fires a large, light blue comet that leaves a sparkling trail behind 
+it. There are also two intersecting yellow mini-comets swirling around the 
+comet's sides.
+
+Charge time: 62 frames
+Type: Special - The side comets are single-hit, the main comet is multi-hit.
+Damage: 3x2 from the side comets + 3 damage per hit from the main comet (the 
+numbers of hits vary, usually 4, can go up to 5).
+
+Comments: Think Load ran's charge shot, but better in every way. Sprites's
+charge atack is bigger (but not too big), more damaging, and easier to use. The
+two side comets not only add extra damage (the comets ensure the attack does at
+least 6 damage on a direct hit), but they also make it easier for the charge
+shot to hit. This charge attack even charges up slightly faster than Load Ran's
+charge attack. Overall, a great charge attack that does a whopping 18 damage
+(or even 21 damage if the boss is traveling upwards) on a direct hit.
+
+Extra Attack: 8/10
+
+A spinning rabicat appears on the opponent's screen and immediately heads
+towards the opponent.
+
+Number of attacks fired from a level 2 charge shot: 3
+
+Comments: Yet another extra attack that forces the opponent to move, which is
+never a bad thing. There's nothing special about this extra attack, its hitbox
+is fairly tall but skinny, and each rabicat's speed can vary a lot, but the
+combination of aimed, fast average speed, and the fact this attack can surround
+you make this a good extra attack.
+
+Boss - God Rabicat: 7/10
+
+Life: 23
+
+A giant rabicat. It has five attacks.
+
+Three of God Rabicat's attacks are the same as Super Rabicat's attacks.
+
+Body Ram - A->W->E: Same as Load Ran
+
+Star Spread - W->A->W->E: Same as Load Ran
+
+Lightning - W->A->E: God Rabicat moves in 3/4ths of a circle, then heads to the
+center of the field where it does a funny little dance while summoning three
+thin streaks of lightning that cover the height of the playing field. 
+Afterwards, God Rabicat heads off the screen. Great attack that can cut off a
+lot of space. This attack's only weakness is that the lightning will sometimes
+stack in one place, cutting off very little space.
+
+Flames - W->A->E: God Rabicat moves in 3/4ths of a circle in one direction, 
+circles back to the other direction, then raises its butt and fires two flames
+that head towards you. Afterwards, it jumps up a bit then lowers itself off the
+screen. Slow and telegraphed, this attack is definitely God Rabicat's worst
+attack.
+
+Dual Bunny Bombs - W->A->E: Same as Load Ran
+
+Comments: Good boss, it has slightly higher life than Load Ran's (23), and it 
+has a lightning attack that can cut off a lot of space. However, God Rabicat 
+loses the carrot attack, which is a good attack, and has a mostly useless flame
+attack as a replacement. Definitely not a bad boss.
+
+Best use of meter: 
+
+Extra attack - Sprites's boss is good, but her extra attack is a lot better.
+Also, she fires three extra attacks at once, which can cause a lot of trouble 
+for the opponent if the attacks are spread out in the right places.
+
+Best way to kill bosses:
+
+If the boss has 22 life or below, shoot it four times, charge, then fire
+once the boss is about to attack, the boss should die instantly. Some bosses,
+like Schmitt's and Kim's don't even need to be shot beforehand. If the boss 
+has a higher number life, like Griffon's, then either use two charge attacks, 
+or just shoot it a little more after releasing a charge attack.
+
+Overview:
+
+Sprites is basically a superior version of Load Ran, which makes perfect sense
+because Load Ran transforms into Sprites for the final fight in story mode. 
+Sprites is a very strong character - she has one of the best charge attacks in 
+the game, a great shot and extra attack, and a decent boss. Sprites's only 
+weakness is her average speed; she has trouble maneuvering through quick 
+fireball swarms. Sprites is a good character for beginners since she's not too 
+fast and has good firepower.
+
+
+-------------------------------------------------------------------------------
+
+Memory [TSSMEM]
+
+To select memory, put the cursor Load Ran, press down four times, then press 
+shot or bomb.
+
+Movement speed: 9/10
+
+Horizontal movement speed: 39 frames
+Vertical movement speed: 56 frames
+
+Comments: Memory is slightly faster than Kim and Mevious, but slightly slower
+than Arthur Schmitt, making her the second fastest character in the game.
+
+Shot: 9/10
+
+Memory shoots out a set of four multi-colored rings that resemble the shape of
+a tornado.
+
+Shot speed: 27 frames
+
+Comments: Tied with Nanja Monja for second fastest shot in the game.
+
+Charge shot: 10/10
+
+Memory fires four large, light blue orbs that bounce all over the screen. 
+Memory's face is on each orb, and every time an orb bounces off a wall, her 
+face winces in pain.
+
+Charge time: 94 frames
+Type: Multi-hit
+Damage: 2 damage for every 11 frames (one orb)
+
+Comments: This charge shot is like a free bomb. It covers the whole screen and
+kills every single enemy and fireball. If fired when a boss appears, the charge
+shot will kill the boss in about a second. The charge shot's only weakness
+is the ridiculous amount of time it takes to charge (it's the slowest charging
+attack in the game), but that problem is mostly negated by the fact you can 
+charge while the orbs are still on the screen, leaving very little downtime in 
+between charge attacks. You could argue that the screen clearing properties
+invite a horde of extra attacks your way, but extra attacks are not as much of
+a problem when there are no fireballs on the screen.
+
+Extra attack: 8/10
+
+A small to large food item appears on the opponent's screen, then immediately 
+heads towards the opponent.
+
+Number fired from a level 2 charge attack: 4
+
+Comments: This extra attack is just like Sprites's, except replace rabbits with
+food. Some of the foods are smaller than the rabbits, some are bigger. There 
+isn't much to say, aside from the fact it's good for all of the reasons 
+Sprites's extra attack is good for.
+
+Boss - A.D. Cake: 5/10
+
+Life: 22
+
+A gigantic birthday cake. It has three attacks.
+
+Sweets Carnival - W->A->W->E: After moving in three fourths of a circle, the 
+cake heads top center and summons 6 randomly chosen desserts one after the 
+other in a circle. Once all of the desserts are summoned, the cake fires them 
+towards you. After firing the desserts, the cake wanders around for a half a 
+second, then lowers itself off the screen. Though the desserts look similar to 
+extra attacks, they are not sped up by fevers or perfects. Not too difficult to
+dodge since you can bait the desserts to fly wherever you want.
+
+Forks - W->A->W->E: After moving in three quarters of a circle, the cake
+summons two rows of forks, each row containing three forks. The forks fall down
+slowly as the cake moves left and right while raising its hands. After the 
+forks leave the screen, the cake continues to move across the screen for a 
+second before descending off the screen. This attack is incredibly easy to 
+dodge, I'm not sure why a final boss would have such a weak attack.
+
+Bullet Spray - W->A->E: After moving in 3/4ths of a circle, A.D. cake circles
+back in the opposite direction and raises its fingers while spraying 7 bullets.
+After A.D. cake fires bullets, it lowers its hands and heads off the screen.
+Not a very effective bullet spread attack, the bullets are pretty slow.
+
+Notes: For a final boss, Memory has a disappointing boss attack. The sweet 
+carnival and bullet spray can be a nuisance if there are a lot of fireballs on 
+screen, but otherwise, the boss is merely average.
+
+Best use of meter:
+
+Extra attacks - Memory's boss isn't that great, and it takes her an incredibly
+long time to charge up her charge shot anyways. It takes over three seconds 
+just to charge up a level 2 attack.
+
+Best way to kill bosses:
+
+Charge attack - Bosses are almost guaranteed to die from one charge attack, 
+why use anything else?.
+
+Overview:
+
+SNK has a long history of creating overpowered bosses, and Memory is no 
+exception. She is incredibly fast, has a fast shot and ridiculous charge 
+attack, and a good extra attack. Her charge attack basically functions like a 
+bomb, making her the best turtle. Her only "weakness" is that her boss isn't 
+great, but most bosses aren't great and extra attacks are more important than 
+bosses. Between her high speed, fast shot, and bomb-like charge attack, Memory 
+is ridiculously hard to hit.
+
+
+-------------------------------------------------------------------------------
+
+Mevious [TSSMEV]
+
+To select Mevious, put the cursor on Griffon, press up 4 times, then press shot
+or bomb.
+
+Yes, Mevious is a guy. He has a guy's voice when he speaks. I don't know
+whether he is a pre-op or post-op transexual, a man inside a woman's body, or
+just very very confused, but that's something you can decide.
+
+Speed: 8/10
+
+Horizontal movement speed: 41 frames
+Vertical movement speed: 59 frames
+
+Comments: Mevious is tied with Kim as the third fastest character.
+
+Shot: 10/10
+
+Mevious fires a small, black, wing-flapping bat.
+
+Shot speed: 25 frames
+
+Comments: Fastest shot in the game.
+
+Charge shot: 6/10
+
+Mevious simultaneously fires three bats covered in a dome of energy. One of the
+bats flies straight forward, while the other two are fired in front of Mevious 
+at 45-degree angles.
+
+Charge time: 53 frames
+Type: Single-hit
+Damage: 3x3 (three shots that do three damage each)
+
+Comments: This is a good, but not great charge attack. At point blank range it 
+can do 9 damage, which is good for taking out bosses. It's also easy to prepare
+a charge attack for bosses since it charges quickly. It can also hit reverse
+attacks that are coming from an angle, which is convenient if there are extra
+attacks blocking shots. 
+
+This charge attack's biggest weakness is how each shot only does a pitiful 
+three damage. Three damage isn't even enough to take down some of the bigger 
+popcorn enemies and fireballs. This charge shot's other weakness is that the 
+charge shot can sometimes hit fireballs you don't want to hit, since the charge
+shot's spread covers a wide area. Mevious's charge attack is good for 
+eliminating hard to reach extra attacks and popcorn, or for killing enemies, 
+but it's not a great all-purpose shot, like Tinker and Linker's, nor is it a 
+good boss-killer, like Sprites's.
+
+Extra Attack: 10/10
+
+A short bat with a wide wingspan travels from Mevious's side of the screen to 
+the opponent's side of the screen. After sticking around the opponent's side
+of the screen for a couple of seconds, the bat flies off in a random direction.
+
+Number fired from a level 2 charge attack: 3
+
+Comments: So. Freaking. Annoying. The bats last on the screen forever and 
+wander around in seemingly random directions while hovering around you just to 
+be incredibly annoying. Though the bats are short, they're very wide, which is 
+more annoying because there is a lot less room to maneuver horizontally than 
+there is vertically. The bats also last on the screen a couple of seconds, 
+which means they harass the opponent longer than the average attack. Basically,
+this is an attack that is hard to evade and lasts forever, making it a true 
+nuisance.
+
+Boss: 7/10
+
+Life - Master Bat: 22
+
+A gigantic dark blue bat. It has three attacks.
+
+Body Ram - A->W->E: Master Bat moves to the top-left or top-right corner (it's
+random which corner is picked), dives into the bottom middle, then rises to the
+opposite top corner. Afterwards, the bat wanders around the top of the screen
+in a criss-cross pattern, then descends in a zigzag motion. Out of all of the 
+body ram attacks, this is the best one since it's fast and takes up a lot of 
+space. This attack can be dodged by hanging out in a bottom corner, but this
+isn't a smart idea because you will be a sitting duck.
+
+Tail Strike - W->A->W->E: Master Bat moves slightly past half a circle before 
+squinting and striking with its tail that heads towards your current position. 
+The tail has a fixed length (it won't reach all the way across the screen), and
+the highest point it can strike is directly to the side. After striking, Master
+Bat moves slightly up before heading downwards off the screen. One thing to 
+note is that Master Bat's vulnerable box shifts from the middle of its body to 
+the tip of its tail while attacking. However, the tail does block shots. This 
+attack will probably catch you off guard a few times, but once you learn the 
+positioning, it's easy to dodge.
+
+Bat Swarm - W->A->W->E: What's more annoying than Mevious's extra attack? 
+Four of them at once. After moving in 3/4ths of a circle, Master Bat summons
+four bats on the top of the screen that head towards you before flying upwards
+and escaping. If you're on the very bottom of the screen, the bats will head 
+towards the bottom, then fly off the top of the screen. After summoning the 
+bats, Master Bat circles back in the opposite direction, then zig-zags off the
+screen. If this attack is combined with a level 2 charge attack, then have fun 
+dodging a mess of bats. Like the extra attack, the bats block shots.
+
+Notes: The bat swarm sends four bats, that's beyond evil. On top of that, 
+Master Bat's body ram is quick and covers a lot of space. In addition, the way 
+Master Bat zig-zags off the screen is obnoxious. This boss's only weakness is
+that the tail strike is easy to dodge.
+
+Best use of meter:
+
+Extra attacks - Mevious's extra attacks are some of the best in the game and
+his boss is only pretty good. There is almost no reason to charge up a boss 
+instead of extra attacks.
+
+Best way to kill bosses:
+
+Fire a charge shot at point-blank range, then mash the fire button - Mevious's
+charge shot does decent damage up close, but not enough to qualify charging a
+second time. 
+
+Overview:
+
+SNK certainly didn't screw around when it came to making the bosses powerful.
+Mevious is most likely the best character in the game. Why? He has the best 
+shot, he's fast, his charge attack and boss are good, and he has one of the 
+best extra attacks in the game. What really puts his extra attack over the top 
+is the fact that his extra attack lasts forever and is difficult to dodge. 
+Mevious is great at pounding the opponent with constant offense, so make sure 
+you score plenty of perfects and unleash level 2 charges frequently. Play 
+Mevious if you're feeling lazy or if you want an easy win.
+
+
+-------------------------------------------------------------------------------
+
+Dark Ran [TSSDARK]
+
+To select Dark Ran, put the cursor on griffon, press down four times, then 
+press shot or bomb.
+
+Dark Ran is a Load Ran clone with a different color scheme, lower voice, and 
+different voice samples. 
+
+Refer to Load Ran's section (TSSRAN) for more info.
+
+-------------------------------------------------------------------------------
+Character Rankings [TSS006]
+-------------------------------------------------------------------------------
+
+Actual Ranking:
+
+NOTE - These rankings do not mean that a top-tier character will always beat
+a low-tier character. An expert will always beat a beginner, no matter which
+character is used. However, these rankings exist to judge what each character's
+strengths and weaknesses are, and how strong they are in comparison to every
+other character.
+
+EVEN MORE IMPORTANT NOTE - Skill and good knowledge of how the game works is 
+more important than tiers, so don't be discouraged if you play a low tier 
+character, though you might have to work a little harder to win if you do. And 
+if you're going to disagree with me on these tiers, then you better provide 
+some good reasons.
+
+This ranking is NOT based on the point values I gave each character in the 
+character sections. It's based on their abilities that actually apply in-game 
+and how they fare in certain matchups.
+
+The ranking order within tiers is from top to bottom. For example, Mevious is
+more powerful than Memory, though not by a lot since they are in the same tier.
+
+-------
+God tier
+-------
+
+Mevious
+Memory
+
+There's a reason these two characters are banned in tournaments, the two of
+them are so much stronger than the other characters that there would be no 
+reason to play the other characters if they were allowed - they're fast, have
+fast shots, and strong offenses. The only area they're not strongest in is 
+boss attacks, but if that mattered then Kim would be a lot stronger than he 
+currently is. 
+
+Mevious has a disgusting extra attack coupled with a super-fast shot and fast 
+movement speed, while Memory excels at everything - second fastest shot and 
+movement speed, a charge attack that practically acts like a bomb, and a great 
+extra attack. Though Memory is more well-balanced (well-overpowered?), 
+Mevious's extra attack puts him above Memory. 
+
+-------
+Top tier
+-------
+
+Nanja Monja
+Sprites
+Tinker and Linker
+
+These characters all have great offense and no egregious weaknesses. They all
+have average speed, but that's still enough speed to dodge most attacks.
+
+Nanja Monja has the second fastest shot in the game and an extra attack that is
+basically a huge bouncing wall. He doesn't really have any weaknesses aside 
+from a somewhat crappy boss.
+
+Sprites is just very solid - third fastest shot, powerful charge shot that 
+doesn't take too long to charge, and a great extra attack that can surround 
+the opponent. 
+
+Tinker and Linker aren't as powerful numbers-wise, they have average shots and 
+their crystal isn't as good for killing bosses as the former two characters' 
+charge attacks, but their extra attack is incredibly good and easily makes up 
+for their deficiency in killing bosses.
+
+--------
+High tier
+--------
+
+Load Ran/Darkran
+
+Yep, only one character here since Load Ran is the only character whose 
+abilities don't match the top tier characters, yet doesn't have any egregious 
+weaknesses. She's average in a lot of categories, like her shot, speed, and 
+boss; But she also has a good charge shot for softening up bosses, and an 
+annoying extra attack.
+
+-------
+Mid tier
+-------
+
+Macky and Pentell (nearly high tier)
+Yan Yanyung
+Realy Till (borderline low tier)
+
+Macky and Pentell would be really strong, except for the fact they're slow and
+have trouble dodging certain things most characters can dodge pretty easily.
+They have one of the best extra attacks in the game, and they have a fast shot,
+but their slow speed and non-piercing charge shot really hurts them when facing
+Nanja Monja.
+
+Yanyan is mid-tier for one reason, her extra attack. Without her extra attack,
+she'd easily be crap. With her extra attack, she can mount strong, difficult to
+dodge offense. On the other hand, her weaknesses - slowest speed in the game, 
+slow shot, and meh charge attack means her defense is really bad. Many times
+she has no choice but to blow up an enemy formation to defend herself, which
+can open her up to boss attacks. She also has a hard time against Schmitt, who 
+can easily dodge her pigbirds.
+
+Realy Till's extra attack is a little weird. One extra attack is easy to dodge,
+due to the attack's normally slow speed and telegraphed turning, but three or 
+more can be very troublesome due to the dragons' large sizes and slight 
+trapping effect. She's also fast, which helps her dodge attacks. However, her 
+charge attack is just godawful, its damage is too shitty for killing bosses, 
+and it charges slowly, making it difficult to establish an offense on the fly. 
+
+-------
+Low tier
+-------
+
+Kim
+Arthur Schmitt
+Griffon
+
+These three characters share one thing, shitty extra attacks. Their bad extra
+attacks make it difficult for them to establish a strong offense. They also 
+have other weaknesses, but those weaknesses aren't as important as their 
+terrible extra attacks.
+
+As mentioned earlier, Kim has a lot of strengths, but he really hurts in the
+one category where it matters, extra attacks. Without a good extra attack, Kim
+has a lot of trouble hitting the opponent. His boss is great, but without a 
+good extra attack supporting it, it's not as useful as it could be.
+
+Schmitt is incredibly fast and can last for long periods of time simply dodging
+everything, but his opponent can do the same since his offense is so weak. 
+Also, he's almost too fast, one tap of a direction can send him flying across
+the screen. His boss would be good if it didn't slowly hover to the center of
+the screen, then back up while preparing its laser attack, allowing the 
+opponent to hammer it to death. However, he does fare well against Tinker and
+Linker and Yanyan, because he has an easier time dealing with quick extra 
+attacks than any other character.
+
+Griffon just doesn't have anything good that stands out. His boss is pretty 
+good, but not great, he moves at a speed in between the quick characters and
+the average characters, and his charge attack isn't bad, if situational at 
+times. However, he does have two flaws that stick out, his shot and his extra
+attack. His extra attack is wide, but it's slow and very predictable. Griffon's
+dead last simply because he doesn't have anything that makes him stand out.
+
+Quick rundown of character rankings:
+
+N/A. Mevious
+N/A. Memory
+
+1.  Nanja Monja
+2.  Sprites
+3.  Tinker and Linker
+4.  Load Ran/Darkran
+5.  Macky and Pentell
+6.  Yan Yanyung
+7.  Realy Till
+8.  Kim
+9.  Arthur Schmitt
+10. Griffon
+
+-------------------------------------------------------------------------------
+
+Points Ranking:
+
+This ranking is calculated by adding up the sum of a character's score in each 
+of the five categories, which are movement speed, shot, charge shot, extra 
+attack, and boss.
+
+This ranking isn't meant to be taken seriously. The scores I used will never be
+100% accurate since it's a subjective rating, and I'm sure people will disagree
+with me on some of the scores. Furthermore, each category is weighted equally,
+which isn't how the game really works. For example, extra attacks are more 
+important than boss attacks, but they're both rated on a scale of 1-10. Just 
+think of this section as a curiosity.
+
+1.  Memory - 41
+1.  Mevious - 41
+3.  Sprites - 38
+4.  Nanja Monja - 36
+
+5.  Tinker and Linker - 32
+6.  Load Ran/Darkran - 30
+6.  Kim - 30
+
+8.  Yan Yanyung - 25
+8.  Macky and Pentell - 25
+10. Griffon - 23
+11. Arthur Schmitt - 22
+12. Realy Till - 20
+
+This ranking follows the actual character rankings closely until we get to 
+Kim, who is tied as number 6 with Load Ran, even though he is is really the 
+third worst character. After that it doesn't mirror the actual rankings all 
+that closely, except for the fact that Macky and Yanyan are pretty close to 
+each other.
+
+
+-------------------------------------------------------------------------------
+Advanced Concepts and Strategy [TSS007]
+-------------------------------------------------------------------------------
+
+Baiting attacks and surviving fevers:
+
+I explained this concept a little beforehand, but this concept is very 
+important so it bears some repeating.
+
+One thing that a lot of people fail to see is that the best Japanese players 
+don't just make stupidly precise dodges, hordes of extra attacks, and big 
+combos. What really makes these players great is how good they are at 
+preventing such events - it's a lot easier to dodge a fever when it's only
+10-20 fireballs coming your way, rather than 30+ fireballs with a load of 
+extra attacks.
+
+A lot of attacks will aim towards your current position, this includes 
+fireballs, certain extra attacks, and certain boss attacks. You generally want
+to stay still in one place, then move out of the way of such attacks. However,
+considering how fast and hectic the game gets, that method of dodging usually
+isn't possible, so small, quick steps is the best way to dodge repeated 
+assaults of aimed attacks.
+
+Baiting is especially important when talking about fireballs because it can 
+mean the difference between scoring a boss attack, or being boss attacked 
+yourself. As a general rule, you want to be near an enemy formation when a 
+bunch of reverse attacks are about to head your way so you can catch the 
+reverse attacks and counter with a boss attack. 
+
+The reverse is also true, if a bunch of normal attacks are heading your way, 
+then you either want to stay away from enemy formations so that they don't 
+reflect attacks when they blow up, or simply dodge the attacks and don't shoot 
+anything. The latter type of dodge is especially important if the opponent has
+fever, otherwise it is very likely you will catch some your opponent's attacks
+in an explosion and set yourself up for a boss attack.
+
+To sum up...
+
+-Stay near enemy formations, then destroy them once reverse attacks come near 
+a formation if the opponent is sending over reverse attacks.
+
+-Either stay away from enemy formations until the fireballs pass by, then 
+destroy the enemies, or just don't shoot if the opponent is sending normal
+attacks.
+
+-The latter method of dodging normal attacks is definitely preferable if your
+opponent has fever. It's very easy to accidentally reflect normal attacks if
+your opponent has fever.
+
+-If there is a cluster of reverse attacks and normal attacks, make sure there 
+are less than three normal attacks in the cluster before reflecting, or else
+it's likely you will receive a boss attack.
+
+Dodging Extra attacks:
+
+Considering that extra attacks are a big part of the game, it's important to 
+know how to dodge them all.
+
+Load Ran/Dark Ran: Not too difficult once you learn to look towards the center
+of the screen, once you hear the sound or see some rabicats moving, be sure to 
+move to a different spot. Also, be careful about going back after a rabicat 
+explodes, the explosion lingers for a while.
+
+Kim: I really don't neeed to say anything here.
+
+Nanja Monja: The furballs head towards your horizontal position, so you can
+bait them if necessary. Remember that the furballs bounce up, but not as far
+as they fall down, which means you can sneak in between clusters of furballs 
+while they bounce up, but your time is limited, so be quick.
+
+Tinker and Linker: Be sure to pay attention if the fairy is glowing, if it is,
+then it will bounce before leaving the screen. Also, the fairies will not 
+change angle after bouncing - if a fairy is coming in at a shallow angle, then
+it will also bounce off at a shallow angle. The fairies will head towards
+your current position, so you can dodge them ahead of time if you know your
+opponent is going to reflect some of your reverse attacks.
+
+Realy Till: It depends, it's more of a wait and see situation than anything 
+else. Half the time you won't even need to move, whereas other times the 
+dragons will come in and trap you. Just remember that the dragons will always
+turn, and you will have time to react to them no matter how fast they are 
+moving.
+
+Griffon: Though this attack is pretty wide, only about half of its wingspan 
+can hit you, the outer edge will not hit you. This attack is really only a 
+problem if 4+ are scattered all over the screen.
+
+Yan Yanyung: Easily one of the most annoying extra attacks to dodge. Dodging
+the pigbirds takes a lot of practice, and if you're playing a slow character,
+it's not always possible to dodge them. 
+
+If they are coming in from one side, then pay attention to each pigbird's 
+horizontal movement and check and see if it's matching yours. If the pigbird 
+is moving just as fast as you (or faster), then head towards the opposite 
+direction when the the pigbird is about 2-3 character heights away from you. 
+If you did this correctly, you will dodge the pigbird by a decent margin. 
+
+If there are pigbirds coming at you from the left and right, then try moving
+up to pass by them. However, if you're playing a slower character, you might
+be forced to bomb.
+
+Arthur Schmitt: Learn to look at the bottom of the screen. Seriously, once you
+train your eyes to follow the flashing blue and white orbs that head towards
+the bottom of your screen, you will be MUCH more prepared for this attack 
+(and realize that it's actually not a bad atack). Also, this attack is VERY
+skinny, only the big green orb and jet stream can hit you, the parts on the 
+side go right through you.
+
+Macky and Pentell: The most important thing is to pay attention to where the 
+attack is parked, and be sure to move out of the way when it starts heading 
+your way. This attack will occasionally be unfair and hit you before you can 
+react, but that usually occurs when you're near the inner wall, which is really
+just asking to be hit.
+
+Sprites: Pay attention to where the flashing blue and white circles stop, 
+that's where the rabicat will spawn. If there's only one rabicat, then this
+attack is easy to dodge because all you have to do is move slightly out of the 
+way once the rabicat starts moving. 
+
+However, you'll normally be faced with rabicats from multiple angles. 
+The easiest way to deal with this situation is to adjust your positioning 
+so that the rabicats are all on one side of you. It's best to go to the 
+bottom or towards the outer wall if you're doing this. The one drawback to this
+method is that it's sometimes impossible to pull off, either due to 
+circumstances or your character's speed . In these situations, you will want to
+stay still (or try not to move too much), then head towards a spot where none 
+of the rabicats are heading towards.
+
+Memory: See Sprites, the only difference is that Memory's extra attack varies
+in size.
+
+Mevious: Probably the hardest attack to dodge. You just have to see where the
+bat is moving and react accordingly. I'm sorry I don't have better advice, but 
+the bats are very random and difficult to dodge.
+
+
+Dodging Death:
+
+Death gets faster and faster as a round becomes longer and longer. He'll 
+disappear for a couple of seconds if you destroy him, but he'll only come back
+stronger than before. Therefore, it's essential to know how to dodge death at
+high level play.
+
+-When Death first starts appearing, you want to keep him alive as long as 
+possible. Yes, keeping Death alive goes against every natural urge as he is 
+such a nuisance, but he only becomes harder to kill every time you destroy him,
+and it's a lot more likely you will need to destroy him when he starts moving
+faster than when he is slow and easy.
+
+-When death starts becoming fast (this varies from character to character), 
+then you want to start destroying death when you have the chance.
+
+-Death eventually starts moving at the same speed as Load Ran. This means
+Yanyan and Macky have a difficult time dodging Death at high speeds because
+Death starts moving faster than them. However, this doesn't mean Death is 
+impossible to dodge for these two characters; they need to lure Death 
+diagonally because Death's diagonal speed is slower than their diagonal speeds.
+This is best done by making a small circle so that death is always chasing 
+you diagonally.
+
+-Remember that Death is still around if he wanders offscreen. It's very easy
+to forget about Death and accidentally run into him when he is offscreen.
+
+
+-------------------------------------------------------------------------------
+Frame Data [TSS008]
+-------------------------------------------------------------------------------
+
+A frame is the smallest unit that can be measured in a game. Since Twinkle
+Star Sprites runs at 60 fps, this is how frame measurements work.
+
+1 frame = 1/60th of a second
+60 frames = 1 second.
+
+Note: All of these tests were conducted in lag-free conditions. Add some more
+time if you are in an intense, slowdown-riddled situation.
+
+Horizontal Movement speed:
+
+Horizontal movement speed was tested by measuring how long it took to move from
+the left wall to the right wall.
+
+Order is from fastest to slowest (less frames means faster).
+
+Arthur Schmitt: 36 frames
+Memory: 39 frames
+Kim: 41 frames
+Mevious: 41 frames
+Realy Till: 45 frames
+Griffon: 50 frames
+Load Ran/Dark Ran: 56 frames
+Sprites:  56 frames
+Nanja Monja: 56 frames
+Tinker and Linker: 56 frames
+Macky and Pentell: 64 frames
+Yan-YanYung: 69 frames
+
+Vertical Movement speed:
+
+Vertical movement speed was tested by measuring how long it took to move from 
+the bottom of the screen to the top of the screen.
+
+Order is from fastest to slowest (less frames means faster).
+
+Arthur Schmitt: 52 frames
+Memory: 56 frames
+Kim: 59 frames
+Mevious: 59 frames
+Realy Till: 64 frames
+Griffon: 72 frames
+Load Ran/Dark Ran: 80 frames
+Sprites: 80 frames
+Nanja Monja: 80 frames
+Tinker and Linker: 80 frames
+Macky and Pentell: 92 frames
+Yan-YanYung: 99 frames
+
+These movement speed tests prove two things. One is that vertical and 
+horizontal movement speed are directly proportional to each other - characters 
+with fast vertical movement speed have equally fast horizontal movement
+speed. The second thing is that traveling from one side of the horizontal 
+playing field to the other takes roughly 70% of the time it would for the 
+vertical playing field.
+
+It's also of interest to note that characters move across the screen at the 
+same rate when moving diagonally.
+
+Shot speed:
+
+Shot speed was tested by placing the character at the very bottom of the screen
+and seeing how long it took a shot to travel from the bottom of the screen to 
+disappearing at the top of the screen.
+
+Order is from fastest to slowest (less frames means faster).
+
+These frame counts might not be 100% accurate due to varying character heights
+and shot lengths.
+
+Mevious: 25 frames
+Memory: 27 frames
+Nanja Monja: 27 frames
+Macky and Pentell: 29 frames
+Sprites: 29 frames
+Load Ran/Dark Ran: 34 frames
+Realy Till: 34 frames
+Tinker and Linker: 35 frames
+Griffon: 37 frames
+Yan-YanYung: 37 frames
+Kim: 38 frames
+Arthur Schmitt: 41 frames
+
+Charge time:
+
+Charge time tests were conducted by holding the fire button until the 1 on the 
+bottom of the screen started flashing.
+
+Order is from fastest to slowest (less frames means faster).
+
+Yan-YanYung: 41 frames
+Nanja Monja: 46 frames
+Mevious: 53 frames
+Kim: 58 frames
+Tinker and Linker: 58 frames
+Sprites: 62 frames
+Load Ran/Dark Ran: 65 frames
+Realy Till: 70 frames
+Griffon: 75 frames
+Arthur Schmitt: 80 frames
+Macky and Pentell: 87 frames
+Memory: 94 frames
+
+Charge attack execution time:
+
+The purpose of this test is to see how long each charge attack lasts and/or the
+amount of time a charge attack takes to clear the screen. This test was 
+conducted by charging up a charge attack, starting timing the moment the fire 
+button was released, then ending timing when the charge attack animation is
+over, or when the charge shot disappears from the screen. All tests were 
+conducted at the bottom of the screen.
+
+These times aren't comparable, as some charge attacks differ wildly.
+
+Nanja Monja: 15 frames
+Mevious 20 (side shots)/31 (middle shot) frames
+LoadRan/Dark Ran: 34 frames (takes six frames for the comet to appear)
+Sprites: 36 frames (takes six frames for the comet to appear)
+Tinker and Linker: 36 frames (the trail of sparkles doesn't leave until 40 
+frames)
+Yan-Yanyung: 38 (full width on the eighth frame)
+Arthur Schmitt: 39 frames (the laser achieves full width on the fourth frame)
+Kim: 41 (the first fist is fully extended after three frames)
+Macky and Pentell: 51 frames (can be detonated at any time)
+Griffon: 61 frames (if you don't move)
+Realy Till: 77 frames 
+Memory: Varies, the orbs tend to stop bouncing around 50-55 frames.
+
+Post collision invincibility period: 58ish frames
+
+-------------------------------------------------------------------------------
+Thanks [TSS009]
+-------------------------------------------------------------------------------
+
+Joe Stanski - For playing this game with me obsessively, and adding some input
+to the FAQ.
+
+Enhasa - Also for playing obsessively and adding some input to the FAQ
+
+Kaede - For being a good challenge and proving to me that Arthur Schmitt does
+indeed kind of suck. :(
+
+Breakdown - For proofreading this FAQ and providing good suggestions. 
+
+SDA (speeddemosarchive.com) - For existing. That, and the IRC channel is a cool
+place.
+
+2dfighter (www.2dfighter.com) - For having TSS online play. Props to damdai 
+for listening to peoples' requests and adding new games and fixes on a regular
+basis.
+
+NMT8.2i's Twinkle Star Sprites webpage - http://nmt.cside.com/twinkle/index.htm
+WARNING: It's in Japanese.
+
+This site contains a ton of good, detailed information about charge attacks and
+bosses. There's even a table detailing character stats that I used for this 
+FAQ. Needless to say, the boss and charge shot sections of this FAQ would be 
+nowhere near as good if I never found this site.
+
+Kanazawa Air Attack Technology Development - 
+http://www.geocities.jp/r13_5034/0000.html  WARNING: It's in Japanese
+
+This is 503's, a Japanese Sprites (the character) player, and it has the most 
+obsessive catalog of TSS strategies, journals, and videos. How obsessive is 
+the site? Look at this page. http://www.geocities.jp/r13_5034/3000/3300.html
+On the bottom is a record of the number of matches, wins, loses, and draws 
+he's had since he has been playing the game.
+
+
+
+View in: Text Mode
+
+
+
+
+
+window.onhashchange = hashHasChanged;
+
+function hashHasChanged()
+{
+	$(document).scrollTop(window.pageYOffset-130);
+}
+
+$().ready(function()
+{
+	$('.faq_bookmark_jumper').clone().appendTo('#faq_header_wrap');
+	if(window.pageYOffset>=150)
+	{
+		$('#faq_header_wrap').addClass('fixed');
+	}
+
+	window.onscroll = function()
+	{
+		if(window.pageYOffset>=150)
+		{
+			$('#faq_header_wrap').addClass('fixed');
+			$('.top_link').addClass('fixed').css('display','block');
+		}
+		else
+		{
+			$('#faq_header_wrap').removeClass('fixed');
+			$('.top_link').removeClass('fixed').css('display','none');
+		}
+	};
+
+	
+	$.each($('.ffaq img.imgnofloat'),function(){
+		var image = $(this);
+		if(image.attr('width')>400)
+		{
+			image.addClass('bigresize');
+		}
+	});
+
+	
+	var autobm = window.setInterval(function()
+	{
+		if(window.pos==$(document).scrollTop() || window.autobmstop==true)
+			clearInterval(autobm);
+		else
+			set_bookmark(1);
+	}, 5000);
+});
+
+$('img.imgresize').bind('click touch', function()
+{
+	if($(this).css('max-width')=='none')
+		$(this).css({ 'width':'100%','max-width':'100%' });
+	else
+		$(this).css({ 'width':'auto','max-width':'none' });
+});
+var timer, lastsearch;
+
+$('body :not(#faq_search_results)').bind('click touch', function(e)
+{
+	if($('#faq_search_results').css('display')=='block')
+	{
+		e.stopPropagation();
+		if($(this).attr('id')!='results_table' && $(this).attr('id')!='faq_search' && $(this).attr('id')!='faq_search_input' && $(this).attr('class')!='head' && $(this).attr('id')!='home_links')
+		{
+			dismiss_faq_search_results(0);
+		}
+	}
+});
+
+$('#faq_search_input, .search_mobile').click(function(e)
+{
+	e.preventDefault();
+	if($(this).attr('class')=='search_mobile')
+	{
+		$('#faq_search_module').toggle();
+	}
+	$('#faq_search_module, #faq_search_results').addClass('fixed');
+	$('#faq_header_wrap').addClass('search');
+		if($('#faq_search_results').css('display')!='block')
+	{
+		$('#faq_search_results').show();
+	}
+	if($('#results_table tr').length==0)
+		$('.close_results').hide();
+	$('#faq_search_input').focus();
+});
+
+$('#faq_search_input').keyup(function()
+{
+	if(lastsearch != $('#faq_search_input').val())
+	{
+		if(timer)
+			clearTimeout(timer);
+		lastsearch = $('#faq_search_input').val();
+		if($('#faq_search_input').val().length>=3)
+		{
+			$('#faq_search_results').show();
+			timer = setTimeout(function(){ faq_search(56584, $('#faq_search_input').val()) },150);
+		}
+		else
+		{
+			dismiss_faq_search_results(1);
+		}
+	}
+});
+
+function dismiss_faq_search_results(fixed)
+{
+	$('#faq_search_results').hide();
+	$('#faq_search_overlay').fadeTo(200,0).remove();
+	if(!fixed)
+	{
+		$('#faq_search_module, #faq_search_results').removeClass('fixed');
+		$('#faq_header_wrap').removeClass('search');
+		if($('.search_mobile').is(':visible'))
+			$('#faq_search_module').toggle();
+	}
+	$('#results_table').empty();
+}
+
+function search_result(row)
+{
+	if($('#results_table tr[data-row="'+row+'"]').length>0)
+	{
+		var url = $('#results_table tr[data-row="'+row+'"]').attr('data-url');
+		if(url.indexOf('search_highlight')>=0)
+			eval(url);
+		else
+			window.location = $('#results_table tr[data-row="'+row+'"]').attr('data-url');
+	}
+}
+
+$('body :not(#faq_toc_header *, #faq_toc a.toc_toggle *)').bind('click touch', function(e)
+{
+	if($('#faq_toc_header').css('display')=='block')
+	{
+		e.stopPropagation();
+		if($(this).attr('class')!='toc_toggle active' && $(this).attr('id')!='faq_toc_header')
+		{
+			$('.toc_toggle').removeClass('active');
+			$('#faq_toc_header').css('display','none');
+		}
+	}
+});
+
+function toc_toggle()
+{
+	if($('.toc_toggle').hasClass('active'))
+	{
+		$('a.toc_toggle').removeClass('active');
+		$('#faq_toc_header').css('display','none');
+	}
+	else
+	{
+		$('a.toc_toggle').addClass('active');
+		$('#faq_toc_header').css('display','block');
+	}
+}
+
+function faq_search(id, term)
+{
+	var term = $('#faq_search_input').val();
+	var len = term.length;
+	if(term.lengthNo Results Found - Close');
+				$('.close_results').remove();
+				$('#faq_search_results').show();
+			}
+			else
+			{
+				window.currentpage = 0;
+				$('#results_table').html('');
+				$('.close_results').remove();
+
+				$.each(response,function(j,i)
+				{
+					var val = i.value;
+					val = val.split('-');
+					var page = val[0];
+										if(window.currentpage!=page)
+					{
+						window.currentpage = page;
+					}
+					var link, pagenum = '';
+
+					
+										{
+						link = "search_highlight(56584,"+val[0]+",2,"+val[1]+","+len+");";
+					}
+					
+					$('#results_table').append(''+i.label+''+pagenum+'');
+				});
+
+				$('#results_table').after('Close Results');
+			}
+		}
+	});
+}
+
+function search_highlight(file_id,page,format,pos,len,section)
+{
+	window.textpage = page+1;
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/ajax/faq_search_highlight',
+		data: { id: file_id, page: page, for: format, pos: pos, len: len, section: '', key: '4359a67f' },
+		success: function(response)
+		{
+					$('span[name="search_jump"]').remove();
+			$("span.faq_highlight").contents().unwrap();
+			$('pre#faqspan-'+window.textpage).html(response);
+				$.each($('.ffaq img.imgnofloat'),function(){
+			var image = $(this);
+			if(image.attr('width')>400)
+			{
+				image.addClass('bigresize');
+			}
+		});
+		var offset = $('span[name="search_jump"]').offset().top - 100;
+		if(offset .faq_bookmark_jumper').css('visibility','hidden');
+	$('#faq_header_wrap > .faq_bookmark_jumper').remove();
+	$('#faq_bookmark').removeClass('active');
+}
+
+
+function page_top()
+{
+	$(window).scrollTop(0);
+}
+
+function make_printable()
+{
+	var faqdiv = $('#faqtext').detach();
+	faqdiv.appendTo('#fullscreen_overlay');
+	$('#fullscreen_overlay').show();
+	$('.wrapper').hide();
+	$('#faqtext').addClass("fullscreen_takeover");
+	$('#faqtext').append('Restore Page');
+	$(window).scrollTop(0);
+}
+
+function restore_page()
+{
+	$('#restore_page').remove();
+	$('#faqtext').removeClass("fullscreen_takeover");
+	$('#fullscreen_overlay').hide();
+	$('.wrapper').show();
+	var faqdiv = $('#faqtext').detach();
+	faqdiv.appendTo('#faqwrap');
+	$(window).scrollTop(0);
+}
+
+
+
+function set_rec_val(val)
+{
+	
+	var ftype = "guide";	
+	$('#recval').val(val);
+	if(val==2)
+		$('.rec_comment').attr('placeholder','What is missing from this '+ftype+'? (140 character max)');
+	$('#rec_one').hide();
+	$('#rec_two').show();
+	return;
+}
+
+function hide_rec()
+{
+	$('#rec_two').hide();
+	$('#rec_three').show();
+	var timer = setTimeout(function()
+	{
+		$('#contrib_rec').fadeOut('slow').remove();
+		$('#faq_header_wrap').addClass('rec_closed');
+	}, 2000);
+}
+
+function rec_submit(item_id, item_type_id, button)
+{
+	var recval = $('#recval').val();
+	if($('.rec_comment'))
+		var reccommentval = $('.rec_comment').val();
+	else
+		var reccommentval = '';
+
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/ajax/gamespace_contrib_rec',
+		data: { item: item_id, type: item_type_id, btn: button, val: recval, comment: reccommentval, key: '4359a67f' },
+		success: function(response)
+		{
+			if(response==2)
+			{
+				track_event(79);
+				return;
+			}
+			else
+				hide_rec();
+		}
+	});
+}
+
+
+
+
+{
+	"@context": "http://schema.org",
+	"@type": "WebPage",
+	"headline":"Twinkle Star Sprites Versus Guide (NEO)",
+	"image":"/a/box/9/6/4/26964_thumb.jpg",
+	"author":"mikwuyma",
+	"datePublished":"2009-05-18",
+	"dateModified":"2009-05-18",
+	"url":"https://gamefaqs.gamespot.com/neo/565709-twinkle-star-sprites/faqs/56584",
+	"reviewedBy":
+	{
+		"@type":"Organization",
+		"name":"GameFAQs",
+		"logo":
+		{
+			"@type":"ImageObject",
+			"url":"/a/images/site/logo_v13.png",
+			"width":"190",
+			"height":"60"
+		}
+	},
+	"genre":"Action",
+	"isPartOf":
+	{
+		"@type":"VideoGame",
+		"name":"Twinkle Star Sprites",
+		"url":"https://gamefaqs.gamespot.com/neo/565709-twinkle-star-sprites",
+		"image":"/a/box/9/6/4/26964_thumb.jpg",
+		"description":"Aim for Chain Explosions! Send your Big Boss to attack! Finish things with an Extra Attack! Look forward to a new style of competitive shooter!
+
+"Twinkle Star Sprites" is a competitive shooting game released by SNK in 1996. Utilize Chain Explosions, Power Shots, and Bombs to defeat the incoming Enemy Golems, changing them into Attack Characters to assault your opponent! Experience a new style of shooting game with more than enough cute characters flying around to fill the sky!
+
+The "ACA...",
+		"datePublished":"1997-01-31",
+				"publisher":"SNK",
+		"genre":["Action","Shooter","Shoot-'Em-Up","Vertical"],
+		"gamePlatform":["NEO","ARC","DC","NGCD","NS","PC","PS4","SAT","XONE"],
+		"operatingSystem":["NEO","ARC","DC","NGCD","NS","PC","PS4","SAT","XONE"],
+		"applicationCategory":"Game",
+		"sameAs":"https://www.gamespot.com/games/twinkle-star-sprites/",
+		"keywords":""
+	},
+	"breadcrumb":
+	{
+		"type": "BreadcrumbList",
+		"itemListElement":
+		[
+			{
+				"@type": "ListItem",
+				"position": 1,
+				"item":
+				{
+					"@id": "https://gamefaqs.gamespot.com/neo",
+					"name": "Neo Geo"
+				}
+			},									{
+				"@type": "ListItem",
+				"position": 2,
+				"item":
+				{
+					"@id": "https://gamefaqs.gamespot.com/neo/category/54-action",
+					"name": "Action"
+				}
+			},
+									{
+				"@type": "ListItem",
+				"position": 3,
+				"item":
+				{
+					"@id": "https://gamefaqs.gamespot.com/neo/category/55-action-shooter",
+					"name": "Shooter"
+				}
+			},
+									{
+				"@type": "ListItem",
+				"position": 4,
+				"item":
+				{
+					"@id": "https://gamefaqs.gamespot.com/neo/category/313-action-shooter-shoot-em-up",
+					"name": "Shoot-'Em-Up"
+				}
+			},
+									{
+				"@type": "ListItem",
+				"position": 5,
+				"item":
+				{
+					"@id": "https://gamefaqs.gamespot.com/neo/category/83-action-shooter-shoot-em-up-vertical",
+					"name": "Vertical"
+				}
+			},
+						{
+				"@type": "ListItem",
+				"position": 6,
+				"item":
+				{
+					"@id": "https://gamefaqs.gamespot.com/neo/565709-twinkle-star-sprites/faqs/56584",
+					"name": "Twinkle Star Sprites Versus Guide (NEO)"
+				}
+			}
+		]
+	}
+}
+
+								
+							
+						
+														
+				
+												
+			
+						
+							GameFAQsfacebook.com/GFAQstwitter.com/GameFAQsHelp / Contact UsChange Colors Blue (Default)
+Blue on Black
+Red
+Red on Black
+Green
+Green on Black
+Orange
+Orange on Black
+Purple
+Purple on Black
+Cloudy Blue
+Grayscale
+Sepia
+Cotton Candy

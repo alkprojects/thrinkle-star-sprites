@@ -1,0 +1,45 @@
+
+ General 
+ How is this game different from a traditional shmup? 
+ The game is presented like a regular shmup, but is a very involved competitive game, especially at higher levels. You can use positioning, meter, and timing to make your offense or defense.There isn't a way to play TSS like a traditional shmup. You can only play TSS against an enemy. Human or CPU 
+ Do I have to be good at shmups to play this? 
+ No. The early learning curve may be a bit eaiser if you have shmup experience, but it can also be harder. Shmup players can play games either for score or speed, but playing TSS requires to play aggressive against another player and their choices. TSS is similar to shmups, but also different in alot of ways. 
+ How can I play Twinkle Star Sprites? 
+ The competitive community primarily uses fightcade. There may also be some arcade cabs left out in the wild. There's a steam port, but it's netplay isn't that good. 
+ Anywhere I can watch high level VODs for this game? 
+ NakanoTRF Nakano TRF has a bunch of VOD from their casual sessions. You can also search for through some vods on fightcade. Some players to look out for are Tombbas, twinkler, cemera, and DarkActTSS 
+ Gameplay 
+ What are the tiers? 
+ This game doesn't have traditional tiers. The gamefaqs guide from 2009 orders characters into tiers, but that list mostly orders characters based on their offensive potential and doesn't give much consideration for characters that have good defensive abilities. The truth is that pretty much any non-boss character has a chance to win. Having good fundamentals will take you farther than playing any one character than another in the long run. 
+ How do I get better? 
+ Try playing through arcade mode. If you can 1cc it, then that's a good start. at some point you may be able to 1cc the game at level 8. If you can do that then you have a good grasp of the fundamentals, but competitive play against humans goes a few more levels deep than stuff you'll learn from arcade mode. At that point you'll learn about stuff like good defensive movement and screenwatching. We'll try to have as much advanced meta knowledge as we can put on this wiki. 
+ Twinkle Star Sprites 
+ | 
+ General 
+ | 
+ System Mechanics 
+ Controls 
+ Glossary 
+ FAQ 
+ Formations 
+ | 
+ | 
+ Characters 
+ | 
+ Arthur Schmitt 
+ Griffon 
+ Kim 
+ Load Ran/Dark Ran 
+ Macky & Pentell 
+ Nanja Monja 
+ Really Till 
+ Sprites 
+ Tinker & Linker 
+ Yan Yang 
+ | 
+ | 
+ Boss Characters 
+ | 
+ Mevious 
+ Memory 
+ | 

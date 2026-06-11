@@ -17,9 +17,9 @@ Consequence of `'both'`: incoming pressure roughly doubles vs 1v1. Global tuning
 Always sent to **both** opponents (owner decision, 2026-06-10).
 
 ### Reflections (Reverse Attacks)
-A reflected attack **returns to its original sender**, not a random opponent (owner decision, 2026-06-10). Every attack entity carries `originalSender` through its whole reflection chain, so escalation ping-pongs between the original sender and whoever keeps reflecting.
+A reflected attack **returns to its original sender**, not a random opponent (owner decision, 2026-06-10).
 
-Reflection wars **escalate**: at `attacks.escalation.extraAtReflect` reflections (default 3) the return comes back as an Extra Attack, at `bossAtReflect` (default 6) as a Boss — and escalated tiers route to **all** opponents, dragging the third player into the duel. Reverse-tier returns also speed up per reflection (`reverseSpeedScale`, capped at `maxReflections`).
+The ladder follows the verified original (GAME_MECHANICS.md §4): a destroyed **normal** returns as a **Reverse** (the ladder's only speed bump); a Reverse destroyed **individually** converts to **one Extra Attack**; **3+ Reverses caught by explosions within one combo** summon a **Boss instead** of those Extras. Extras are indestructible (dodge only); bosses are killable and never reflect. 3-player twist: Extras and Bosses route to **all** opponents (owner rule), so a reflection war between two players spills onto the third the moment it escalates.
 
 ### Timeout
 `match.onTimeout`: `'most-hp'` (default) — healthiest player wins at the bell, exact tie = draw; `'sudden-death'` — everyone drops to 1 HP (healing can't undo it), next hit ends the match.

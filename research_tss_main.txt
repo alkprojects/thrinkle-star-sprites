@@ -1,0 +1,96 @@
+
+Twinkle Star Sprites
+(TSS)
+ | 
+ | 
+Version
+ | 
+Neo Geo
+ | 
+Developers
+ | 
+ADK
+ | 
+Publishers
+ | 
+SNK
+ | 
+ADK(for certain ports)
+ | 
+Systems
+ | 
+Arcade
+ | 
+Official Websites
+ | 
+none
+ | 
+Online Play
+ | 
+Rollback
+ | 
+Player Resources
+ | 
+ Gamefaqs guide 
+ | 
+Community Channels
+ | 
+ Discord Server 
+ | 
+Twinkle Star Sprites is a versus shoot 'em up game where both players fight each playing on seperate screens. It was first relased in 1996. Unlike Dodonpachi or Touhou, you're always fighting against another player instead of going against waves of enemies for a final boss. The game takes the fast paced dodging of danmaku and mixes it with the competitive mindset of fighting and puzzle games.
+The community plays on Fightcade 2 . More info can be found by joining the Discord in the info box.
+ Versions 
+In addition to the Neo Geo version of this game, there are Dreamcast and Saturn ports for this game as well. 
+Dreamcast plays without slowdowns 
+Saturn has an extra character, plus some gameplay changes like saving meter between rounds. 
+Other ports like Steam, PS4, etc. are mostly emulating the arcade port. 
+ Wiki Roadmap 
+ 10% complete
+ | 
+ | 
+ | 
+ | 
+In Progress / Completed | 
+To-do
+ | 
+Landing Page 
+First Character Page 
+FAQ added 
+Skeleton for character pages 
+Character Portrait Uploads 
+ | 
+Add Mechanics, and Esoterics sections 
+Add all character pages 
+Add sprites w/ hitboxes for attacks 
+Add formations 
+ | 
+ Twinkle Star Sprites 
+ | 
+ General 
+ | 
+ System Mechanics 
+ Controls 
+ Glossary 
+ FAQ 
+ Formations 
+ | 
+ | 
+ Characters 
+ | 
+ Arthur Schmitt 
+ Griffon 
+ Kim 
+ Load Ran/Dark Ran 
+ Macky & Pentell 
+ Nanja Monja 
+ Really Till 
+ Sprites 
+ Tinker & Linker 
+ Yan Yang 
+ | 
+ | 
+ Boss Characters 
+ | 
+ Mevious 
+ Memory 
+ | 

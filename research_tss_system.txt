@@ -1,0 +1,56 @@
+
+ Basic System Mechanics 
+Players sit on two seperate screens. 
+players will shoot the zako enemies to build combos and meter. 
+getting a certain amount of combos from zakos will send a fireball to your opponent.
+If the opponent shoots a fireball back, it will return to your side of the screen as a reverse fireball that glows green. 
+If you clear three reverse fireballs in a chain, you'll send a boss to your opponent. 
+If both players send bosses too closes to each other, the bosses will clash and neither player will send a boss. 
+If you can clear the current formation of zako by shooting down only one zako, you will get a perfect. 
+Getting a perfect will give you an extra bit of meter, slow down formations on your screen, and speed up formations on your opponents screen. 
+you can use your meter to attack by charging your shot to level two or three 
+If you have a boss on the screen, lv 3 meter will send more EXs at a time 
+Attacks from the enemy (fireballs/EX/boss) will reduce your HP by 3 
+Attacks from zakos will reduce your HP by 1 
+zakos can't kill you, but they will leave you in a dizzy state which reduces your momvement and shot speed. and makes your basic shot smaller 
+Anytime you lose HP, your opponent gets half of your lost HP 
+After a random about of formations of zako, a fever orb will show up. 
+if the Fever orb is hit by a chain explosion (or a bomb), your character will go into fever mode and shoot more fireballs per chain 
+If the game goes on for too long Death will show up. Death instantly kills if he touches you 
+death can be temporarily killed, but will come back with more HP, and gets faster the longer he's on the screen. 
+Even the slowest characters can avoid death permanently by moving in circles. 
+ Advanced system Mechanics 
+You can move faster by moving diagonally 
+Fireballs move in three different patterns, Parabola, Diagonal Bounce, and stop and wait at the stop of the screen. 
+The Fireballs may start on a random pattern, but will always cycle in the aforementioned order. The fireballs you send change patterns when your formations change. This will happen mid combo. 
+If you send a boss while your opponent has a boss on the screen, their boss will leave your screen and your boss shows up on theirs. 
+ Twinkle Star Sprites 
+ | 
+ General 
+ | 
+ System Mechanics 
+ Controls 
+ Glossary 
+ FAQ 
+ Formations 
+ | 
+ | 
+ Characters 
+ | 
+ Arthur Schmitt 
+ Griffon 
+ Kim 
+ Load Ran/Dark Ran 
+ Macky & Pentell 
+ Nanja Monja 
+ Really Till 
+ Sprites 
+ Tinker & Linker 
+ Yan Yang 
+ | 
+ | 
+ Boss Characters 
+ | 
+ Mevious 
+ Memory 
+ | 

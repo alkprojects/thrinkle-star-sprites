@@ -1,5 +1,5 @@
 import type { AttackTier, BalanceConfig } from '../config/balance';
-import { detSin, ipow } from './detmath';
+import { detSin } from './detmath';
 import { createRng, rngFromState, type Rng } from './rng';
 import type {
   ActiveChain, IncomingAttack, PlayerInput, PlayerSim, SimState,
@@ -100,14 +100,12 @@ function queueAttack(
   densityGated = false,
 ): void {
   if (densityGated && rng.next() >= cfg.routing.incomingDensityScale) return;
-  const speedBase =
+  // Original ladder has exactly ONE speed bump: reverses are slightly faster than normals.
+  const speed =
     tier === 'extra' ? cfg.attacks.extraSpeed :
     tier === 'boss' ? cfg.attacks.bossSpeed :
+    tier === 'reverse' ? cfg.attacks.baseSpeed * cfg.attacks.reverseSpeedScale :
     cfg.attacks.baseSpeed;
-  const capped = Math.min(reflectCount, cfg.attacks.maxReflections);
-  const speed = tier === 'normal' || tier === 'reverse'
-    ? speedBase * ipow(cfg.attacks.reverseSpeedScale, capped)
-    : speedBase;
   const margin = cfg.attacks.entryMarginFrac;
   s.transit.push({
     tier,
@@ -124,32 +122,15 @@ function queueAttack(
 }
 
 /**
- * Reflect an incoming normal/reverse attack: it returns to whoever last sent it
- * (the original sender on first reflection — owner rule; ping-pongs thereafter).
- * Sustained reflection wars ESCALATE: at escalation.extraAtReflect reflections the
- * return becomes an Extra Attack, at bossAtReflect a Boss — and escalated tiers hit
- * ALL opponents (per routing config), dragging the third player into the duel.
+ * THE LADDER (docs/GAME_MECHANICS.md §4). A destroyed NORMAL returns as a REVERSE to
+ * whoever last sent it (the original sender on first reflection — owner rule). A
+ * destroyed REVERSE becomes an EXTRA (1:1) — unless >= bossFromReversesInCombo
+ * reverses are caught by explosions within ONE combo, which sends a Boss instead
+ * (handled at chain resolution). Extras and bosses never reflect.
  */
-function reflectAttack(s: SimState, cfg: BalanceConfig, rng: Rng, reflector: PlayerSim, a: IncomingAttack): void {
+function returnAsReverse(s: SimState, cfg: BalanceConfig, rng: Rng, reflector: PlayerSim, a: IncomingAttack): void {
   reflector.stats.reflections++;
   s.events.push({ type: 'reflect', seat: reflector.seat });
-  const count = a.reflectCount + 1;
-  const esc = cfg.attacks.escalation;
-  const tier: AttackTier =
-    count >= esc.bossAtReflect ? 'boss' :
-    count >= esc.extraAtReflect ? 'extra' :
-    'reverse';
-
-  const toAll =
-    (tier === 'boss' && cfg.routing.bossToAll) ||
-    (tier === 'extra' && cfg.routing.extrasToAll);
-  if (toAll) {
-    for (const o of livingOpponents(s, reflector.seat)) {
-      queueAttack(s, cfg, rng, tier, a.originalSender, reflector.seat, o.seat, count);
-    }
-    return;
-  }
-
   let target = a.lastSender;
   const targetP = s.players[target];
   if (!targetP || !targetP.alive) {
@@ -158,28 +139,56 @@ function reflectAttack(s: SimState, cfg: BalanceConfig, rng: Rng, reflector: Pla
     if (others.length === 0) return;
     target = others[rng.int(others.length)]!.seat;
   }
-  queueAttack(s, cfg, rng, tier, a.originalSender, reflector.seat, target, count);
+  queueAttack(s, cfg, rng, 'reverse', a.originalSender, reflector.seat, target, a.reflectCount + 1);
 }
 
+/** A reverse destroyed individually converts to Extra Attack(s) from the destroyer. */
+function sendExtras(s: SimState, cfg: BalanceConfig, rng: Rng, from: PlayerSim, count: number): void {
+  const targets = cfg.routing.extrasToAll
+    ? livingOpponents(s, from.seat).map((o) => o.seat)
+    : targetsForNormal(s, from, cfg, rng);
+  for (const t of targets) {
+    for (let i = 0; i < count; i++) queueAttack(s, cfg, rng, 'extra', from.seat, from.seat, t, 0);
+  }
+}
+
+function sendBoss(s: SimState, cfg: BalanceConfig, rng: Rng, from: PlayerSim): void {
+  const targets = cfg.routing.bossToAll
+    ? livingOpponents(s, from.seat).map((o) => o.seat)
+    : targetsForNormal(s, from, cfg, rng);
+  for (const t of targets) queueAttack(s, cfg, rng, 'boss', from.seat, from.seat, t, 0);
+}
+
+/** Ladder routing for an attack destroyed INDIVIDUALLY (shot, beam, or bomb-with-knob). */
+function attackDestroyedIndividually(s: SimState, cfg: BalanceConfig, rng: Rng, destroyer: PlayerSim, a: IncomingAttack): void {
+  if (a.tier === 'normal') returnAsReverse(s, cfg, rng, destroyer, a);
+  else if (a.tier === 'reverse') sendExtras(s, cfg, rng, destroyer, 1);
+  // extras/bosses never produce a return
+}
+
+/** An opponent's attack lands: fixed damage, and the ATTACKER heals a fixed amount (original economy). */
 function damagePlayer(s: SimState, cfg: BalanceConfig, victim: PlayerSim, amount: number, attacker: number): void {
   if (victim.iframes > 0 || !victim.alive) return;
   victim.hp -= amount;
   victim.iframes = cfg.player.iframesTicks;
   if (attacker >= 0 && attacker !== victim.seat) {
     victim.lastAttacker = attacker;
-    s.players[attacker]!.stats.damageDealt += amount;
+    const ap = s.players[attacker]!;
+    ap.stats.damageDealt += amount;
+    if (ap.alive) ap.hp = Math.min(cfg.player.maxHp, ap.hp + cfg.lifeSteal.onAttackHit);
   }
 }
 
-/** Self-inflicted damage (zako collision): both other players recover a share — owner rule. */
-function selfDamageWithLifeSteal(s: SimState, cfg: BalanceConfig, victim: PlayerSim, amount: number): void {
+/** Zako collision: 1 heart, can NEVER kill (floor), and both other players heal — owner rule. */
+function selfDamageWithLifeSteal(s: SimState, cfg: BalanceConfig, victim: PlayerSim): void {
   if (victim.iframes > 0 || !victim.alive) return;
-  victim.hp -= amount;
+  victim.hp = Math.max(cfg.damage.zakoFloorHp, victim.hp - cfg.damage.zakoCollision);
   victim.iframes = cfg.player.iframesTicks;
   const others = livingOpponents(s, victim.seat);
   if (others.length === 0) return;
-  const pool = amount * cfg.lifeSteal.fraction;
-  const share = cfg.lifeSteal.split === 'divided' ? pool / others.length : pool;
+  const share = cfg.lifeSteal.split === 'divided'
+    ? cfg.lifeSteal.onZakoHit / others.length
+    : cfg.lifeSteal.onZakoHit;
   for (const o of others) o.hp = Math.min(cfg.player.maxHp, o.hp + share);
 }
 
@@ -188,7 +197,7 @@ function getChain(p: PlayerSim, s: SimState, chainId?: number): ActiveChain {
     const existing = p.chains.find((c) => c.id === chainId);
     if (existing) return existing;
   }
-  const chain: ActiveChain = { id: chainId ?? s.nextChainId++, size: 0, reflectedAttacks: 0 };
+  const chain: ActiveChain = { id: chainId ?? s.nextChainId++, size: 0, reflectedAttacks: 0, reversesCaught: 0 };
   p.chains.push(chain);
   return chain;
 }
@@ -275,21 +284,21 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
     }
     p.prevFire = input.fire;
 
-    // Bomb (edge): clears zako and attacks around the player; no chain credit.
-    // bomb.reflectsAttacks decides whether caught normals/reverses fly back or just vanish.
+    // Bomb (edge): full-field zako wipe + i-frames. Original bombs do NOT clear
+    // incoming attacks (you survive them via i-frames) — clearsAttacks is a 3P knob.
     if (input.bomb && !p.prevBomb && p.bombs > 0) {
       p.bombs--;
       p.iframes = Math.max(p.iframes, cfg.player.iframesTicks);
       s.events.push({ type: 'bomb', seat: p.seat });
       p.zako = p.zako.filter((z) => !circleHit(z.x, z.y, cfg.waves.zakoRadius, p.x, p.y, cfg.bomb.radius));
-      p.incoming = p.incoming.filter((a) => {
-        if (a.tier === 'boss') return true; // bombs don't clear bosses (PROVISIONAL)
-        if (!circleHit(a.x, a.y, cfg.attacks.attackRadius, p.x, p.y, cfg.bomb.radius)) return true;
-        if (cfg.bomb.reflectsAttacks && (a.tier === 'normal' || a.tier === 'reverse')) {
-          reflectAttack(s, cfg, rng, p, a);
-        }
-        return false;
-      });
+      if (cfg.bomb.clearsAttacks) {
+        p.incoming = p.incoming.filter((a) => {
+          if (a.tier === 'boss') return true; // bombs never erase bosses outright
+          if (!circleHit(a.x, a.y, cfg.attacks.attackRadius, p.x, p.y, cfg.bomb.radius)) return true;
+          if (cfg.bomb.reflectsAttacks) attackDestroyedIndividually(s, cfg, rng, p, a);
+          return false;
+        });
+      }
     }
     p.prevBomb = input.bomb;
 
@@ -359,11 +368,11 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
         const a = p.incoming[ai]!;
         if (!circleHit(shot.x, shot.y, 2, a.x, a.y, hitRadius(a))) continue;
         p.shots.splice(si, 1);
+        if (a.tier === 'extra' && !cfg.attacks.extrasDestructible) break; // extras absorb shots
         a.hp--;
         if (a.hp <= 0) {
           p.incoming.splice(ai, 1);
-          if (a.tier === 'normal' || a.tier === 'reverse') reflectAttack(s, cfg, rng, p, a);
-          // extras/bosses are destroyed outright — no reflection (ladder rule, PROVISIONAL)
+          attackDestroyedIndividually(s, cfg, rng, p, a);
         }
         break;
       }
@@ -374,25 +383,36 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
       for (let ai = p.incoming.length - 1; ai >= 0; ai--) {
         const a = p.incoming[ai]!;
         if (Math.abs(a.x - beam.x) <= beam.halfWidth + hitRadius(a) && a.y >= beam.y - 10 && a.y <= beam.y + 14) {
+          if (a.tier === 'extra' && !cfg.attacks.extrasDestructible) continue; // extras shrug it off
           a.hp -= cfg.shot.beamDamage;
           if (a.hp <= 0) {
             p.incoming.splice(ai, 1);
-            if (a.tier === 'normal' || a.tier === 'reverse') reflectAttack(s, cfg, rng, p, a);
+            attackDestroyedIndividually(s, cfg, rng, p, a);
           }
         }
       }
     }
 
-    // Explosions catch incoming attacks → reflected AND credited to the chain (PROVISIONAL)
+    // Explosions catch incoming attacks — they count as combo hits, and:
+    //   normals  → return as reverses immediately
+    //   reverses → tallied on the chain; at resolution, >= bossFromReversesInCombo of
+    //              them sends a BOSS instead of their individual extras (ladder rule)
     for (const ex of matured) {
       for (let ai = p.incoming.length - 1; ai >= 0; ai--) {
         const a = p.incoming[ai]!;
         if (a.tier !== 'normal' && a.tier !== 'reverse') continue;
         if (circleHit(ex.x, ex.y, cfg.chain.explosionRadius, a.x, a.y, cfg.attacks.attackRadius)) {
           p.incoming.splice(ai, 1);
-          reflectAttack(s, cfg, rng, p, a);
           const chain = p.chains.find((c) => c.id === ex.chainId);
           if (chain) { chain.size++; chain.reflectedAttacks++; }
+          if (a.tier === 'normal') {
+            returnAsReverse(s, cfg, rng, p, a);
+          } else if (chain) {
+            chain.reversesCaught++;
+            s.events.push({ type: 'reflect', seat: p.seat });
+          } else {
+            sendExtras(s, cfg, rng, p, 1); // orphan catch (chain already resolved this tick)
+          }
         }
       }
     }
@@ -428,13 +448,8 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
       }
       const radius = hitRadius(a);
       if (circleHit(a.x, a.y, radius, p.x, p.y, cfg.player.radius)) {
-        const dmg =
-          a.tier === 'normal' ? cfg.damage.normalHit :
-          a.tier === 'reverse' ? cfg.damage.reverseHit :
-          a.tier === 'extra' ? cfg.damage.extraHit :
-          cfg.damage.bossHit;
         const hadIframes = p.iframes > 0;
-        damagePlayer(s, cfg, p, dmg, a.lastSender);
+        damagePlayer(s, cfg, p, cfg.damage.attackHit, a.lastSender);
         if (!hadIframes) {
           s.events.push({ type: 'player-hit', seat: p.seat, source: a.tier });
           if (a.tier !== 'boss') p.incoming.splice(ai, 1);
@@ -449,7 +464,7 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
       const z = p.zako[zi]!;
       if (circleHit(z.x, z.y, cfg.waves.zakoRadius, p.x, p.y, cfg.player.radius)) {
         const hadIframes = p.iframes > 0;
-        selfDamageWithLifeSteal(s, cfg, p, cfg.damage.zakoCollision);
+        selfDamageWithLifeSteal(s, cfg, p);
         if (!hadIframes) {
           s.events.push({ type: 'player-hit', seat: p.seat, source: 'zako' });
           p.zako.splice(zi, 1);
@@ -478,27 +493,32 @@ export function tickSim(s: SimState, inputs: PlayerInput[], cfg: BalanceConfig):
         if (chain.size >= 2) bigChains++;
         if (chain.size >= 2) s.events.push({ type: 'chain', seat: p.seat, size: chain.size });
 
-        // Fever: a big chain during fever sends a Boss INSTEAD of its normal attacks
-        if (p.feverTicks > 0 && chain.size >= cfg.fever.bossChainSize) {
-          const targets = cfg.routing.bossToAll
-            ? livingOpponents(s, p.seat).map((o) => o.seat)
-            : targetsForNormal(s, p, cfg, rng);
-          for (const t of targets) queueAttack(s, cfg, rng, 'boss', p.seat, p.seat, t, 0);
-          if (chain.size >= 2) bigChains--; // the boss replaces this chain's whole output
-          continue;
-        }
-
-        if (chain.size >= cfg.chain.minChainToAttack) {
-          const count = Math.min(
-            cfg.chain.maxAttacksPerChain,
-            Math.floor((chain.size - cfg.chain.minChainToAttack) / cfg.chain.perExtraChain) + 1,
-          );
+        // Chain → fireballs. Normal: floor((hits-2)/2) from the 4th hit.
+        // Fever: hits - feverHitOffset, starting from the 2nd hit (original mapping).
+        const inFever = p.feverTicks > 0;
+        const count = inFever
+          ? Math.min(cfg.chain.maxAttacksPerChain * 2, Math.max(0, chain.size - cfg.chain.feverHitOffset) * (chain.size >= 2 ? 1 : 0))
+          : chain.size >= cfg.chain.minChainToAttack
+            ? Math.min(
+                cfg.chain.maxAttacksPerChain,
+                Math.floor((chain.size - cfg.chain.minChainToAttack) / cfg.chain.perExtraChain) + 1,
+              )
+            : 0;
+        if (count > 0) {
           const targets = targetsForNormal(s, p, cfg, rng);
           for (const t of targets) {
             for (let i = 0; i < count; i++) {
               queueAttack(s, cfg, rng, 'normal', p.seat, p.seat, t, 0, true);
             }
           }
+        }
+
+        // Reverses caught by this combo's explosions: 3+ summon a BOSS instead of
+        // their individual extras (the original's only non-meter boss trigger).
+        if (chain.reversesCaught >= cfg.attacks.bossFromReversesInCombo) {
+          sendBoss(s, cfg, rng, p);
+        } else if (chain.reversesCaught > 0) {
+          sendExtras(s, cfg, rng, p, chain.reversesCaught);
         }
       }
 

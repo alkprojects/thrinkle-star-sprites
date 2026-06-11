@@ -81,6 +81,9 @@ export interface ActiveChain {
   size: number;
   /** Reflections folded into this chain (attacks caught in explosions). */
   reflectedAttacks: number;
+  /** REVERSE attacks caught by this chain's explosions — >= bossFromReversesInCombo
+   *  of these sends a Boss instead of their individual Extras (original ladder rule). */
+  reversesCaught: number;
 }
 
 export interface PlayerSim {

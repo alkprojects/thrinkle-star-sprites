@@ -1,15 +1,16 @@
 /**
  * EVERY gameplay number and rule variant lives here. Sim code never hardcodes a tunable.
  *
- * Numbers marked PROVISIONAL are educated reconstructions of the original game,
- * pending reconciliation with docs/GAME_MECHANICS.md and owner playtests.
- * Distances are in field units (field = 160 wide × 224 tall), times in ticks (60/sec).
+ * Numbers follow docs/GAME_MECHANICS.md (the verified original-game reference) unless
+ * marked 3P-ADAPT (deliberate 3-player change, see docs/ADAPTATION.md) or
+ * PROVISIONAL (original value unknown — needs playtest/emulator verification,
+ * see docs/FIDELITY_GAPS.md). Distances in field units (160×224), times in ticks (60/s).
  */
 
 /** Who chain-generated Normal Attacks are sent to. Owner default: 'both'. */
 export type RoutingMode = 'both' | 'round-robin' | 'retaliation' | 'manual' | 'leader';
 
-/** How life-steal healing is shared among the other players. */
+/** How healing from one player's mishap is shared among the other players. */
 export type LifeStealSplit = 'divided' | 'each';
 
 export type AttackTier = 'normal' | 'reverse' | 'extra' | 'boss';
@@ -17,21 +18,21 @@ export type AttackTier = 'normal' | 'reverse' | 'extra' | 'boss';
 export interface BalanceConfig {
   field: { width: number; height: number };
   player: {
-    speed: number;            // units/tick, full 2D movement
+    speed: number;            // units/tick; diagonals NOT normalized in the original (√2 faster)
     radius: number;           // collision radius
-    maxHp: number;
-    iframesTicks: number;     // invincibility after taking damage
-    bombs: number;            // starting bomb stock
+    maxHp: number;            // hearts — original: 5
+    iframesTicks: number;     // post-attack-hit invincibility — original: ~58 frames
+    bombs: number;            // per-round bomb stock — original: 2
   };
   shot: {
-    cooldownTicks: number;    // autofire rate while held (tap-fire)
+    cooldownTicks: number;    // autofire rate while held (original limits to 2 shots on screen)
     speed: number;
     chargeTicksLv1: number;   // hold duration for level-1 charge
     chargeTicksLv2: number;   // hold duration for level-2 charge (wider blast)
     chargeWidthLv1: number;   // beam half-width
     chargeWidthLv2: number;
     beamSpeedScale: number;   // beam speed = shot speed * this
-    beamDamage: number;       // hp removed per beam touch on an attack
+    beamDamage: number;       // hp removed per beam touch on a destructible attack
   };
   waves: {
     /** Ticks between wave spawns; identical wave sequence on every field (fairness, as in the original). */
@@ -45,68 +46,70 @@ export interface BalanceConfig {
     swayFactor: number;       // horizontal speed = sin(phase) * swayAmp * swayFactor
   };
   chain: {
-    explosionRadius: number;  // blast circle that detonates adjacent zako
-    explosionTicks: number;   // how long a blast lingers
+    explosionRadius: number;  // blast circle that detonates adjacent zako (PROVISIONAL)
+    explosionTicks: number;   // how long a blast lingers — original: ~30 active frames
     /** An explosion must be at least this old before it detonates neighbours —
      *  creates the original's rippling pop-pop-pop cascade instead of one big bang. */
     propagationDelayTicks: number;
-    minChainToAttack: number; // chain size that starts sending attacks (PROVISIONAL: 3)
-    /** attacksSent = floor((chain - minChainToAttack) / perExtraChain) + 1 */
+    /** Original mapping: fireballs = floor((hits-2)/2), i.e. the 4th hit sends the
+     *  first fireball and every 2 hits add one more. minChainToAttack=4, perExtraChain=2. */
+    minChainToAttack: number;
     perExtraChain: number;
-    maxAttacksPerChain: number;
-    feverGainPerChainLink: number; // fever meter % per chain link
+    maxAttacksPerChain: number; // counter caps at 32 hits → 15 fireballs
+    /** During fever the mapping becomes (hits - feverHitOffset) starting from the 2nd hit. */
+    feverHitOffset: number;     // original: 1 (fever sends hits-1 fireballs)
+    feverGainPerChainLink: number; // 3P-ADAPT: meter-based fever stand-in until orbs exist (FIDELITY_GAPS)
   };
   attacks: {
-    travelTicks: number;        // delay before a sent attack enters the target field
-    baseSpeed: number;          // descent speed of a normal attack
-    swayAmplitude: number;      // sinusoidal sway of incoming attacks
+    travelTicks: number;        // delay before a sent attack enters the target field (PROVISIONAL)
+    baseSpeed: number;          // descent speed of a normal fireball
+    swayAmplitude: number;      // sinusoidal sway of incoming attacks (stand-in for the 3 patterns)
     swayPeriodTicks: number;
     attackRadius: number;
-    attackHp: number;           // shots to down a normal/reverse attack
-    extraHp: number;            // shots to down an Extra Attack
-    /** Escalation ladder (PROVISIONAL until GAME_MECHANICS.md lands):
-     *  normal shot down  -> reflects as 'reverse' back to ORIGINAL SENDER (owner rule)
-     *  reverse shot down -> reflects again, faster each time
-     *  at escalation.extraAtReflect reflections the reflection comes back as an EXTRA ATTACK,
-     *  at escalation.bossAtReflect it comes back as a BOSS — escalated tiers route to ALL
-     *  opponents (per routing.extrasToAll/bossToAll), pulling third parties into the duel
-     *  extra             -> cannot reflect; can be destroyed (extraHp) or dodged
-     *  boss              -> destroyed only by depleting bossHp; can't reflect */
-    reverseSpeedScale: number;  // speed multiplier per reflection
-    maxReflections: number;     // beyond this, attack is undodgeable-fast but still capped
-    escalation: {
-      extraAtReflect: number;   // reflectCount at which a reflection escalates to an Extra Attack
-      bossAtReflect: number;    // reflectCount at which a reflection escalates to a Boss
-    };
-    /** Simultaneous chains resolving in one tick (e.g. via charge shot) send an Extra Attack. */
+    attackHp: number;           // shots to down a small fireball — original: 2
+    /** Original ladder (docs/GAME_MECHANICS.md §4):
+     *  normal destroyed (shot or explosion) -> REVERSE back to its sender (owner rule:
+     *    reflections return to the original sender), slightly faster — the ONLY speed bump
+     *  reverse destroyed individually        -> ONE Extra Attack (1:1)
+     *  >= bossFromReversesInCombo reverses caught by EXPLOSIONS in ONE combo
+     *                                        -> ONE Boss INSTEAD of those extras
+     *  extra  -> INDESTRUCTIBLE, dodge only (ladder ends)
+     *  boss   -> killable by depleting bossHp; never reflects */
+    reverseSpeedScale: number;  // reverse = baseSpeed * this (original: "slightly faster")
+    bossFromReversesInCombo: number; // original: 3
+    extrasDestructible: boolean;     // original: false — knob for 3P experimentation
+    extraHp: number;                 // only used if extrasDestructible
+    /** Simultaneous chains resolving in one tick (e.g. via charge shot) send an Extra.
+     *  PROVISIONAL stand-in for the original's Lv2-meter extras (FIDELITY_GAPS). */
     simultaneousChainsForExtra: number;
     extraSpeed: number;
-    bossHp: number;
+    bossHp: number;             // original: 17–25 by character
     bossSpeed: number;
-    bossDurationTicks: number;  // boss leaves after this if not killed
-    bossHoverY: number;         // boss descends to this line and parks
+    bossDurationTicks: number;  // original: ~10-15s if ignored
+    bossHoverY: number;
     bossRainIntervalTicks: number; // boss drops a reflectable shot every N ticks
     bossHitboxScale: number;    // boss radius = attackRadius * this (contact AND shots)
     entryMarginFrac: number;    // attacks enter within [frac, 1-frac] of field width
   };
   damage: {
-    normalHit: number;
-    reverseHit: number;
-    extraHit: number;
-    bossHit: number;            // per boss contact/volley
-    zakoCollision: number;      // bumping into a regular enemy
+    /** Original: EVERY opponent attack (normal/reverse/extra/boss) costs 3 hearts. */
+    attackHit: number;
+    /** Original: zako collision costs 1 heart and can NEVER kill (floor 0.5). */
+    zakoCollision: number;
+    zakoFloorHp: number;
   };
   lifeSteal: {
-    /** Fraction of self-inflicted (zako-collision) damage recovered by other players. Original: 0.5 to the one opponent. */
-    fraction: number;
-    /** 'divided': fraction is split among living others (faithful total economy).
-     *  'each': every living other heals the full fraction. OWNER TO PICK after playtest. */
+    /** Original: healing is FIXED per hit type, not damage-proportional.
+     *  Attack hits heal the ATTACKER +1 heart; zako collisions heal the others +0.5 total. */
+    onAttackHit: number;
+    onZakoHit: number;
+    /** 3P-ADAPT — owner rule: zako-collision healing goes to BOTH other players.
+     *  'divided': onZakoHit split between them (conserves the original economy).
+     *  'each': both heal the full amount. OWNER TO PICK after playtest. */
     split: LifeStealSplit;
   };
   fever: {
-    durationTicks: number;
-    /** During fever, a chain >= this sends a Boss Attack instead of an Extra. */
-    bossChainSize: number;
+    durationTicks: number;     // original: 10s orb-fever; meter-triggered here (FIDELITY_GAPS)
   };
   routing: {
     normalMode: RoutingMode;       // owner default: 'both'
@@ -119,17 +122,20 @@ export interface BalanceConfig {
      *  Density gate applies ONLY to chain-generated normal attacks — never to
      *  reflections, extras, or bosses (a successful reflection must always return). */
     incomingSpeedScale: number;
-    incomingDensityScale: number;  // probability scale that a routed attack is actually sent
+    incomingDensityScale: number;
   };
   match: {
-    timerTicks: number;            // round timer (PROVISIONAL: 120s)
+    timerTicks: number;            // stand-in for the original's ~100s Death reaper (FIDELITY_GAPS)
     /** 'most-hp': healthiest player wins on timeout (exact tie = draw).
-     *  'sudden-death': on timeout everyone drops to 1 HP and healing stops working — next hit ends it. */
+     *  'sudden-death': on timeout everyone drops to 1 HP and healing stops working. */
     onTimeout: 'most-hp' | 'sudden-death';
   };
   bomb: {
-    radius: number;                // clears zako + attacks in radius
-    /** Attacks destroyed by a bomb do NOT reflect (PROVISIONAL). */
+    /** Original: bombs cover the ENTIRE field. */
+    radius: number;
+    /** Original: bombs do NOT destroy incoming fireballs or extras (you survive via i-frames). */
+    clearsAttacks: boolean;
+    /** Owner-experiment knob: if bombs do clear attacks, do normals/reverses reflect back? */
     reflectsAttacks: boolean;
   };
 }
@@ -139,9 +145,9 @@ export const DEFAULT_BALANCE: BalanceConfig = {
   player: {
     speed: 2.2,
     radius: 3,
-    maxHp: 80,
-    iframesTicks: 75,
-    bombs: 3,
+    maxHp: 5,
+    iframesTicks: 58,
+    bombs: 2,
   },
   shot: {
     cooldownTicks: 7,
@@ -165,11 +171,12 @@ export const DEFAULT_BALANCE: BalanceConfig = {
   },
   chain: {
     explosionRadius: 16,
-    explosionTicks: 24,
+    explosionTicks: 30,
     propagationDelayTicks: 7,
-    minChainToAttack: 3,
-    perExtraChain: 1,
-    maxAttacksPerChain: 8,
+    minChainToAttack: 4,
+    perExtraChain: 2,
+    maxAttacksPerChain: 15,
+    feverHitOffset: 1,
     feverGainPerChainLink: 4,
   },
   attacks: {
@@ -178,38 +185,33 @@ export const DEFAULT_BALANCE: BalanceConfig = {
     swayAmplitude: 22,
     swayPeriodTicks: 90,
     attackRadius: 6,
-    attackHp: 1,
+    attackHp: 2,
+    reverseSpeedScale: 1.15,
+    bossFromReversesInCombo: 3,
+    extrasDestructible: false,
     extraHp: 6,
-    reverseSpeedScale: 1.22,
-    maxReflections: 7,
-    escalation: {
-      extraAtReflect: 3,
-      bossAtReflect: 6,
-    },
     simultaneousChainsForExtra: 2,
     extraSpeed: 0.9,
-    bossHp: 45,
+    bossHp: 21,
     bossSpeed: 0.35,
-    bossDurationTicks: 600,
+    bossDurationTicks: 750,
     bossHoverY: 56,
     bossRainIntervalTicks: 90,
     bossHitboxScale: 3,
     entryMarginFrac: 0.12,
   },
   damage: {
-    normalHit: 8,
-    reverseHit: 8,
-    extraHit: 14,
-    bossHit: 16,
-    zakoCollision: 8,
+    attackHit: 3,
+    zakoCollision: 1,
+    zakoFloorHp: 0.5,
   },
   lifeSteal: {
-    fraction: 0.5,
+    onAttackHit: 1,
+    onZakoHit: 0.5,
     split: 'divided',
   },
   fever: {
     durationTicks: 600,
-    bossChainSize: 5,
   },
   routing: {
     normalMode: 'both',
@@ -224,7 +226,8 @@ export const DEFAULT_BALANCE: BalanceConfig = {
     onTimeout: 'most-hp',
   },
   bomb: {
-    radius: 70,
+    radius: 300,
+    clearsAttacks: false,
     reflectsAttacks: false,
   },
 };

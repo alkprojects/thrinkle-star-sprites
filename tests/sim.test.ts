@@ -115,24 +115,28 @@ describe('chains and attack generation', () => {
   });
 });
 
-describe('reflection ladder', () => {
-  function incomingNormal(s: SimState, atSeat: number, from: number, x = 80, y = 100) {
-    s.players[atSeat]!.incoming.push({
-      id: s.nextId++,
-      tier: 'normal',
-      originalSender: from,
-      lastSender: from,
-      x, y, anchorX: x, age: 0,
-      speed: 0, // hold still so the test shot can hit it
-      reflectCount: 0,
-      hp: cfg.attacks.attackHp,
-    });
-  }
+/** Place a 1-HP incoming attack so a single test shot destroys it. */
+function placeIncoming(
+  s: SimState, atSeat: number, from: number, tier: 'normal' | 'reverse',
+  x = 80, y = 100, reflectCount = tier === 'reverse' ? 1 : 0,
+) {
+  s.players[atSeat]!.incoming.push({
+    id: s.nextId++,
+    tier,
+    originalSender: from,
+    lastSender: from,
+    x, y, anchorX: x, age: 0,
+    speed: 0, // hold still so the test shot can hit it
+    reflectCount,
+    hp: 1,
+  });
+}
 
+describe('reflection ladder', () => {
   it('shooting down a normal attack reflects it as a reverse back to the ORIGINAL SENDER', () => {
     const s = createSim(cfg, 7);
     s.waveTimer = 100000;
-    incomingNormal(s, 1, 0); // player 0 attacked player 1
+    placeIncoming(s, 1, 0, 'normal'); // player 0 attacked player 1
     shootAt(s, 1, 80, 100);
     run(s, cfg, 2);
     const reflected = s.transit.find((t) => t.tier === 'reverse');
@@ -140,31 +144,70 @@ describe('reflection ladder', () => {
     expect(reflected!.target).toBe(0);          // returns to original sender — owner rule
     expect(reflected!.originalSender).toBe(0);
     expect(reflected!.lastSender).toBe(1);
-    expect(reflected!.reflectCount).toBe(1);
+    expect(reflected!.speed).toBeCloseTo(cfg.attacks.baseSpeed * cfg.attacks.reverseSpeedScale);
   });
 
-  it('re-reflection ping-pongs back and gets faster', () => {
+  it('a small fireball takes attackHp shots to bring down', () => {
     const s = createSim(cfg, 7);
     s.waveTimer = 100000;
-    // Player 0 shoots down the reverse that came back from player 1
-    s.players[0]!.incoming.push({
-      id: s.nextId++,
-      tier: 'reverse',
-      originalSender: 0,
-      lastSender: 1,
-      x: 80, y: 100, anchorX: 80, age: 0,
-      speed: 0,
-      reflectCount: 1,
-      hp: cfg.attacks.attackHp,
-    });
+    placeIncoming(s, 1, 0, 'normal');
+    s.players[1]!.incoming[0]!.hp = cfg.attacks.attackHp; // full durability
+    shootAt(s, 1, 80, 100);
+    run(s, cfg, 1);
+    expect(s.players[1]!.incoming.length).toBe(1); // survived the first shot
+    shootAt(s, 1, 80, 100);
+    run(s, cfg, 1);
+    expect(s.players[1]!.incoming.length).toBe(0);
+  });
+
+  it('destroying a reverse individually converts it to an Extra at BOTH opponents (ladder ends)', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    placeIncoming(s, 0, 1, 'reverse'); // a reverse came back to player 0
     shootAt(s, 0, 80, 100);
     run(s, cfg, 2);
-    const t = s.transit.find((a) => a.tier === 'reverse');
-    expect(t).toBeDefined();
-    expect(t!.target).toBe(1); // back to the reflector
-    expect(t!.reflectCount).toBe(2);
-    const speed1 = cfg.attacks.baseSpeed * cfg.attacks.reverseSpeedScale;
-    expect(t!.speed).toBeGreaterThan(speed1);
+    const extras = s.transit.filter((t) => t.tier === 'extra');
+    expect(extras.map((t) => t.target).sort()).toEqual([1, 2]); // extrasToAll — owner rule
+    expect(s.transit.filter((t) => t.tier === 'reverse').length).toBe(0); // no re-reverse ping-pong
+  });
+
+  it('extras are indestructible — shots are absorbed', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    s.players[1]!.incoming.push({
+      id: s.nextId++, tier: 'extra', originalSender: 0, lastSender: 0,
+      x: 80, y: 100, anchorX: 80, age: 0, speed: 0, reflectCount: 0, hp: cfg.attacks.extraHp,
+    });
+    shootAt(s, 1, 80, 100);
+    run(s, cfg, 1);
+    expect(s.players[1]!.incoming.length).toBe(1);       // still there
+    expect(s.players[1]!.shots.length).toBe(0);           // shot absorbed
+    expect(s.transit.length).toBe(0);
+  });
+
+  it('3 reverses caught by explosions in ONE combo summon a BOSS instead of extras', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    // Three reverses parked where one zako explosion will catch them all
+    for (const x of [74, 80, 86]) placeIncoming(s, 0, 1, 'reverse', x, 100);
+    s.players[0]!.zako.push({ id: s.nextId++, x: 80, y: 100, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
+    shootAt(s, 0, 80, 100);
+    run(s, cfg, settleTicks(2));
+    const bosses = s.transit.filter((t) => t.tier === 'boss');
+    expect(bosses.map((t) => t.target).sort()).toEqual([1, 2]); // bossToAll — owner rule
+    expect(s.transit.filter((t) => t.tier === 'extra').length).toBe(0); // boss REPLACES the extras
+  });
+
+  it('fewer than 3 explosion-caught reverses send their individual extras', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    for (const x of [74, 86]) placeIncoming(s, 0, 1, 'reverse', x, 100);
+    s.players[0]!.zako.push({ id: s.nextId++, x: 80, y: 100, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
+    shootAt(s, 0, 80, 100);
+    run(s, cfg, settleTicks(2));
+    expect(s.transit.filter((t) => t.tier === 'boss').length).toBe(0);
+    // 2 caught reverses × 2 opponents = 4 extras
+    expect(s.transit.filter((t) => t.tier === 'extra').length).toBe(4);
   });
 
   it('reflection toward an eliminated seat is dropped (default config)', () => {
@@ -173,7 +216,7 @@ describe('reflection ladder', () => {
     s.players[0]!.hp = 0;
     run(s, cfg, 1); // processes elimination
     expect(s.players[0]!.alive).toBe(false);
-    incomingNormal(s, 1, 0);
+    placeIncoming(s, 1, 0, 'normal');
     shootAt(s, 1, 80, 100);
     run(s, cfg, 2);
     expect(s.transit.length).toBe(0);
@@ -181,30 +224,55 @@ describe('reflection ladder', () => {
 });
 
 describe('life economy', () => {
-  it('zako collision damages you and heals BOTH others (divided split)', () => {
+  it('zako collision costs 1 heart and heals BOTH others a fixed split', () => {
     const s = createSim(cfg, 7);
     s.waveTimer = 100000;
-    for (const p of s.players) p.hp = 40;
+    for (const p of s.players) p.hp = 3;
     const p0 = s.players[0]!;
     p0.zako.push({ id: s.nextId++, x: p0.x, y: p0.y, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
     run(s, cfg, 1);
-    expect(p0.hp).toBe(40 - cfg.damage.zakoCollision);
-    const expectedHeal = (cfg.damage.zakoCollision * cfg.lifeSteal.fraction) / 2;
-    expect(s.players[1]!.hp).toBeCloseTo(40 + expectedHeal);
-    expect(s.players[2]!.hp).toBeCloseTo(40 + expectedHeal);
+    expect(p0.hp).toBe(3 - cfg.damage.zakoCollision);
+    const expectedHeal = cfg.lifeSteal.onZakoHit / 2; // 'divided' between the two others
+    expect(s.players[1]!.hp).toBeCloseTo(3 + expectedHeal);
+    expect(s.players[2]!.hp).toBeCloseTo(3 + expectedHeal);
   });
 
-  it("'each' split heals both others the full fraction", () => {
-    const c: BalanceConfig = { ...cfg, lifeSteal: { fraction: 0.5, split: 'each' } };
+  it("'each' split heals both others the full fixed amount", () => {
+    const c: BalanceConfig = { ...cfg, lifeSteal: { ...cfg.lifeSteal, split: 'each' } };
     const s = createSim(c, 7);
     s.waveTimer = 100000;
-    for (const p of s.players) p.hp = 40;
+    for (const p of s.players) p.hp = 3;
     const p0 = s.players[0]!;
     p0.zako.push({ id: s.nextId++, x: p0.x, y: p0.y, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
     run(s, c, 1);
-    const expectedHeal = cfg.damage.zakoCollision * 0.5;
-    expect(s.players[1]!.hp).toBeCloseTo(40 + expectedHeal);
-    expect(s.players[2]!.hp).toBeCloseTo(40 + expectedHeal);
+    expect(s.players[1]!.hp).toBeCloseTo(3 + cfg.lifeSteal.onZakoHit);
+    expect(s.players[2]!.hp).toBeCloseTo(3 + cfg.lifeSteal.onZakoHit);
+  });
+
+  it('zako collisions can NEVER kill — hp floors at zakoFloorHp', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    p0.hp = 1;
+    p0.zako.push({ id: s.nextId++, x: p0.x, y: p0.y, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
+    run(s, cfg, 1);
+    expect(p0.hp).toBe(cfg.damage.zakoFloorHp);
+    expect(p0.alive).toBe(true);
+  });
+
+  it('an attack hit costs 3 hearts and heals the ATTACKER 1 heart', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    const p1 = s.players[1]!;
+    s.players[0]!.hp = 3;
+    p1.incoming.push({
+      id: s.nextId++, tier: 'normal', originalSender: 0, lastSender: 0,
+      x: p1.x, y: p1.y, anchorX: p1.x, age: 0, speed: 0, reflectCount: 0, hp: 1,
+    });
+    run(s, cfg, 1);
+    expect(p1.hp).toBe(cfg.player.maxHp - cfg.damage.attackHit);
+    expect(s.players[0]!.hp).toBe(3 + cfg.lifeSteal.onAttackHit);
+    expect(p1.lastAttacker).toBe(0);
   });
 
   it('iframes prevent damage', () => {
@@ -246,9 +314,9 @@ describe('elimination and win', () => {
   it('timeout resolves to most HP', () => {
     const c: BalanceConfig = { ...cfg, match: { timerTicks: 10, onTimeout: 'most-hp' } };
     const s = createSim(c, 7);
-    s.players[1]!.hp = 70;
-    s.players[0]!.hp = 50;
-    s.players[2]!.hp = 60;
+    s.players[1]!.hp = 4;
+    s.players[0]!.hp = 2;
+    s.players[2]!.hp = 3;
     run(s, c, 12);
     expect(s.phase).toBe('over');
     expect(s.winner).toBe(1);
@@ -267,52 +335,23 @@ describe('fever', () => {
     expect(s.players[0]!.feverMeter).toBe(0);
   });
 
-  it('big chain during fever sends a boss to both opponents INSTEAD of normals', () => {
-    const s = createSim(cfg, 7);
-    s.waveTimer = 100000;
-    s.players[0]!.feverTicks = cfg.fever.durationTicks;
-    plantCluster(s, 0, cfg.fever.bossChainSize);
-    shootAt(s, 0, 80, 100);
-    run(s, cfg, settleTicks(cfg.fever.bossChainSize));
-    const bosses = s.transit.filter((t) => t.tier === 'boss');
-    expect(bosses.map((b) => b.target).sort()).toEqual([1, 2]);
-    expect(s.transit.filter((t) => t.tier === 'normal').length).toBe(0); // boss replaces the chain's output
-  });
-});
+  it('fever chains send hits-1 fireballs (vs floor((hits-2)/2) normally)', () => {
+    // Same 4-chain, with and without fever: 4 hits → 3 fireballs in fever, 1 outside it
+    const fever = createSim(cfg, 7);
+    fever.waveTimer = 100000;
+    fever.players[0]!.feverTicks = cfg.fever.durationTicks;
+    plantCluster(fever, 0, 4);
+    shootAt(fever, 0, 80, 100);
+    run(fever, cfg, settleTicks(4));
+    const feverToP1 = fever.transit.filter((t) => t.target === 1 && t.tier === 'normal').length;
+    expect(feverToP1).toBe(4 - cfg.chain.feverHitOffset);
 
-describe('reflection escalation', () => {
-  function incomingAt(s: SimState, atSeat: number, lastSender: number, reflectCount: number) {
-    s.players[atSeat]!.incoming.push({
-      id: s.nextId++,
-      tier: 'reverse',
-      originalSender: lastSender,
-      lastSender,
-      x: 80, y: 100, anchorX: 80, age: 0,
-      speed: 0,
-      reflectCount,
-      hp: cfg.attacks.attackHp,
-    });
-  }
-
-  it('reflection number extraAtReflect escalates to an EXTRA aimed at ALL opponents', () => {
-    const s = createSim(cfg, 7);
-    s.waveTimer = 100000;
-    incomingAt(s, 1, 0, cfg.attacks.escalation.extraAtReflect - 1);
-    shootAt(s, 1, 80, 100);
-    run(s, cfg, 2);
-    const extras = s.transit.filter((t) => t.tier === 'extra');
-    expect(extras.map((t) => t.target).sort()).toEqual([0, 2]); // third player dragged in
-    expect(extras[0]!.reflectCount).toBe(cfg.attacks.escalation.extraAtReflect);
-  });
-
-  it('reflection number bossAtReflect escalates to a BOSS aimed at ALL opponents', () => {
-    const s = createSim(cfg, 7);
-    s.waveTimer = 100000;
-    incomingAt(s, 2, 1, cfg.attacks.escalation.bossAtReflect - 1);
-    shootAt(s, 2, 80, 100);
-    run(s, cfg, 2);
-    const bosses = s.transit.filter((t) => t.tier === 'boss');
-    expect(bosses.map((t) => t.target).sort()).toEqual([0, 1]);
+    const normal = createSim(cfg, 7);
+    normal.waveTimer = 100000;
+    plantCluster(normal, 0, 4);
+    shootAt(normal, 0, 80, 100);
+    run(normal, cfg, settleTicks(4));
+    expect(normal.transit.filter((t) => t.target === 1 && t.tier === 'normal').length).toBe(1);
   });
 });
 
@@ -321,6 +360,7 @@ describe('bombs', () => {
     const s = createSim(c, 7);
     s.waveTimer = 100000;
     const p1 = s.players[1]!;
+    p1.zako.push({ id: s.nextId++, x: 20, y: 40, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
     p1.incoming.push({
       id: s.nextId++,
       tier: 'normal',
@@ -329,25 +369,32 @@ describe('bombs', () => {
       x: p1.x + 10, y: p1.y, anchorX: p1.x + 10, age: 0,
       speed: 0,
       reflectCount: 0,
-      hp: cfg.attacks.attackHp,
+      hp: 1,
     });
     return s;
   }
 
-  it('reflectsAttacks=false: bombed attacks vanish without reflecting', () => {
+  it('default (faithful): bomb wipes zako across the field but does NOT clear attacks', () => {
     const s = bombSetup(cfg);
     run(s, cfg, 1, inputs([{}, { bomb: true }, {}]));
-    expect(s.players[1]!.incoming.length).toBe(0);
-    expect(s.transit.length).toBe(0);
+    expect(s.players[1]!.zako.length).toBe(0);          // full-field zako wipe
+    expect(s.players[1]!.incoming.length).toBe(1);      // fireball survives — dodge via i-frames
+    expect(s.players[1]!.iframes).toBeGreaterThan(0);
     expect(s.players[1]!.bombs).toBe(cfg.player.bombs - 1);
   });
 
-  it('reflectsAttacks=true: bombed attacks fly back to their sender', () => {
-    const c: BalanceConfig = { ...cfg, bomb: { ...cfg.bomb, reflectsAttacks: true } };
-    const s = bombSetup(c);
-    run(s, c, 1, inputs([{}, { bomb: true }, {}]));
-    expect(s.players[1]!.incoming.length).toBe(0);
-    const reflected = s.transit.find((t) => t.tier === 'reverse');
+  it('clearsAttacks knob: bombed attacks vanish; +reflectsAttacks they fly back', () => {
+    const c1: BalanceConfig = { ...cfg, bomb: { ...cfg.bomb, clearsAttacks: true } };
+    const s1 = bombSetup(c1);
+    run(s1, c1, 1, inputs([{}, { bomb: true }, {}]));
+    expect(s1.players[1]!.incoming.length).toBe(0);
+    expect(s1.transit.length).toBe(0);
+
+    const c2: BalanceConfig = { ...cfg, bomb: { ...cfg.bomb, clearsAttacks: true, reflectsAttacks: true } };
+    const s2 = bombSetup(c2);
+    run(s2, c2, 1, inputs([{}, { bomb: true }, {}]));
+    expect(s2.players[1]!.incoming.length).toBe(0);
+    const reflected = s2.transit.find((t) => t.tier === 'reverse');
     expect(reflected).toBeDefined();
     expect(reflected!.target).toBe(0);
   });
@@ -394,6 +441,7 @@ describe('boss lifecycle', () => {
     const rain = s.players[1]!.incoming.find((a) => a.tier === 'normal');
     expect(rain).toBeDefined();
     rain!.speed = 0; // pin it for the test shot
+    rain!.hp = 1;    // one shot downs it in this test
     shootAt(s, 1, rain!.x, rain!.y);
     run(s, cfg, 2);
     expect(s.transit.some((t) => t.tier === 'reverse' && t.target === 0)).toBe(true);
@@ -455,8 +503,8 @@ describe('routing modes', () => {
     const c: BalanceConfig = { ...cfg, routing: { ...cfg.routing, normalMode: 'leader' } };
     const s = createSim(c, 7);
     s.waveTimer = 100000;
-    s.players[1]!.hp = 30;
-    s.players[2]!.hp = 70;
+    s.players[1]!.hp = 2;
+    s.players[2]!.hp = 4;
     expect(chainAndCollect(c, s)).toEqual(new Set([2]));
   });
 
@@ -489,7 +537,7 @@ describe('pressure valves', () => {
       x: 80, y: 100, anchorX: 80, age: 0,
       speed: 0,
       reflectCount: 0,
-      hp: cfg.attacks.attackHp,
+      hp: 1,
     });
     shootAt(s, 1, 80, 100);
     run(s, c, 2);
@@ -519,7 +567,7 @@ describe('timeout variants', () => {
   it('most-hp exact tie is a draw', () => {
     const c: BalanceConfig = { ...cfg, match: { timerTicks: 10, onTimeout: 'most-hp' } };
     const s = createSim(c, 7);
-    for (const p of s.players) p.hp = 50;
+    for (const p of s.players) p.hp = 4;
     run(s, c, 12);
     expect(s.phase).toBe('over');
     expect(s.winner).toBe(-1);
@@ -532,15 +580,25 @@ describe('timeout variants', () => {
     run(s, c, 12);
     expect(s.phase).toBe('playing'); // sudden death continues the match…
     for (const p of s.players) expect(p.hp).toBe(1); // …at 1 HP
-    // Life-steal heal gets clamped right back down
+    // Zako collisions still can't kill — they floor at 0.5 — and the heals they
+    // grant the others get clamped right back down to 1
     const p0 = s.players[0]!;
     p0.iframes = 0;
     p0.zako.push({ id: s.nextId++, x: p0.x, y: p0.y, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
     run(s, c, 2);
-    expect(p0.alive).toBe(false);        // the collision killed player 0…
-    expect(s.phase).toBe('playing');     // …and the survivors continue 1v1
-    expect(s.players[1]!.hp).toBe(1);    // life-steal heals were clamped away
+    expect(p0.alive).toBe(true);
+    expect(p0.hp).toBe(cfg.damage.zakoFloorHp);
+    expect(s.players[1]!.hp).toBe(1);    // heal clamped away
     expect(s.players[2]!.hp).toBe(1);
+    // An ATTACK hit finishes a sudden-death player
+    p0.iframes = 0;
+    p0.incoming.push({
+      id: s.nextId++, tier: 'normal', originalSender: 1, lastSender: 1,
+      x: p0.x, y: p0.y, anchorX: p0.x, age: 0, speed: 0, reflectCount: 0, hp: 1,
+    });
+    run(s, c, 1);
+    expect(p0.alive).toBe(false);
+    expect(s.phase).toBe('playing');     // two survivors continue 1v1
     s.players[1]!.hp = 0;                // second kill ends the match
     run(s, c, 1);
     expect(s.phase).toBe('over');

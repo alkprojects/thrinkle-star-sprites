@@ -1,0 +1,217 @@
+
+Load Ran
+ | 
+ | 
+ Attack Rating | 
+★★★☆☆
+ | 
+ Defense Rating | 
+★★☆☆☆
+ | 
+Contents 
+ 1 Story 
+ 2 Gameplay Overview 
+ 3 Move List 
+ 3.1 Basic Attacks 
+ 4 Special Attacks 
+ 4.1 Boss 
+ 5 Strategy 
+ Story 
+Load Ran is an girl that uses her broom to fly and fight. She has a counterpart named Dark Ran and she plays the same as her and is only a palette change.
+ Gameplay Overview 
+TBD
+Strengths | 
+Weaknesses
+ | 
+ Surprise Factor : Her EX attacks can move extremely quickly, and can fly to unexpected places. This helps makes up for the fact that they're otherwise a quite predictable attack, and gives some chance to win the game abruptly without the other player using their bombs. 
+ | 
+ Worst Bomb : Ran has an extra animation when using her bomb, so she has less invul time to reposition after a bomb. 
+ Bad Charge Attack : The charge attack does fairly low damage and has terrible horizontal coverage. In conjunction with her low movement speed, Ran tends to have a hard time controlling her screen. It's also unreliable at killing fireballs that are right in front of you, making it a bad panic button. Most low speed characters have impressive charge attacks to support them, but Ran lacks this and as a result has overall very bad defense. 
+ Bad Boss : The boss's body slam is a respectable attack, but the other three attacks are slow, don't cover much space, and are easily ignored. 
+ Inconsistent EX : Outsize of its potential for surprise attacks, the EX doesn't have much strength. They're very small and generally predictable, and only exist on screen for a very brief time. Because they're so reliant on speed and catching the other player off guard, they need to be part of an extremely long combo and be fired outside of slowdown to be particularly effective. If this is done, however, they make pretty good attacks. 
+ | 
+ Move List 
+ Basic Attacks 
+ Basic shot 
+ A 
+ | 
+Damage
+ | 
+Charge Time
+ | 
+1
+ | 
+-
+ | 
+Load Ran's basic shot. 2 Lines shoot from in front of her. about as wide as her character sprite
+ | 
+ | 
+ Weakened Basic shot 
+ A 
+ | 
+Damage
+ | 
+Charge Time
+ | 
+1
+ | 
+-
+ | 
+Load Ran's basic shot, but 1 line instead of the 2
+ | 
+ | 
+ Charge Attack 
+ Hold A 
+ | 
+Damage
+ | 
+Charge Time
+ | 
+2/8/10
+ | 
+65 frames
+ | 
+A giant blue light comet that shoots in one direction. A strong, fairly wide charge attack that is good for killing bosses and reflecting fireballs. Its only weaknesses are that it takes a little long to charge, and that you have to connect on its center to do a significant amount of damage.
+ | 
+ | 
+ Bomb Attack 
+ B 
+ | 
+Damage
+ | 
+Charge Time
+ | 
+12
+ | 
+-
+ | 
+Load Rans and throws in a star that damages everything on screen.
+ | 
+ | 
+ Special Attacks 
+ EX Attack 
+ | 
+Damage
+ | 
+Startup
+ | 
+Active
+ | 
+FAF
+ | 
+Adv on Hit
+ | 
+Adv on Block
+ | 
+3
+ | 
+20
+ | 
+--
+ | 
+-
+ | 
+-
+ | 
+-
+ | 
+A rabicat comes and fires at the opponent in an arc path. Explodes when it stops. This can be almost impossible to dodge at high speeds/combos.
+ | 
+ | 
+ Boss 
+Super Rabicat
+ | 
+ | 
+ Health | 
+22 HP
+ | 
+ Body Ram 
+ A->w->E 
+ Twinbee stings back 
+ Twinbee stings back 
+ | 
+Damage
+ | 
+Charge Time
+ | 
+3 hearts
+ | 
+-
+ | 
+The boss attacks by dropping it's butt directly from the top of the screen. Can die isntantly if you're able lower of its HP before it receovers from the attack.
+ | 
+ | 
+ Star Spread 
+ W->A->W->E 
+ | 
+Damage
+ | 
+Charge Time
+ | 
+3
+ | 
+-
+ | 
+The Rabicat moves in nearly a full circle, and while it is halfway through the circle, it lifts its butt and fires a five-way star spread with a stray star immediately following. The spread's center is always focused on your current position.
+ | 
+ | 
+ Carrot Barrage 
+ W->A->E 
+ | 
+Damage
+ | 
+Charge Time
+ | 
+3
+ | 
+-
+ | 
+Rabicat moves to one wall, then shoots carrots down vertically while strafing to the opposite side. You can slip through the carrots if you're careful, but it's a high risk, low reward move. (do it)
+ | 
+ | 
+ Dual Bunny Bombs 
+ W->A->E 
+ | 
+Damage
+ | 
+Charge Time
+ | 
+3
+ | 
+-
+ | 
+The boss circles around the stage, then drops two bunnies toward your position.
+ | 
+ | 
+ Strategy 
+How Should someone play as Schmitt? [NEEDS EDITS]
+ Twinkle Star Sprites 
+ | 
+ General 
+ | 
+ System Mechanics 
+ Controls 
+ Glossary 
+ FAQ 
+ Formations 
+ | 
+ | 
+ Characters 
+ | 
+ Arthur Schmitt 
+ Griffon 
+ Kim 
+ Load Ran/Dark Ran 
+ Macky & Pentell 
+ Nanja Monja 
+ Really Till 
+ Sprites 
+ Tinker & Linker 
+ Yan Yang 
+ | 
+ | 
+ Boss Characters 
+ | 
+ Mevious 
+ Memory 
+ | 

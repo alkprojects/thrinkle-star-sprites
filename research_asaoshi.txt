@@ -1,0 +1,1080 @@
+                            Twinklestar Sprites FAQ
+
+Copyright July 22, 2005, Akemi Saoshi             Email: hasuko AT gmail DOT com
+
+If you would like to host this FAQ, please send me an e-mail.
+Do not reproduce or repost anywhere without permission. Do not claim this work
+as your own.
+
+List of sites this FAQ can be posted on:
+gamefaqs.com
+
+
+ =================
+ TABLE OF CONTENTS
+ =================
+
+ 1.  INTRODUCTION
+	- Updates.
+	- Basic Controls.
+	- Game Information.
+ 2.  GAMEPLAY.
+	- Weapons, Attacks, and Zako.
+ 3.  CHARACTERS.
+	- Load Ran.
+	- Do Kesubei.
+	- Nanja Monja.
+	- Tinker and Linker.
+	- Realy Till.
+	- Griffon.
+	- Yan Yanyan.
+	- Arthur Schmitt.
+	- Macky and Pentell.
+	- Dark Ran.
+	- Sprites.
+	- Mevious.
+	- Memory.
+ 4.  STRATEGIES.
+	- Computer.
+	- Humans.
+ 5.  STAGES.
+	- Forrett.
+	- Achelis.
+	- Cloudia.
+	- Freezia.
+	- Mevious Castle.
+	- Wonder World.
+ 6. TRANSLATIONS.
+	- Speech.
+	- Post battle quotes.
+ 7. MISCELLANEOUS.
+	- FAQ.
+	- Thanks.
+
+
+
+
+1. INTRODUCTION
+====================
+
+NOTE: All of my information is coming from the Japanese version of
+Twinklestar Sprites, because my MVS board is Japanese region so the
+cartridge displays in Japanese.
+
+
+ ------------------------------------------------------------------------
+ UPDATES
+ ------------------------------------------------------------------------
+
+December 04, 2007 - Version 0.2
+- Fixed some things in character section.
+- Added Tinker and Linker information.
+- Added more speech lines.
+- Added some more boss attack information.
+- Fixed Dark Ran's Extra Attack information.
+- Fixed musical score (had Griffon's and Macky & Pentell's backwards).
+- Various typo fixes and format fixes.
+
+July 22, 2005 - Version 0.1.
+- First release of this FAQ.
+
+
+ ------------------------------------------------------------------------
+ BASIC CONTROLS
+ ------------------------------------------------------------------------
+
+Joystick (8-way) - This moves your character around.
+
+A Button - Fires your character's special shot.
+
+Hold A button - Character's chargeup shot (game term: Attack Stopper).
+
+B Button - Bomb Attack.
+
+ ------------------------------------------------------------------------
+ GAME INFORMATION
+ ------------------------------------------------------------------------
+
+Twinklestar Sprites is classified by SNK as "competitive shooting". It is
+the only game of its kind - and it's certainly a lot of fun! It was released
+by ADK (a smaller part of SNK) in 1996. It was also released on Dreamcast and
+Sega Saturn. There is a new Twinklestar Sprites port coming to PS2 in addition
+to a brand new game with a new cast of characters.
+
+You choose from thirteen different characters and play on a vertically
+scrolling screen, much like a normal shooter. You and your opponent can send
+attacks at each other over the middle of the screen. The goal? Empty your
+opponent's health metre to win!
+
+
+
+
+2. GAMEPLAY
+====================
+
+
+ ------------------------------------------------------------------------
+ WEAPONS, ATTACKS, AND ZAKO
+ ------------------------------------------------------------------------
+
+1.	A Button Shots.
+
+Tap the A button to produce a shot that weakens zako (literally means "small
+fry", these are the creatures in the stages that fly around) by one colour
+(covered below). These can also reverse kougeki zako ("attack small fry",
+the fiery looking things) and destroy the green flashing kougeki zako) to
+make tokushuu kougeki ("Special Attack", the game calls it "Extra Attack").
+
+2.	Charged A Button Shots (Attack Stopper).
+
+Looking at the bottom left corner of the 1P side or bottom right corner of
+the 2P side, you can see a little gauge there - this shows the maximum
+power of your attack stopper shot. The longer you hold the A button, the
+more the gauge will charge. A level 1 shot is simply the normal attack
+stopper, a level 2 shot sends several (ranging from two to four, depending
+on character) Extra Attacks to your opponent's screen. Charging to MAX
+releases a Boss Attack. Every time you destroy zako, your attack stopper
+gauge will increase. Destroy all zako onscreen in a full combo to receive
+a "Perfect!" and receive extra points and a little bonus on your gauge.
+
+3.	Bombs.
+
+Every character starts with two bombs, but more can be collected from the
+rotating coins dropped by the puffy bunny things. It will say "GET BOMS' [sic]"
+when you have picked up a bomb coin, and raise your bomb metre by one. When a
+coin is going to be deposited, you will see a little blue bubble with two "!!"
+pop out of the top of the screen.
+
+4.	Zako.
+
+The zako that float through your screen come in patterns - there's only
+about fifteen to twenty pattern sets, growing more complex as you progress
+through the stages. Usually, the zako come in different colours:
+
+Purple (usually large), Blue (slightly smaller), Green (medium-sized),
+Yellow (small), and Red (usually tiny).
+
+This also describes their "hitpoints" and how many shots it will take to blow
+them up. If you are struck by a zako, it will remove one heart (you cannot
+die from zako) and send half a heart to your opponent. You'll be slowed and
+your shots will do less damage. You can only get struck twice by zako
+in one go - at least, until you recover.
+
+5.	Zako Chains.
+
+If you shoot a zako, it will lose one "hitpoint" and go to the colour below it.
+The only exception is shabon zako (lit: bubble zako) and red zako. When you
+shoot a bubble zako, it will pop the bubble, and when you shoot a red zako,
+it will explode. If you blow up a red zako next to a bubble zako, the bubble
+will pop, but not the zako inside. The goal is to combo as many zako as possible
+in one go - this can usually be accomplished by popping all bubble zako first
+and then shooting the large purple zako until it explodes. Occasionally, there
+are strange setups that take a little while to learn, but if you play enough the
+sequences are easy to memorise. If you're having trouble learning the order of
+some of the more difficult patterns, the easiest way to learn them is watch the
+computer player blow them up. That is how I learned some of the tougher chains.
+
+The bigger combo you make, the more kougeki zako will fly at your opponent. They
+usually fly up to the top of the screen and fly downwards, but occasionally they
+will arc over and catch somebody hiding in the corner.
+
+Another note on bubble zako: certain sequences of zako will have all of the zako
+inside of bubbles. These are usually brought into the screen with a "!!" bubble
+and a coin with a star on it. Collecting the coin when the star side is up will
+pop all the bubbles onscreen.
+
+6.	The ORB!
+
+The orb is a very important item - it will also come with a "!!" bubble and
+will always come out in a zako chain. It looks like a little blue orb with
+a crescent moon that spins. You cannot blow this up with any sort of A button
+shot - you must either combo it with its surrounding zako or use a bomb.
+
+When you collect the orb, a voice will announce, "FEVER!" and you will enter
+"fever mode". Any combos you do with zako will send DOUBLE attack characters
+that fly faster and glow yellow like your character. This is the best
+time to KO somebody. Rack up big combos in fever mode!
+
+Another note about fever mode: bubble zako will never appear while you
+have fever mode active. This allows you to chain easier!
+
+7.	Reversal Attacks.
+
+As I already covered above, shooting plain kougeki zako will create a 
+"reversal" (the announcer says this) and send green flashing zako over to
+the other screen. You want to avoid doing this as much as possible
+because of...
+
+8.	Special Attacks!
+
+You cannot destroy these, not with shots or bombs. Special attacks are created
+from these green flashing zako when they are shot and returned! You can also
+create these by shooting level 2 attack stoppers. However, the green flashing
+zako behave a bit differently, because if you manage to blow up normal zako and
+reverse three flashing green zako in the combo, it creates...
+
+9.	Boss Attacks!
+
+THIS is the main reason you want to avoid sending reversal green flashing zako
+to your opponent - somebody who's smart will wait for a set of zako to float
+down and blow them up and counter your green flashing zako to create a boss.
+It takes three green flashing zako countered with plain zako to create a boss.
+A REVERSAL boss happens when you counter three green flashing zako or more when
+there is a boss on your screen, or you shoot a MAX attack stopper when there is
+a boss on your screen. This sends the boss on your screen away and creates a 
+boss on your opponent's screen. The only time this will not happen is if you
+and your opponent create a boss simultaneously (or within a few seconds before
+yours or theirs has appeared) - the two bosses will cancel out and neither
+of you will receive/send a boss.
+
+Every character's boss attack is different and usually lasts for ten to fifteen
+seconds and has two special attacks and can create your character's extra attack
+characters. The more times you summon a boss in one round, the stronger it
+gets. Normal bosses are killed with several shots and also take damage from
+bombs. Certain characters have better attack stoppers for killing bosses, such
+as Kesubei.
+
+One nice thing to note about boss attacks, if you have one in your screen
+and it begins to do a special attack (spawning extra attacks, or one of
+its two special attacks) you can throw a bomb to negate the attack and
+clear it off your screen. This helps especially versus Memory when her
+cake boss spawns six extra attacks - as it's spawning them you can
+bomb and they will never appear!
+
+10.	DEATH.
+
+If your match goes on for too long, a tiny version of the reaper himself will
+fly out onto the field - he can be killed by shooting him or blowing him up
+in a combo or with a bomb, but the longer the match goes on, the stronger
+he gets. Touching him once will kill you instantly, no matter how much
+health you have. This is a "Death KO".
+
+
+
+
+3. CHARACTERS
+====================
+
+NOTE: I list the characters' statistics in the following order:
+
+Name: 		 Well really, come on.
+Title:		 Character's title. (They appear above their name in Japanese)
+B Colours:	 B button colours.
+Speed: 		 Number of dots in the character's "speed" metre.
+Power: 		 Number of dots in the character's "power" metre.
+Bomb:  		 Bomb attack description.
+Attack Stopper:  Attack stopper description and features.
+Extra Attack: 	 Extra attack description and features.
+Boss: 		 Boss attack description and attacks.
+Character Story: Character's story.
+Rating:		 My rating of the character.
+Difficulty:	 How hard it is to use this character.
+
+
+ ------------------------------------------------------------------------
+ LOAD RAN
+ ------------------------------------------------------------------------
+
+Name: 		 Load Ran.
+Title:		 Magical Sprite.
+B Colours:	 Her red costume is replaced with blue.
+Speed: 		 Two.
+Power: 		 Two.
+Bomb:  		 Ran flies upside down and a large star fills the screen.
+Attack Stopper:  A blue energy burst.
+Extra Attack: 	 "Rabibomu!" Ran shoots a rabicat bomb that explodes. If
+		 a character touches the remnant of the bomb, you will still
+		 take damage.
+Boss: 		 A large rabicat appears in the opponent's screen - its attacks
+		 consist of dropping of carrots in a row across the screen,
+		 dropping rabibombs, and shooting stars out of its chest.
+Character Story: Ran is the daughter of the magical queen, Memory. She's got
+		 the ability to transform into Sprites using the power of
+		 the Twinklestar.
+Rating:		 Ran is a solid 5/10, average all around. She's good to
+		 use if you are just starting out.
+Difficulty:	 5/10. Average.
+
+ ------------------------------------------------------------------------
+ DO KESUBEI
+ ------------------------------------------------------------------------
+
+Name: 		 Do Kesubei.
+Title:		 Doraneko Sennin (Wizard Cat).
+B Colours:	 He is black and grey instead of orange and grey, his scarf is
+		 purple instead of green.
+Speed: 		 Three.
+Power: 		 One.
+Bomb:  		 A large wave of water flows through, complete with mermaid!
+		 It washes Kesubei away.
+Attack Stopper:  Kesubei's robot alternates punching fists. EXCELLENT for
+		 destroying bosses!
+Extra Attack: 	 Kesubei shoots several robotic fists that explode into cat
+		 heads. If your character touches the remnant of the bomb,
+		 you will still take damage.
+Boss: 		 Kesubei's robot appears on the opponent's screen. Its attacks
+		 are: laser eye shot that scans across the screen (this is VERY
+		 hard to dodge), and a set of bouncing triangles.
+Character Story: Kesubei is an ancient magician cat. He is out to capture the
+		 Twinklestar to wish to be 3,000 years younger.
+Rating:		 His attack stopper excels at destroying bosses,
+		 just simply get up close and let go. 7/10.
+Difficulty:	 6/10. Slightly difficult.
+
+ ------------------------------------------------------------------------
+ NANJA MONJA
+ ------------------------------------------------------------------------
+
+Name: 		 Nanja Monja.
+Title:		 Nazo no Ikimono (Mysterious Living Things).
+B Colours:	 They are blue, green, yellow, and purple.
+Speed: 		 Two.
+Power: 		 Three.
+Bomb:  		 Several large nanja monja fly through.
+Attack Stopper:  A bolt of lightning - this can be shot in one of three ways,
+		 depending on the direction the joystick is held.
+		 Diagram: \ | /
+Extra Attack: 	 A large, bouncing nanja monja bounces down the screen.
+		 This is very hard to dodge if there's more than one.
+Boss: 		 A very large, very ANGRY nanja monja - it's wearing a crown so
+		 perhaps it is the king of nanja monja? It shoots spikes from
+		 its body, creates bouncing nanja monja like the extra attack,
+		 and shoots lightning bolts straight down.
+Character Story: Nobody knows what these things are, or why they venture out.
+		 Apparently they hate little girls with red ribbons, though.
+Rating:		 These guys are a joke. You can beat Memory without being very
+		 good at all by using them. Their attacks are very strong and
+		 they are extremely overpowered. 8/10.
+Difficulty:	 2/10. Very easy.
+
+ ------------------------------------------------------------------------
+ TINKER AND LINKER
+ ------------------------------------------------------------------------
+
+Name: 		 Tinker and Linker.
+Title:		 Yousei KONBI (Faerie Combination).
+B Colours:	 Their hair is pink and their outfits are blue. Their
+		 faeries and bosses are golden. I love their B Colours best.
+Speed: 		 Two.
+Power: 		 Two.
+Bomb:  		 Linker flies in and shoots a blue beam with Tinker.
+Attack Stopper:  Their attack stopper is the best in the game - it is the
+		 most versatile and once you've learned how to use it can
+		 save you. They have an EIGHT WAY shot - it will fire in
+		 the direction you hold the joystick upon shooting. It's a
+		 large crystal bit.
+Extra Attack: 	 A faerie with a glowing aura flies into the screen,
+		 she'll bounce off the wall (the aura then goes away) and then
+		 fly off the screen.
+Boss: 		 A large faerie appears, wielding a sword. She looks so awesome!
+		 She can create a rain of crystals and a small target that flies
+		 around, extra attack faeries, or a rain of sparkling diamonds.
+Character Story: Tinker and Linker are Load Ran's escort. They think it is
+		 fun to do chores like cleaning and homework. Ran disagrees.
+		 Their wish is to bring the princess back to the castle to
+		 finish her work!
+Rating:		 Tinker and Linker are my personal choice, and I never use
+		 anyone else but them anymore, reason being their excellent
+		 extra attacks (very annoying and tough to dodge) and attack
+		 stopper. It's hard to learn their attack stopper but it's
+		 worth learning how to use. 10/10.
+Difficulty:	 7/10. Difficult.
+
+* SOMETHING TO NOTE ABOUT TINKER AND LINKER *
+When you have a boss out on the opponent's screen, you can usually charge
+up a "MAX" and shoot double your Extra Attack characters. However, with
+Tinker and Linker, they only shoot four instead of six. Their level 2
+attack shoots three faeries, so stick with shooting two level 2 attack
+stoppers instead of shooting a "MAX" when you have a boss out.
+
+ ------------------------------------------------------------------------
+ REALY TILL
+ ------------------------------------------------------------------------
+
+Name: 		 Realy Till.
+Title:		 Dragon Star.
+B Colours:	 Her hair is pink and blue, her skirt is pink.
+Speed: 		 Three.
+Power: 		 Two.
+Bomb:  		 Several large fireballs fill the screen. It's hard to see,
+		 but there's a dragon head in each fireball's tip!
+Attack Stopper:  This is pretty useless - it's a flame-thrower type shot, very
+		 short range and the damage is abysmal. If it did the damage
+		 Kesubei's did, it would be worth the time, but it doesn't.
+		 Its only redeeming factor is you can move around while you shoot
+		 it. I never use it except to launch level 2 and MAX attacks.
+Extra Attack: 	 "Ike! Drapy!" Drapy flies down and turns at a 90 degree angle
+		 left or right.
+Boss: 		 Drapy appears and breathes fire, creates extra attack
+		 dragons, or shoots out small orange bullets.
+Character Story: Realy wishes to become a great singer - her kingdom of Dragons
+		 seems to be at war with the kingdom of Sprites and Faeries
+		 (Ran's kingdom). Her dragon's name is Drapy.
+Rating:		 Realy suffers where other characters shine - because of her high
+		 statistics, her extra attack and charge attack are lacking, unlike
+		 Nanja Monja. Therefore, she is useless, except by cosmetic choice if
+		 you like her look. 3/10.
+Difficulty:	 3/10. Easy.
+
+ ------------------------------------------------------------------------
+ GRIFFON
+ ------------------------------------------------------------------------
+
+Name: 		 Griffon, Ebin, Burn. 
+Title:		 Mevious Bodyguards.
+B Colours:	 Griffon's hair is yellow, Ebin's hair is grey, and Burn's
+		 is red.
+Speed: 		 Two.
+Power: 		 One.
+Bomb:  		 Ebin and Burn fly in and create a maelstrom.
+Attack Stopper:  Another useless attack stopper. Two sawblades, their damage
+		 is pathetic and they are difficult to hit with. If you feel like it,
+		 you can circle Griffon around the blades and they will stay out.
+		 Usually though, you'll get hit while maneuvering.
+Extra Attack: 	 A hippogriff flies straight down. Easy to dodge.
+Boss: 		 A large hippogriff appears, and shoots either round electrical rings,
+		 creates hippogriff extra attacks, or creates four swords that shoot
+		 in one direction.
+Character Story: Apparently, these three want one girlfriend. That's right, one
+		 girlfriend to share. Somehow they created Dark Ran.. Why don't they
+		 date her?
+Rating:		 How the hell can somebody with crappier power be somebody's
+		 bodyguard? Overall, these guys are pretty pathetic. Normally,
+		 somebody with low stats has something to make up for it. These
+		 guys have nothing going for them. 2/10.
+Difficulty:	 8/10. Very difficult.
+
+ ------------------------------------------------------------------------
+ YAN YANYAN
+ ------------------------------------------------------------------------
+
+Name: 		 Yan Yanyan.
+Title:		 Beast Master.
+B Colours:	 Her hair is yellow.
+Speed: 		 One.
+Power: 		 One.
+Bomb:  		 Yanyan yells "Aaa!" and several large pigbirds fly in.
+Attack Stopper:  Yanyan's attack stopper is the fastest charge in the game,
+		 possibly to compensate for her horrible stats. It's a large
+		 green wave that flies out and covers most of the screen.
+Extra Attack: 	 A pigbird appears and flies down the screen.
+Boss: 		 A large pigbird appears and sneezes two large booger waves out of
+		 its nose (eww), creates flying pigbirds, or sends a wave of green
+		 energy out around it.
+Character Story: Yanyan needs nothing!
+Rating:		 Yanyan's extra attacks are annoying, and her charge shot
+		 is pretty slick. Overall though, she's not very good. 4/10.
+Difficulty:	 10/10. Insane.
+
+
+ ------------------------------------------------------------------------
+ ARTHUR SCHMITT
+ ------------------------------------------------------------------------
+
+Name: 		 Arthur Schmitt.
+Title:		 Rocket Man.
+B Colours:	 His hair is blue, and his rockets are blue.
+Speed: 		 Three.
+Power: 		 One.
+Bomb:  		 A beam sears the top of the screen and explosions occur.
+Attack Stopper:  Arthur shoots out a column of blue energy.
+Extra Attack: 	 "PURASUMA SHUUTO!" A rocket appears at the bottom of the screen
+		 and flies up. You can be damaged by the fire coming out of it,
+		 so be careful!
+Boss: 		 A large rocket appears and shoots either a large, black bullet,
+		 mini-ascending rockets, or shoots two large lasers.
+Character Story: Arthur is in love with Ran, and wants to find the Twinklestar
+		 to become the most handsome man in the world.
+Rating:		 Arthur is FAST. I always end up running into zako with him.
+		 His extra attacks are annoying if they don't overlap. 6/10.
+Difficulty:	 7/10. Difficult.
+
+ ------------------------------------------------------------------------
+ MACKY AND PENTELL
+ ------------------------------------------------------------------------
+
+Name: 		 Macky and Pentell.
+Title:		 Treasure Hunters.
+B Colours:	 Macky's hair is blue and Pentell's is pink.
+Speed: 		 One.
+Power: 		 Three.
+Bomb:  		 A large like the one Pentell holds flies in.
+Attack Stopper:  This is an interesting attack stopper. Macky fires a small
+		 character (like the one Pentell holds) and if you press the
+		 A button again, it will detonate into Pentell. (WTF?)
+Extra Attack: 	 The little thing in Pentell's arms flies out and sweeps
+		 across the screen. It locks on to your position, so move quickly.
+Boss: 		 Another one of those weird things, but giant this time. It can
+		 shoot its arm off, create extra attack characters, or throw large
+		 pencils. 
+Character Story: Macky wants to find the most expensive items in the world.
+		 Pentell just wants to hug her teddy bear.
+Rating:		 These two are the inverse of Arthur. Slow and hard-hitting,
+		 Macky and Pentell are the powerhouse of the game. 7/10.
+Difficulty:	 7/10. Difficult.
+
+ ------------------------------------------------------------------------
+ DARK RAN
+ ------------------------------------------------------------------------
+
+NOTE: To play as Dark Ran, select Griffon and move the joystick down four
+times. Press A or B.
+
+Name: 		 Dark Ran.
+Title:		 Anguro SUPURAITO (Dark Sprite).
+B Colours:	 Black with brown rabicat. This is my favourite colour in
+		 the whole game.
+Speed: 		 Two.
+Power: 		 Two.
+Bomb:  		 Dark Ran flies downward, and a large evil star fills the screen.
+Attack Stopper:  A black ball of energy.
+Extra Attack: 	 "Darabi bomu!" Just like Load Ran's, but with DarkRabicat.
+Boss: 		 A large rabicat. It either shoots carrots, rabibombs, or stars.
+Character Story: She is the evil version of Ran, created by Griffon.
+		 She wants to change the game name to Twinklestar Dark Ran.
+Rating:		 Plays exactly like Load Ran. 5/10.
+Difficulty:	 5/10. Average.
+
+ ------------------------------------------------------------------------
+ SPRITES
+ ------------------------------------------------------------------------
+
+NOTE: To play as Sprites, select Load Ran and move the joystick up four
+times. Press A or B.
+
+Name: 		 Sprites.
+Title:		 Hikari no Joou (trans: Queen of Light).
+B Colours:	 Blue outfit.
+Speed: 		 Two.
+Power: 		 Three.
+Bomb:  		 Sprites appears and holds out her hands with a burst of energy.
+Attack Stopper:  Just like Load Ran's but with circling energy around it.
+Extra Attack: 	 "Rabicat Attaku!" A rabicat flies in and twirls in circles, It
+		 locks on like Macky and Pentell's. It doesn't explode like Load
+		 Ran's do.
+Boss: 		 A large rabicat in a dress. It drops fireballs, creates
+		 tracking extra attacks, or a large electrical attack (deadly).
+Character Story: This is Load Ran's adult form, she can change into it using
+		 the Twinklestar. She wants to be able to stay this way
+		 forever.
+Rating:		 Plays a lot like Load Ran, but is stronger. 6/10.
+Difficulty:	 5/10. Average.
+
+ ------------------------------------------------------------------------
+ MEVIOUS
+ ------------------------------------------------------------------------
+
+NOTE: To play as Mevious, select Griffon and move the joystick up four
+times. Press A or B.
+
+Name: 		 Mevious.
+Title:		 Aku no Mikado (trans: Emperor of Evil).
+B Colours:	 Purple hair.
+Speed: 		 Three.
+Power: 		 Three.
+Bomb:  		 A bat in the middle of a black hole shoots out electricity.
+Attack Stopper:  Three red balls shoot in a \ | / formation from Mevious.
+Extra Attack: 	 "Koumori funka!" Bats fly in and lock onto the opponent.
+Boss: 		 A large bat/cat thing appears, it can extend its tail, create
+		 homing bats, or do a diving attack.
+Character Story: Mevious wants to take over the world. In the story mode,
+		 he has mind-controlled Memory, Load Ran's mother.
+Rating:		 Very fast and very strong. He's kind of hard to get used to,
+		 though. 9/10.
+Difficulty:	 3/10. Easy.
+
+ ------------------------------------------------------------------------
+ MEMORY
+ ------------------------------------------------------------------------
+
+NOTE: To play as Memory, select Load Ran and move the joystick down four
+times. Press A or B.
+
+Name: 		 Memory Joou. (trans: Queen Memory)
+Title:		 Magical Queen.
+B Colours:	 Blue hair.
+Speed: 		 Three.
+Power: 		 Three.
+Bomb:  		 Memory's face appears and she winks.
+Attack Stopper:  Balls with Memory's face in them appear and bounce around.
+		 Memory's attack stopper charges slowly (holding the A button)
+		 and usually it's hard to fire anything above a level 2 because
+		 she takes so long, she usually gets hit and dies. This is
+		 pretty much the only way to kill CPU memory.
+Extra Attack: 	 Any manner of food appears, locks on, and flies at
+		 the opponent. Some of the objects are: odango, sushi,
+		 hot dogs, slices of cake, whole cakes, burgers, double
+		 burgers, round waffles, square waffles, candy, coffee,
+		 and a loaf of bread.
+Boss: 		 A large cake with "ADK" on it - it can fire a row of forks,
+		 create six extra attack foods, or shoot orange bullets.
+Character Story: Memory is mind-controlled by Mevious. She is the queen of
+		 the Sprites and Faeries; however she loves food and is always
+		 eating. Never seems to gain any weight though.
+Rating:		 Very fast and very strong, like Mevious. Her charged attack
+		 hurts her though as you not only charge slowly but reverse kougeki
+		 zako easily allowing for your opponent to punish you with bosses,
+		 but her extra and boss attacks are supreme. If you can get two
+		 charged attack stoppers off, it usually kills a boss though. 9/10.
+Difficulty:	 3/10. Easy.
+
+
+
+4. STRATEGIES
+====================
+
+
+ ------------------------------------------------------------------------
+ COMPUTER
+ ------------------------------------------------------------------------
+
+Overall, the first few stages are very easy. It starts to get hard around
+stage four, but Mevious is where the difficulty scale goes insane.
+
+Before you start playing the computer, know this: no matter who you
+pick, the last two bosses will always be stronger and faster than you,
+even if you play one of the bosses. They also have splitsecond accuracy.
+This means it's best to kill them while they're busy doing something else,
+i.e. charging an attack stopper, countering a flood of kougeki zako, or
+dealing with a boss.
+
+Stage by stage: 
+
+Yanyan and Till should give you no problem - just breeze past them.
+
+Kesubei and Nanja Monja are also easy to pass, just watch out
+for Nanja's extra attacks and Kesubei's boss' eye laser.
+Kesubei shouldn't have time to create a boss, though.
+
+Arthur and Tinker are relatively easy, just make sure they don't
+get a lucky boss attack off. Watch out for Tinker's extra attacks,
+as they bounce around and if you get two going in different directions
+they can pincer you.
+
+Griffon likes to flood you with extra attacks, so be ready for
+a flood of hippogriffs. Macky and Pentell will also send
+over several little bears that lock on - if you get more than four
+you may have to use a bomb.
+
+Dark Ran is a joke, just stomp her into the ground.
+
+The best way to defeat Mevious and Memory is to enter fever mode
+and launch as many attacks as possible WHILE THEY ARE CHARGING.
+Mevious has a faster charge than Memory, but every time I have
+defeated Memory she has been charging her attack stopper.
+
+Mevious loves to send extra attacks, so watch your reversals.
+It's best to punish him as you would with Memory by
+countering his reversals with bosses.
+
+Another way to defeat Memory quickly is punish all of her reversals
+with bosses. Eventually your boss will become so strong she can't
+kill it quickly and will eventually die while charging.
+
+ ------------------------------------------------------------------------
+ HUMANS
+ ------------------------------------------------------------------------
+
+Never, ever, EVER send flashing green reverse attack zako if you can.
+Period. A good player will counter it with their normal zako and boss
+attack you until you are dead.
+
+A good trick with fever mode is to send a large flood just as your
+opponent is creating a chain with zako - if you're lucky they will
+end up reversing most of your kougeki zako and you will get a free boss
+attack! This works especially well with fever mode.
+
+Another good strategy is for characters like Memory and Tinker who
+have excellent extra attacks, garner a full gauge and shoot
+two sets of level 2 attacks - this gives you six bouncing faeries
+with Tinker and EIGHT pieces of food with Memory. NOTE THAT THIS
+DOES NOT WORK IF YOU USE "MAX" WHEN YOU HAVE A BOSS OUT. Tinker
+will only shoot FOUR faeries, NOT six.
+
+
+
+
+5. STAGES
+====================
+
+
+ ------------------------------------------------------------------------
+ FORRETT
+ ------------------------------------------------------------------------
+
+The enemies here are usually red, since this is the "newbie" stage.
+The zako are fat little bird creatures. You will play against either
+Realy Till or Yan Yanyan.
+
+Musical score:
+"Applicot Ground" (Realy Till).
+"Holidays" (Yan Yanyan).
+
+ ------------------------------------------------------------------------
+ ACHELIS
+ ------------------------------------------------------------------------
+
+Zako here are clams - this is the water stage. You will fight either
+Kesubei or Nanja Monja.
+
+Musical score:
+"Disagreeable" (Nanja Monja).
+"Curiouser and Curiouser" (Kesubei).
+
+ ------------------------------------------------------------------------
+ CLOUDIA
+ ------------------------------------------------------------------------
+
+The land of the faeries and sprites. Clouds are the zako for this stage,
+and your enemies are Arthur or Tinker.
+
+Musical score:
+"Love Me" (Arthur).
+"Love So ~Radio-Active Mix~" (Tinker).
+
+ ------------------------------------------------------------------------
+ FREEZIA
+ ------------------------------------------------------------------------
+
+The cold land. Snowmen zako and Griffon or Macky and Pentell await you.
+
+Musical score:
+"Like Sisters Like" (Macky and Pentell).
+"Both You and Me" (Griffon).
+
+ ------------------------------------------------------------------------
+ MEVIOUS CASTLE
+ ------------------------------------------------------------------------
+
+What the hell is up with the frogs? The zako are chests here.
+
+Musical score:
+"Rosselian" (Dark Ran).
+"Neo Life" (Mevious).
+
+ ------------------------------------------------------------------------
+ WONDER WORLD
+ ------------------------------------------------------------------------
+
+Memory awaits you in space, with an army of star zako. The backgrounds
+are really weird - there's some floating eyes, strange alien planets,
+and other miscellaneous stuff. Enjoy the music!
+
+Musical score:
+"Love Will Never Die" (Memory).
+
+
+
+
+6. TRANSLATIONS
+====================
+
+ ------------------------------------------------------------------------
+ SPEECH
+ ------------------------------------------------------------------------
+
+1.	Load Ran
+
+(Selected - character mode)	"Ran! Ganbarimasu!" ("I'll do my best!")
+
+(Entering battle) 		"Let's go!"
+
+(Extra attack)			"Rabibomb!"
+
+(Boss attack)			"Super Rabicat!"
+
+(Large chain)			"Yappi yuppi!"
+
+(Receive bomb)			"Lucky!"
+
+(Struck by kougeki zako)	"Kyao!"
+
+(Struck by zako)		"Abunai yo!"
+
+(Win quote #1)			"Watashi no kachi!" ("[It's] my victory!")
+
+(Win quote #2)			"Yatta ne!" ("I did it, huh!?")
+
+
+2.	Do Kesubei
+
+(Selected - character mode)	?"Washi no deba kano!" ("")
+
+(Entering battle) 		"Yarukai no!" ("Let's do it!")
+
+(Extra attack)			"Nekopanchi ja!" ("Cat punch!")
+
+(Boss attack)			""
+
+(Receive bomb)			"Ohoho!" 
+
+(Struck by kougeki zako)	""
+
+(Struck by zako)		""
+
+(Win quote #1)			"" ("")
+
+(Win quote #2)			"" ("")
+
+
+3.	Nanja Monja
+
+Everything is "Nanja Monja" or some variant.
+
+
+4.	Tinker and Linker
+
+(Selected - character mode)	"Let's go! Nigashimasu!" ("Let's go! Let's run
+				free!")
+
+(Entering battle) 		"Ikimasu!" ("Here I go!")
+
+(Extra attack)			"" ("")
+
+(Boss attack)			"Magical faerie!"
+
+(Receive bomb)			""
+
+(Struck by kougeki zako)	"Kyao!"
+
+(Struck by zako)		""
+
+(Win quote #1)			"" ("")
+
+(Win quote #2)			"" ("")
+
+
+5.	Realy Till
+
+(Selected - character mode)	"" ("")
+
+(Entering battle) 		"Ja, iku wa yo!" ("Alright, here I go!")
+
+(Extra attack)			"Ike, Drapy!" ("Go, Drapy!")
+
+(Boss attack)			"" ("")
+
+(Receive bomb)			""
+
+(Struck by kougeki zako)	""
+
+(Struck by zako)		""
+
+(Win quote #1)			"" ("")
+
+(Win quote #2)			"" ("")
+
+
+6.	Griffon
+
+
+7.	Yan Yanyan
+
+(Selected - character mode)	"" ("")
+
+(Entering battle) 		"Yooshi, makenai yo!" ("I'll never give up!")
+
+(Extra attack)			"" ("")
+
+(Boss attack)			"" ("")
+
+(Receive bomb)			""
+
+(Struck by kougeki zako)	"KO!"
+
+(Struck by zako)		"PINCHI da mo!" ("Oh, I'm in a pinch!")
+
+(Win quote #1)			"Takusho da mo!" ("")
+
+(Win quote #2)			"" ("")
+
+
+8.	Arthur Schmitt
+
+(Selected - character mode)	"Boku ni makase!" ("Trust in me!")
+
+(Entering battle) 		"Honki ikimasu!" ("Here I go seriously!")
+
+(Extra attack)			"PURASUMA SHUUTO!" ("Plasma Shoot!")
+
+(Boss attack)			"Madouhou!" ("The magic one!")
+
+(Receive bomb)			""
+
+(Struck by kougeki zako)	"Yaa!"
+
+(Struck by zako)		"Tasukete!" ("Help me!")
+
+(Win quote #1)			""
+
+(Win quote #2)			"" ("")
+
+
+9.	Macky and Pentell
+
+(Selected - character mode)	"" ("")
+
+(Entering battle) 		"" ("")
+
+(Extra attack)			"" ("")
+
+(Boss attack)			"" ("")
+
+(Receive bomb)			""
+
+(Struck by kougeki zako)	""
+
+(Struck by zako)		"Macky, makechau yo!" ("Macky is gonna lose!")
+
+(Win quote #1)			"Ma, muteki yo!" ("Oh, [we're] invicible!")
+
+(Win quote #2)			"" ("")
+
+
+10.	Dark Ran
+
+(Selected - character mode)	"Ome wa sakai wa ne!"
+
+(Entering battle) 		"Shoubu ni naru kashira?" ("I wonder if you'll
+				be a challenge for me?")
+
+(Extra attack)			"Darabibomb!"
+
+(Boss attack)			"Special Dark Rabi!"
+
+(Large chain)			"Kore de owari yo!" ("This is the end!")
+
+(Receive bomb)			"Suiteru wa ne!"
+
+(Struck by kougeki zako)	"Yao!"
+
+(Struck by zako)		"Yabai!" ("Dangerous!")
+
+				"Sukoshi wa aru wa ne." ("It's a little [dangerous] isn't it?")
+
+(Win quote #1)			"Katteru to omotta no?" ("You thought you could win?")
+
+(Win quote #2)			"Kanashimi naranai wa!" ("There's no feeling sad!")
+
+
+11.	Sprites
+
+(Selected - character mode)	"" ("")
+
+(Entering battle) 		"Zettai makenai wa!" ("I'll never give up!")
+
+(Extra attack)			"Rabicat attack!"
+
+(Boss attack)			"God Rabicat!"
+
+(Receive bomb)			"Lucky!"
+
+(Struck by kougeki zako)	""
+
+(Struck by zako)		""
+
+(Win quote #1)			"Minna no hane yo!" ("These are everyone's wings!")
+
+(Win quote #2)			"Yatta!" ("I did it!")
+
+
+12.	Mevious
+
+(Selected - character mode)	"" ("")
+
+(Entering battle) 		"" ("")
+
+(Extra attack)			"Koumori funka!" ("Bat explosion!")
+
+(Boss attack)			"Ankoku PAWAA da!" ("It's the dark power!")
+
+(Receive bomb)			""
+
+(Struck by kougeki zako)	""
+
+(Struck by zako)		"Kuso!" ("Shit!")
+
+(Win quote #1)			"Hahahaha!"
+
+(Win quote #2)			"Hn. Nasakenai yatsu da." ("What a shameful guy.")
+
+
+13.	Memory
+
+(Selected - character mode)	"Ureshii desu wa!" ("Oh, I'm so happy!")
+
+(Entering battle) 		"Ikimasu wa yo!" ("Here I go!")
+
+(Extra attack)			""
+
+(Boss attack)			"Ureshii! Keeki!" ("[I'm] happy! Cake!")
+
+(Receive bomb)			"Lucky desu wa!" ("I'm so lucky!")
+
+(Struck by kougeki zako)	"Hidoi desu wa!" ("So cruel!")
+
+(Struck by zako)		"Aa, memai da!" ("Ah, I'm dizzy!")
+				"Dou shimashou?!" ("Ah, what should I do?!")
+
+(Win quote #1)			"Suteki na shouri desu wa!" ("What a wonderful victory!")
+
+(Win quote #2)			"" ("")
+
+
+ ------------------------------------------------------------------------
+ POST-BATTLE QUOTES
+ ------------------------------------------------------------------------
+
+1.	Load Ran
+
+2.	Do Kesubei
+
+3.	Nanja Monja
+
+4.	Tinker and Linker
+
+5.	Realy Till
+
+6.	Griffon
+
+7.	Yan Yanyan
+
+8.	Arthur Schmitt
+
+9.	Macky and Pentell
+
+10.	Dark Ran
+
+11.	Sprites
+
+12.	Mevious
+
+13.	Memory
+
+
+
+
+7. MISCELLANEOUS
+====================
+
+ ------------------------------------------------------------------------
+ FAQ
+ ------------------------------------------------------------------------
+
+Q: Can I reproduce part of your guide in mine?
+
+A: Yes, just be sure to credit me and send me an e-mail! :)
+
+ ------------------------------------------------------------------------
+ THANKS
+ ------------------------------------------------------------------------
+
+Thanks to my roommate for showing me this game, and still playing it with
+me even after I started beating him after just two games.
+
+Thanks to ADK for making this, and finally making a second one for PS2!
+
+And thank you for reading my FAQ. :)
+
+Cheers.
+Akemi.
