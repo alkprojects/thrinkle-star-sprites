@@ -17,9 +17,10 @@ Three fields + HUD (HP/charge/fever/target indicators), 60fps render with interp
 Two AI seats: dodge incoming, build chains, manage charge, reflect attacks. Difficulty levels. Same `Controller` interface as humans.
 
 ## Phase 4 — Iteration loop (next sessions, owner-driven)
-- Owner playtests vs `GAME_MECHANICS.md` UNCERTAINTIES list; fix fidelity gaps
+- Owner playtests vs `GAME_MECHANICS.md` UNCERTAINTIES (§13); work down `FIDELITY_GAPS.md`
+  (top: orb fever, charge-meter Lv2/MAX sends, best-of-3 rounds, Death reaper, zako colors)
 - Balance tuning via `balance.ts` knobs (routing feel, life-steal split, pressure scales)
-- Art/audio upgrades, character variety (distinct stats + extra attacks per character)
+- Art/audio upgrades, character variety (GAME_MECHANICS.md §8 has the full original stat table)
 - Menus: character select, settings screen exposing balance knobs in-UI
 
 ## Phase 5 — More humans (later)

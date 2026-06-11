@@ -2,6 +2,13 @@
 
 Newest first. Each entry: what, why, how to change it later.
 
+## 2026-06-11 — Post-research reconciliation (Claude, overnight)
+
+- **Sim follows the verified original ladder and economy** (see GAME_MECHANICS.md §4–5): 1:1 reverse→extra, 3-reverses-in-one-combo→boss, indestructible extras, 5 hearts / 3-damage attacks / fixed heals / zako can't kill. Rationale: owner said "understanding the nuances is critical"; the research refuted my earlier provisional ping-pong escalation. → all knobs in `balance.ts`.
+- **Remaining divergences are catalogued, not silent** → `docs/FIDELITY_GAPS.md`, priority-ordered. Fever stays meter-based and charge stays beam-only *for now* (gaps #1, #2).
+- **Match pacing left faithful-fast** (2 hits kill). If 3-player chaos makes this too brutal, tune `damage.attackHit` / `maxHp`, not the ladder.
+- Review workflow (41 agents) found 34 issues incl. 2 dead config knobs and frame-rate-dependent visuals — all fixed; tests 20→41.
+
 ## 2026-06-10 — Initial decisions (owner + Claude, project kickoff)
 
 **Owner decisions (from kickoff Q&A):**
