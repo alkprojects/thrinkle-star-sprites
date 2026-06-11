@@ -8,12 +8,9 @@ _Last updated: 2026-06-11, end of kickoff overnight session_
 
 Built tonight: deterministic 60Hz sim (pure, seeded RNG, netplay-ready), PixiJS renderer with original procedural art, WebAudio synth SFX, two AI opponents, the verified original attack ladder (normal→reverse→extra/boss via 3-reverses-in-one-combo), 5-heart life economy with fixed life-steal, all owner 3P rules. A 36-agent research workflow produced [GAME_MECHANICS.md](GAME_MECHANICS.md) (the original-game bible, adversarially verified); a 41-agent review workflow found 34 issues, all fixed.
 
-## ⚠ NOT DONE: Cloudflare deploy (5 minutes, needs Alex)
+## Deployed ✅
 
-`wrangler login` browser auth timed out 3× (Alex was asleep). To deploy:
-1. In a terminal: `wrangler login` → click Allow in the browser.
-2. `npm run deploy` (creates/uses Pages project `thrinkle-star-sprites`).
-3. Put the live URL in README.md.
+Live at **https://thrinkle-star-sprites.pages.dev** (Cloudflare Pages, project `thrinkle-star-sprites`). Redeploy any time with `npm run deploy` (wrangler is authenticated on this machine as of 2026-06-11).
 
 ## Next steps (pick by interest)
 

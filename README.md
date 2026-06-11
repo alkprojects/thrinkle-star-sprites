@@ -4,7 +4,7 @@ A three-player browser homage to the Neo Geo classic **Twinkle Star Sprites** (A
 
 This version asks: what if there were **three** of you?
 
-- 🎮 Play: _(deploy URL coming)_
+- 🎮 **Play: https://thrinkle-star-sprites.pages.dev**
 - 🧠 Original-game mechanics reference: [docs/GAME_MECHANICS.md](docs/GAME_MECHANICS.md)
 - 🔀 What changes with 3 players: [docs/ADAPTATION.md](docs/ADAPTATION.md)
 
