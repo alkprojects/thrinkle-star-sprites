@@ -1,6 +1,16 @@
 # Status
 
-_Last updated: 2026-06-11, presentation-overhaul session_
+_Last updated: 2026-06-11, game-vision session (after the presentation overhaul)_
+
+## NEW: We can now SEE the original game (and measure it)
+
+The fidelity loop no longer runs on text alone. Infrastructure built this session:
+
+- **Original-game footage analysis**: archive.org hosts a 35-min Neo Geo CD longplay (`Neo_Geo_CD_Longplay_Twinkle_Star_Sprites`, 608×448 @ true 60fps = every Neo Geo frame) plus dozens of expert Fightcade matches (search `"twinkle star sprites" mediatype:movies`). ffmpeg (via `imageio_ffmpeg`, binary at `%LOCALAPPDATA%\Programs\Python\Python314\Lib\site-packages\imageio_ffmpeg\binaries\`) HTTP-seeks into the remote file — no full download. Extract frames to `.claude/ref/frames/` (**gitignored — ADK-copyrighted, must NEVER be committed**), view them directly, make contact sheets (`tile=4x4`) to scan time ranges, zoom crops (`crop=...,scale=...:flags=neighbor`) to inspect. `.claude/ref/measure_scroll.py` shows the measurement pattern (frame-differencing → px/frame).
+- **Our-game capture**: `window.__game.startAllAi()` (all seats AI) / `start()` + `step(n)` + the `/__shot` middleware → frame sequences → ffmpeg → GIF/MP4 (`.claude/shots/ourgame.gif`). We can watch our own game in motion and hand Alex clips.
+- **Feel tests** (`tests/feel.test.ts`): drive the real sim with held inputs and assert the original's measured frame data (§8.2/§9.1) — wall-to-wall 56f/80f, shot travel 34f, charge 65f/130f, i-frames 58, unnormalized diagonals.
+
+First measured results: corrected `player.speed` 2.2→2.75, `shot.speed` 6→6.6, `chargeTicksLv1/2` 30/70→65/130 (all were off vs verified frame data). Measured the original's background scroll (~0.8–1.0 native px/frame) and our match pacing (3-AI match over in ~6 s — way too fast); both filed in FIDELITY_GAPS as 0a/0b.
 
 ## Where we are
 

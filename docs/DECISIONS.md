@@ -2,6 +2,16 @@
 
 Newest first. Each entry: what, why, how to change it later.
 
+## 2026-06-11 — Measurement-driven fidelity loop (Claude, after owner feedback)
+
+Owner: "this won't work unless you can SEE the actual game — speed, animations, everything; explaining the nuance isn't feasible." Agreed. Built a vision/measurement loop instead of iterating blind (details in STATUS.md):
+
+- **Footage analysis as ground truth**: 60fps longplay + expert-match videos on archive.org, ffmpeg HTTP-seek → frames → view/measure. Extracted frames are ADK-copyrighted: they live only in gitignored `.claude/ref/`, are used solely to derive *facts* (timings, speeds, layout proportions — not copyrightable), and the art we ship stays original.
+- **Feel tests over vibes** (`tests/feel.test.ts`): the bible's verified frame data is now executable — sim-driven assertions on crossing times, shot travel, charge holds, i-frames. Any speed regression fails CI. Found-and-fixed immediately: `player.speed` 2.2→2.75 (was slower than the slowest original character), `shot.speed` 6→6.6, `chargeTicksLv1/2` 30/70→65/130 (charge was 2× too fast vs Ran's 65f).
+- **Our-game capture artifacts**: all-AI matches recorded to GIF/MP4 for the owner to judge feel without building locally.
+- **Two measured gaps filed** (FIDELITY_GAPS 0a/0b): match pacing ~6s (much too fast; suspect AI dodging + 3P 'both' routing), background terrain scroll ~0.8–1.0 px/frame (we're static).
+- **Gold standard offered, needs owner**: MAME + Lua (frame-step, input injection, memory reads) if the owner provides a legally-owned ROM dump.
+
 ## 2026-06-11 — Presentation overhaul: pixel-art look + chiptune sound (Claude)
 
 Owner feedback: "the game looks and feels completely different to Twinkle Star Sprites — make it as close as possible in look, feel, and sound." The build was abstract vector art (stars/circles, dark starfield, Verdana). Root cause: a smooth-vector aesthetic where the original is a bright, cute, **pixel-art** Neo Geo arcade game.

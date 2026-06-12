@@ -58,6 +58,11 @@ async function start(): Promise<void> {
   if (import.meta.env.DEV) {
     (window as unknown as { __game: unknown }).__game = {
       start: newMatch,
+      /** Match where ALL seats are AI-driven — for representative capture footage. */
+      startAllAi: (): void => {
+        newMatch();
+        controllers[0] = new AiController(cfg, 'normal', 0x1337c0de);
+      },
       step(n = 1): void {
         if (!sim || screen !== 'playing') return;
         for (let i = 0; i < n; i++) {

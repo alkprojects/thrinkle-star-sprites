@@ -5,3 +5,4 @@ dist/
 .wrangler/
 CLAUDE.local.md
 .claude/shots/
+.claude/ref/

@@ -143,7 +143,9 @@ export interface BalanceConfig {
 export const DEFAULT_BALANCE: BalanceConfig = {
   field: { width: 160, height: 224 },
   player: {
-    speed: 2.2,
+    // §8.2 Load Ran baseline: 56f horizontal / 80f vertical wall-to-wall.
+    // Clamped traverse is 154u × 218u → 2.75 u/tick hits 56.0f / 79.3f.
+    speed: 2.75,
     radius: 3,
     maxHp: 5,
     iframesTicks: 58,
@@ -151,9 +153,9 @@ export const DEFAULT_BALANCE: BalanceConfig = {
   },
   shot: {
     cooldownTicks: 7,
-    speed: 6,
-    chargeTicksLv1: 30,
-    chargeTicksLv2: 70,
+    speed: 6.6,               // §8.2: full-height shot travel 34f → 224/34 ≈ 6.6
+    chargeTicksLv1: 65,       // §8.2: Ran charge L1 = 65f hold
+    chargeTicksLv2: 130,      // §8.2: L2 = 2× L1 hold
     chargeWidthLv1: 14,
     chargeWidthLv2: 26,
     beamSpeedScale: 1.6,
