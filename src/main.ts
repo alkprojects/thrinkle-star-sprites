@@ -1,6 +1,7 @@
 import { AiController } from './ai/ai';
 import { Sfx } from './audio/sfx';
 import { DEFAULT_BALANCE } from './config/balance';
+import { CHARACTERS } from './config/characters';
 import { KeyboardController, type Controller } from './input/controller';
 import { Renderer } from './render/renderer';
 import { createSim, tickSim } from './sim/sim';
@@ -29,7 +30,7 @@ async function start(): Promise<void> {
 
   function newMatch(): void {
     const seed = Date.now() >>> 0; // render-side seeding is fine; the sim itself stays deterministic
-    sim = createSim(cfg, seed);
+    sim = createSim(cfg, seed, CHARACTERS.map((c) => c.stats));
     controllers = [
       keyboard,
       new AiController(cfg, 'normal', seed ^ 0xaaaa1111),

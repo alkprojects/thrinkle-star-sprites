@@ -23,16 +23,39 @@ export interface BalanceConfig {
     maxHp: number;            // hearts — original: 5
     iframesTicks: number;     // post-attack-hit invincibility — original: ~58 frames
     bombs: number;            // per-round bomb stock — original: 2
+    /** Post-zako-collision "dizzy" debuff (§5.4): ~5s of reduced move + shot speed. */
+    dizzyTicks: number;
+    dizzyMoveScale: number;   // movement multiplier while dizzy (original ≈50%)
+    dizzyShotScale: number;   // shot-speed multiplier while dizzy (original ≈65%)
   };
   shot: {
     cooldownTicks: number;    // autofire rate while held (original limits to 2 shots on screen)
     speed: number;
     chargeTicksLv1: number;   // hold duration for level-1 charge
-    chargeTicksLv2: number;   // hold duration for level-2 charge (wider blast)
+    chargeTicksLv2: number;   // hold duration for level-2 charge (wider blast) — original 2× L1
+    chargeTicksMax: number;   // hold duration for MAX charge — original 3× L1 (mikwuyma)
     chargeWidthLv1: number;   // beam half-width
     chargeWidthLv2: number;
+    chargeWidthMax: number;
     beamSpeedScale: number;   // beam speed = shot speed * this
     beamDamage: number;       // hp removed per beam touch on a destructible attack
+  };
+  /**
+   * Charge-meter economy (GAME_MECHANICS.md §4.2/§5.6). The red gauge fills as you destroy
+   * zako; a charge release SPENDS meter to send attacks on top of the beam:
+   *   hold ≥ Lv2 AND meter ≥ lv2Threshold → send exCount Extra ("special") attacks (cost lv2Cost)
+   *   hold ≥ MAX AND meter ≥ maxThreshold → send a Boss (cost maxCost); if a boss is already in
+   *     YOUR field, this REVERSES it (your boss replaces it on the opponents).
+   * Meter is a 0..1 fraction; the gauge's "1 / 2 / MAX" marks sit at meterLv1Mark / lv2Threshold / 1.
+   */
+  charge: {
+    gainPerZako: number;        // meter added per zako you destroy
+    gainPerChainLink: number;   // extra meter per chain link at chain resolution
+    meterLv1Mark: number;       // where the "1" notch sits on the gauge (free zone top)
+    lv2Threshold: number;       // meter needed to send specials on a Lv2 release (the "2" mark)
+    maxThreshold: number;       // meter needed to send a boss on a MAX release
+    lv2Cost: number;            // meter spent sending specials
+    maxCost: number;            // meter spent sending a boss
   };
   waves: {
     /** Ticks between wave spawns; identical wave sequence on every field (fairness, as in the original). */
@@ -44,6 +67,9 @@ export interface BalanceConfig {
     zakoRadius: number;
     swayRate: number;         // phase advance per tick for serpentine zako
     swayFactor: number;       // horizontal speed = sin(phase) * swayAmp * swayFactor
+    /** Durability (§3.1): a zako's collision radius and the explosion it makes grow by this
+     *  fraction per HP tier above 1 (purple 5-HP zako are bigger and make bigger blasts). */
+    tierRadiusScale: number;
   };
   chain: {
     explosionRadius: number;  // blast circle that detonates adjacent zako (PROVISIONAL)
@@ -63,8 +89,16 @@ export interface BalanceConfig {
   attacks: {
     travelTicks: number;        // delay before a sent attack enters the target field (PROVISIONAL)
     baseSpeed: number;          // descent speed of a normal fireball
-    swayAmplitude: number;      // sinusoidal sway of incoming attacks (stand-in for the 3 patterns)
+    swayAmplitude: number;      // sinusoidal sway — legacy fallback path only
     swayPeriodTicks: number;
+    /** Three fireball flight patterns (§3.4), cycling per formation. */
+    patternHoverY: number;      // stop-and-track: hover line before the drop
+    patternTrackTicks: number;  // stop-and-track: ticks spent tracking before dropping
+    patternTrackSpeed: number;  // stop-and-track: horizontal tracking speed
+    patternParabolaVx: number;  // parabola: horizontal drift
+    patternParabolaAccel: number; // parabola: vertical acceleration per tick of age
+    patternDiagonalVx: number;  // diagonal-bounce: aim horizontal speed
+    patternDiagonalSpeedScale: number; // diagonal-bounce: faster descent
     attackRadius: number;
     attackHp: number;           // shots to down a small fireball — original: 2
     /** Original ladder (docs/GAME_MECHANICS.md §4):
@@ -109,7 +143,14 @@ export interface BalanceConfig {
     split: LifeStealSplit;
   };
   fever: {
-    durationTicks: number;     // original: 10s orb-fever; meter-triggered here (FIDELITY_GAPS)
+    durationTicks: number;     // original: ~10s of fever
+    /** 'orb' (faithful): a fever orb crosses the field; detonate it with a chain/bomb → fever.
+     *  'meter': the legacy chain-meter trigger (kept as a flippable alternative). */
+    mode: 'orb' | 'meter';
+    orbIntervalMinTicks: number; // ticks between orb appearances (semi-random per field)
+    orbIntervalMaxTicks: number;
+    orbSpeed: number;            // orb descent speed
+    orbRadius: number;
   };
   routing: {
     normalMode: RoutingMode;       // owner default: 'both'
@@ -125,10 +166,32 @@ export interface BalanceConfig {
     incomingDensityScale: number;
   };
   match: {
-    timerTicks: number;            // stand-in for the original's ~100s Death reaper (FIDELITY_GAPS)
+    timerTicks: number;            // hard fallback; Death (below) is the real anti-stall resolver
     /** 'most-hp': healthiest player wins on timeout (exact tie = draw).
      *  'sudden-death': on timeout everyone drops to 1 HP and healing stops working. */
     onTimeout: 'most-hp' | 'sudden-death';
+  };
+  /**
+   * Death — the reaper (GAME_MECHANICS.md §7). Spawns on each living field ~100s in and
+   * pursues that player; contact = instant elimination (bypasses hearts). Killable by
+   * shots / beams / chains / bombs; respawns tougher. Evadable forever by circling
+   * (diagonal player speed > Death's capped speed), as in the original.
+   */
+  death: {
+    startTicks: number;            // match time before Death first appears (~100s)
+    /** Early Death if a player fires no shots for this long (§7); this one despawns
+     *  permanently after a single kill (vs the time Death, which respawns endlessly). */
+    inactivityTicks: number;
+    hp0: number;                   // HP on first appearance
+    hpPerAppearance: number;       // +HP each subsequent appearance
+    hpCap: number;                 // HP ceiling
+    speedStart: number;            // units/tick on first appearance
+    speedMax: number;              // cap (must stay < slowest char's diagonal speed)
+    speedGrowthPerAppearance: number;
+    turnRate: number;              // max heading change per tick (radians) — limited pursuit
+    respawnTicks: number;          // gap before Death re-appears after a kill / drift-off
+    radius: number;                // contact + hurt radius
+    explosionRadius: number;       // chain blast when killed (participates in the chain system)
   };
   bomb: {
     /** Original: bombs cover the ENTIRE field. */
@@ -150,16 +213,32 @@ export const DEFAULT_BALANCE: BalanceConfig = {
     maxHp: 5,
     iframesTicks: 58,
     bombs: 2,
+    dizzyTicks: 300,      // ~5s (§5.4, single-sourced)
+    dizzyMoveScale: 0.5,  // rule-of-thumb ≈50% move
+    dizzyShotScale: 0.65, // ≈65% shot speed
   },
   shot: {
     cooldownTicks: 7,
     speed: 6.6,               // §8.2: full-height shot travel 34f → 224/34 ≈ 6.6
     chargeTicksLv1: 65,       // §8.2: Ran charge L1 = 65f hold
     chargeTicksLv2: 130,      // §8.2: L2 = 2× L1 hold
+    chargeTicksMax: 195,      // §8.2: MAX = 3× L1 hold
     chargeWidthLv1: 14,
     chargeWidthLv2: 26,
+    chargeWidthMax: 34,
     beamSpeedScale: 1.6,
     beamDamage: 2,
+  },
+  charge: {
+    // Meter fills slowly so specials are a mid-game tool and a boss is a late-game event
+    // (as in the original), not a 15-second spam — keeps rounds long enough to reach Death.
+    gainPerZako: 0.011,       // ~60 kills to fill; "2" mark (specials) ~40 kills in
+    gainPerChainLink: 0.004,
+    meterLv1Mark: 1 / 3,
+    lv2Threshold: 2 / 3,      // the "2" mark — owner's "meter 2/3 full" → specials
+    maxThreshold: 1.0,        // full → boss
+    lv2Cost: 1 / 3,
+    maxCost: 2 / 3,
   },
   waves: {
     intervalTicks: 150,
@@ -170,6 +249,7 @@ export const DEFAULT_BALANCE: BalanceConfig = {
     zakoRadius: 6,
     swayRate: 0.04,
     swayFactor: 0.045,
+    tierRadiusScale: 0.12,
   },
   chain: {
     explosionRadius: 16,
@@ -186,6 +266,13 @@ export const DEFAULT_BALANCE: BalanceConfig = {
     baseSpeed: 1.1,
     swayAmplitude: 22,
     swayPeriodTicks: 90,
+    patternHoverY: 42,
+    patternTrackTicks: 80,
+    patternTrackSpeed: 0.8,
+    patternParabolaVx: 0.95,
+    patternParabolaAccel: 0.013,
+    patternDiagonalVx: 1.15,
+    patternDiagonalSpeedScale: 1.4,
     attackRadius: 6,
     attackHp: 2,
     reverseSpeedScale: 1.15,
@@ -203,7 +290,11 @@ export const DEFAULT_BALANCE: BalanceConfig = {
     entryMarginFrac: 0.12,
   },
   damage: {
-    attackHit: 3,
+    // Original is 3 (two clean hits kill from 5). 3-player 'both' routing ~doubles the
+    // incoming volume, so rounds ended in ~20s and never reached Death. 2 here = three
+    // hits to kill, stretching rounds into the original's 30s–3min range so Death (100s)
+    // becomes a real late-round resolver. 3P-ADAPT pacing knob — set 3 for the purest feel.
+    attackHit: 2,
     zakoCollision: 1,
     zakoFloorHp: 0.5,
   },
@@ -214,18 +305,40 @@ export const DEFAULT_BALANCE: BalanceConfig = {
   },
   fever: {
     durationTicks: 600,
+    mode: 'orb',
+    orbIntervalMinTicks: 16 * 60, // an orb roughly every 16–26s per field
+    orbIntervalMaxTicks: 26 * 60,
+    orbSpeed: 0.7,
+    orbRadius: 7,
   },
   routing: {
     normalMode: 'both',
     extrasToAll: true,
     bossToAll: true,
     reflectionToEliminated: 'drop',
-    incomingSpeedScale: 1.0,
-    incomingDensityScale: 1.0,
+    // 3-player 'both' routing roughly doubles incoming pressure vs the 1v1 original; thin
+    // and slow it so clean hits are rarer and rounds last long enough for Death to matter
+    // (FIDELITY_GAPS §0a). These are the top pacing knobs — raise toward 1.0 for more chaos.
+    incomingSpeedScale: 0.85,
+    incomingDensityScale: 0.35,
   },
   match: {
-    timerTicks: 120 * 60,
+    timerTicks: 240 * 60,    // generous fallback; Death resolves long-running rounds first
     onTimeout: 'most-hp',
+  },
+  death: {
+    startTicks: 100 * 60,    // §7: ~100 in-game seconds
+    inactivityTicks: 30 * 60, // §7: ~30s of firing nothing (figure unverified — a knob)
+    hp0: 4,
+    hpPerAppearance: 3,
+    hpCap: 100,
+    speedStart: 1.9,
+    speedMax: 2.7,           // < Tyleru's diagonal (2.25×√2 ≈ 3.18) so every char can circle-evade
+    speedGrowthPerAppearance: 0.12,
+    turnRate: 0.06,
+    respawnTicks: 180,
+    radius: 7,
+    explosionRadius: 22,     // §7: Death explodes with blast power 3 and feeds the chain system
   },
   bomb: {
     radius: 300,

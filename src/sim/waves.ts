@@ -9,13 +9,26 @@ import type { Zako } from './types';
 
 export interface WaveSpec {
   /** Relative spawn entries: x in [0, width], y offsets above the top edge. */
-  entries: { x: number; yOffset: number; vx: number; swayAmp: number; swayPhase: number }[];
+  entries: { x: number; yOffset: number; vx: number; swayAmp: number; swayPhase: number; tier: number }[];
 }
 
-export function generateWave(rng: Rng, cfg: BalanceConfig): WaveSpec {
+/**
+ * Durability tier (1 red … 5 purple) for a zako, escalating over round time (§3.1: the
+ * formation pool toughens as the round goes). Early rounds stay mostly 1–2 so chains form
+ * easily; tougher tiers (which resist single shots and need big blasts) appear later.
+ */
+function rollTier(rng: Rng, elapsed: number): number {
+  const r = rng.next();
+  let tier = r < 0.32 ? 1 : r < 0.60 ? 2 : r < 0.82 ? 3 : r < 0.94 ? 4 : 5;
+  // Soften the early game: pull tough zako down toward 1–2 for the first ~25s.
+  if (elapsed < 25 && tier > 2 && rng.next() < 0.6) tier = 1 + rng.int(2);
+  return tier;
+}
+
+export function generateWave(rng: Rng, cfg: BalanceConfig, elapsed = 0): WaveSpec {
   const w = cfg.field.width;
   const kind = rng.int(4);
-  const entries: WaveSpec['entries'] = [];
+  const entries: Omit<WaveSpec['entries'][number], 'tier'>[] = [];
 
   if (kind === 0) {
     // Horizontal line marching down
@@ -73,7 +86,9 @@ export function generateWave(rng: Rng, cfg: BalanceConfig): WaveSpec {
     }
   }
 
-  return { entries };
+  // Assign a durability tier per zako last (deterministic from the shared wave RNG, so
+  // every field gets the identical formation AND tiers — fairness rule).
+  return { entries: entries.map((e) => ({ ...e, tier: rollTier(rng, elapsed) })) };
 }
 
 export function instantiateWave(
@@ -89,5 +104,7 @@ export function instantiateWave(
     vy: cfg.waves.zakoSpeed,
     swayPhase: e.swayPhase,
     swayAmp: e.swayAmp,
+    hp: e.tier,
+    maxHp: e.tier,
   }));
 }

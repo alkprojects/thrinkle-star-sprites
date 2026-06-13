@@ -2,12 +2,12 @@ import { Application, Container, Graphics, Sprite, TilingSprite } from 'pixi.js'
 import type { BalanceConfig } from '../config/balance';
 import { CHARACTERS } from '../config/characters';
 import type { IncomingAttack, PlayerSim, SimEvent, SimState } from '../sim/types';
-import { cloudStripTex, skyTex } from './backgrounds';
+import { canopyTileTex, groundTileTex } from './backgrounds';
 import { textTexture } from './pixelfont';
 import { bake, pixStar, rgba } from './pixutil';
 import {
-  bombTex, bossTex, explosionTex, EXPLO_FRAMES, extraTex, fireballTex, happyStarTex,
-  heartTex, playerTex, sparkleTex, warnTex, zakoTex,
+  attackTex, bombTex, bossTex, deathTex, explosionTex, EXPLO_FRAMES, extraTex, happyStarTex,
+  heartTex, orbTex, playerTex, sparkleTex, warnTex, zakoTex,
 } from './sprites';
 import { Label, SpritePool } from './ui';
 
@@ -42,8 +42,9 @@ interface Popup {
 
 interface Field {
   col: Container; // whole column (shakes)
-  play: Container; // clipped play area (sky/clouds/entities)
-  clouds: TilingSprite;
+  play: Container; // clipped play area (terrain/entities)
+  ground: TilingSprite; // scrolling top-down terrain (base)
+  canopy: TilingSprite; // scrolling tree-crowns / features (parallax)
   gfx: Graphics; // vector bits: beams, charge ring, fever glow, bars
   pool: SpritePool; // textured entities
   popups: Popup[];
@@ -167,11 +168,10 @@ export class Renderer {
     play.position.set(0, HUD_TOP);
     col.addChild(play);
 
-    const sky = new Sprite(skyTex(ch.theme, FW, FH));
-    play.addChild(sky);
-    const clouds = new TilingSprite({ texture: cloudStripTex(ch.theme, FW, 48), width: FW, height: FH });
-    clouds.alpha = 0.9;
-    play.addChild(clouds);
+    const ground = new TilingSprite({ texture: groundTileTex(ch.theme, FW, FH), width: FW, height: FH });
+    play.addChild(ground);
+    const canopy = new TilingSprite({ texture: canopyTileTex(ch.theme, FW, 160), width: FW, height: FH });
+    play.addChild(canopy);
 
     const mask = new Graphics();
     mask.rect(0, 0, FW, FH).fill(0xffffff);
@@ -239,7 +239,7 @@ export class Renderer {
     koLabel.at(FW / 2, HUD_TOP + FH / 2);
     koLabel.visible = false;
 
-    return { col, play, clouds, gfx, pool, popups: [], hearts, bombs, score, koLabel, frame, name, anim: 0 };
+    return { col, play, ground, canopy, gfx, pool, popups: [], hearts, bombs, score, koLabel, frame, name, anim: 0 };
   }
 
   /** Build the "<name> (YOU)" / "<name> (CPU)" header texture for a seat. */
@@ -302,17 +302,25 @@ export class Renderer {
     sub.position.set(INTERNAL_W / 2, 86);
     this.overlayItems.addChild(sub);
 
-    // Character line-up
+    // Character line-up (names are long, so space columns wide and label on two lines)
     for (let i = 0; i < 3; i++) {
+      const colX = INTERNAL_W / 2 + (i - 1) * 150;
       const s = new Sprite(playerTex(CHARACTERS[i]!, 0));
       s.anchor.set(0.5);
-      s.scale.set(2);
-      s.position.set(INTERNAL_W / 2 + (i - 1) * 70, 140);
+      s.scale.set(2.4);
+      s.position.set(colX, 138);
       this.overlayItems.addChild(s);
-      const nm = new Sprite(textTexture(CHARACTERS[i]!.name, { color: cssOf(CHARACTERS[i]!.color), shadow: '#1a0a2a' }));
-      nm.anchor.set(0.5);
-      nm.position.set(INTERNAL_W / 2 + (i - 1) * 70, 168);
-      this.overlayItems.addChild(nm);
+      const parts = CHARACTERS[i]!.name.split(' ');
+      parts.forEach((word, w) => {
+        const nm = new Sprite(textTexture(word, { color: cssOf(CHARACTERS[i]!.color), shadow: '#1a0a2a' }));
+        nm.anchor.set(0.5);
+        nm.position.set(colX, 162 + w * 11);
+        this.overlayItems.addChild(nm);
+      });
+      const tier = new Sprite(textTexture(`PWR ${CHARACTERS[i]!.stats.powerTier}  SPD ${CHARACTERS[i]!.stats.speedTier}`, { color: '#cfe0ff', shadow: '#10204a' }));
+      tier.anchor.set(0.5);
+      tier.position.set(colX, 186);
+      this.overlayItems.addChild(tier);
     }
 
     const lines = [
@@ -395,8 +403,28 @@ export class Renderer {
         case 'fever-start':
           this.popup(e.seat, FW / 2, FH * 0.32, 'FEVER!!', '#ffe06a', 3);
           break;
+        case 'charge-special': {
+          const p = state.players[e.seat]!;
+          const msg = e.tier === 'boss' ? 'MAX BOSS!' : 'SPECIAL!';
+          this.popup(e.seat, p.x, p.y - 26, msg, e.tier === 'boss' ? '#ff8a8a' : '#9fe8ff', 2);
+          break;
+        }
+        case 'boss-reversed':
+          this.popup(e.seat, FW / 2, FH * 0.32, 'REVERSAL!', '#ffd86a', 2);
+          break;
         case 'attack-sent':
           if (e.tier === 'boss') this.popup(e.to, FW / 2, FH * 0.2, 'BOSS!', '#ff8a8a', 2);
+          break;
+        case 'death-spawn':
+          this.shake[e.seat] = 10;
+          this.popup(e.seat, FW / 2, FH * 0.28, 'DEATH!', '#c8b0ff', 3);
+          break;
+        case 'death-killed':
+          this.popup(e.seat, FW / 2, FH * 0.4, 'BANISHED', '#9fe8ff', 1);
+          break;
+        case 'death-ko':
+          this.shake[e.seat] = 16;
+          this.popup(e.seat, FW / 2, FH * 0.5, 'REAPED!', '#ff5a5a', 2);
           break;
         case 'eliminated':
           this.popup(e.seat, FW / 2, FH * 0.5, 'K.O.', '#ff6b6b', 2);
@@ -423,7 +451,10 @@ export class Renderer {
       const f = this.fields[seat]!;
       if (this.shake[seat]! > 0) this.shake[seat]!--;
       f.anim++;
-      f.clouds.tilePosition.y += 0.25; // gentle downward parallax
+      // Continuous downward terrain flow (the original's sense of speed, FIDELITY_GAPS §0b);
+      // the closer canopy parallaxes a touch faster than the ground.
+      f.ground.tilePosition.y += 0.85;
+      f.canopy.tilePosition.y += 1.15;
       for (const pop of f.popups) {
         pop.ticks--;
         pop.sprite.y += pop.vy;
@@ -456,8 +487,8 @@ export class Renderer {
 
   draw(state: SimState): void {
     const cfg = this.cfg;
-    const secs = Math.max(0, Math.ceil((cfg.match.timerTicks - state.tick) / 60));
-    this.timer.set(`${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`);
+    const toDeath = cfg.death.startTicks - state.tick;
+    this.timer.set(toDeath > 0 ? `DEATH IN ${Math.ceil(toDeath / 60)}` : 'DEATH');
 
     for (let seat = 0; seat < 3; seat++) {
       const p = state.players[seat]!;
@@ -478,11 +509,13 @@ export class Renderer {
       f.pool.begin();
 
       if (!p.alive) {
-        f.clouds.alpha = 0.25;
+        f.ground.alpha = 0.4;
+        f.canopy.alpha = 0.25;
         f.pool.end();
         continue;
       }
-      f.clouds.alpha = p.feverTicks > 0 ? 0.5 : 0.9;
+      f.ground.alpha = 1;
+      f.canopy.alpha = 0.95;
 
       // Fever field glow
       if (p.feverTicks > 0) {
@@ -500,11 +533,16 @@ export class Renderer {
         }
       }
 
-      // Zako
+      // Zako — colour = current HP tier (a direct readout), size = max tier
       for (const z of p.zako) {
-        const tier = zakoTier(z.id);
+        const tier = Math.max(1, Math.min(5, Math.ceil(z.hp ?? 1)));
         const s = f.pool.put(zakoTex(tier, Math.floor((f.anim + z.id * 7) / 8)), z.x, z.y);
-        s.scale.set(1);
+        s.scale.set(1 + ((z.maxHp ?? 1) - 1) * cfg.waves.tierRadiusScale);
+      }
+
+      // Fever orbs — detonate with a chain for FEVER
+      for (const o of p.orbs) {
+        f.pool.put(orbTex(Math.floor(f.anim / 6) % 4), o.x, o.y);
       }
 
       // Player shots
@@ -523,14 +561,27 @@ export class Renderer {
         f.pool.put(sparkleTex(0xffffff, 7), beam.x, beam.y).scale.set(1.1);
       }
 
-      // Explosions
+      // Explosions — scale with blast radius (big purple-zako blasts are bigger)
       for (const ex of p.explosions) {
         const t = 1 - ex.ticksLeft / cfg.chain.explosionTicks;
-        f.pool.put(explosionTex(Math.floor(t * EXPLO_FRAMES)), ex.x, ex.y);
+        const es = f.pool.put(explosionTex(Math.floor(t * EXPLO_FRAMES)), ex.x, ex.y);
+        es.scale.set(ex.radius / cfg.chain.explosionRadius);
       }
 
       // Incoming attacks
       for (const a of p.incoming) this.drawAttack(f, a, seat);
+
+      // Death (the reaper) — pursues this player; contact ends the round
+      if (p.death) {
+        const d = p.death;
+        const ds = f.pool.put(deathTex(Math.floor(f.anim / 8) % 2), d.x, d.y);
+        if (d.age < 16 && Math.floor(this.tickCount / 3) % 2 === 0) ds.alpha = 0.5; // fade-in
+        if (d.maxHp > 1) {
+          const frac = Math.max(0, d.hp / d.maxHp);
+          g.rect(d.x - 9, d.y - 16, 18, 3).fill({ color: 0x1a0a1a, alpha: 0.85 });
+          g.rect(d.x - 8, d.y - 15, 16 * frac, 1).fill(0xff3a3a);
+        }
+      }
 
       // Player
       const flick = p.iframes > 0 && Math.floor(this.tickCount / 3) % 2 === 0;
@@ -551,32 +602,49 @@ export class Renderer {
         }
       }
 
+      // Dizzy: little stars circling the head after a zako clip (§5.4)
+      if (p.dizzyTicks > 0) {
+        const a = this.tickCount * 0.2;
+        for (let k = 0; k < 3; k++) {
+          const ang = a + (k / 3) * Math.PI * 2;
+          const ds = f.pool.put(sparkleTex(0xfff2a8, 5), p.x + Math.cos(ang) * 7, p.y - 14 + Math.sin(ang) * 2.5);
+          ds.scale.set(0.7);
+        }
+      }
+
       f.pool.end();
     }
   }
 
   private drawAttack(f: Field, a: IncomingAttack, seat: number): void {
-    const senderColor = CHARACTERS[a.originalSender]?.color ?? 0xffffff;
+    const sender = CHARACTERS[a.originalSender];
+    const senderColor = sender?.color ?? 0xffffff;
+    const accent = sender?.accent ?? 0xffffff;
+    const theme = sender?.attackTheme ?? 'frisbee';
     // Bonus fidelity: slide the attack in from the screen-side of its sender's lane
     // during its first SIDE_ENTRY_TICKS so 3-way pressure reads at a glance. Cosmetic
     // only — the sim x (a.x) is unchanged; hitboxes are unaffected.
     const rx = this.entryX(a, seat);
     if (a.tier === 'boss') {
-      const bs = f.pool.put(bossTex(Math.floor(f.anim / 18) % 2), rx, a.y);
+      const bs = f.pool.put(bossTex(theme, Math.floor(f.anim / 18) % 2), rx, a.y);
       // Spawn telegraph: a brief white flash as the boss materialises (spec §6).
       if (a.age < 48 && Math.floor(this.tickCount / 4) % 2 === 0) {
         bs.tint = 0xffffff;
         bs.alpha = 0.7;
       }
-      // HP bar
-      const frac = Math.max(0, a.hp / this.cfg.attacks.bossHp);
+      // HP bar (denominator = this sender's boss HP)
+      const maxBossHp = sender?.stats.bossHp ?? this.cfg.attacks.bossHp;
+      const frac = Math.max(0, a.hp / maxBossHp);
       f.gfx.rect(rx - 18, a.y - 30, 36, 4).fill({ color: 0x2a0a1a, alpha: 0.8 });
       f.gfx.rect(rx - 17, a.y - 29, 34 * frac, 2).fill(0xff6b8a);
     } else if (a.tier === 'extra') {
-      f.pool.put(extraTex(Math.floor(f.anim / 10) % 2), rx, a.y);
+      f.pool.put(extraTex(theme, Math.floor(f.anim / 10) % 2), rx, a.y);
     } else {
-      const size = a.hp <= 2 ? 0 : a.hp <= 3 ? 1 : a.hp <= 4 ? 2 : 3;
-      f.pool.put(fireballTex(senderColor, size, a.tier === 'reverse'), rx, a.y);
+      const sz = a.maxHp ?? a.hp;
+      const size = sz <= 2 ? 0 : sz <= 3 ? 1 : sz <= 4 ? 2 : 3;
+      const s = f.pool.put(attackTex(theme, senderColor, accent, size, a.tier === 'reverse'), rx, a.y);
+      // A reflected "flashing ghost" pulses bright (the original's flashing reverse).
+      if (a.tier === 'reverse' && Math.floor(this.tickCount / 4) % 2 === 0) s.tint = 0xfff2a8;
     }
   }
 
@@ -607,21 +675,29 @@ export class Renderer {
     // Bombs (display caps at MAX_BOMBS)
     for (let i = 0; i < MAX_BOMBS; i++) f.bombs[i]!.visible = i < p.bombs;
 
-    // Charge gauge with 1 / 2 / MAX sections + fever overlay
+    // Charge gauge: the banked METER (1 / 2 / MAX) fills from kills and is spent on
+    // specials/boss; a live cursor shows how far the current hold has charged.
     const cg = (f.col as unknown as { __cg: Graphics }).__cg;
     cg.clear();
     const gw = 64;
     const gh = 6;
     cg.rect(0, 4, gw, gh).fill(0x1a1030).stroke({ width: 1, color: 0x5a3a7a, alignment: 0 });
-    const lv1 = cfg.shot.chargeTicksLv1;
-    const lv2 = cfg.shot.chargeTicksLv2;
-    const chargeFrac = Math.min(1, p.chargeTicks <= 0 ? 0 : p.chargeTicks / lv2);
-    if (chargeFrac > 0) {
-      const col = p.chargeTicks >= lv2 ? 0xffe06a : p.chargeTicks >= lv1 ? 0xff8a3d : 0xff4d6a;
-      cg.rect(1, 5, (gw - 2) * chargeFrac, gh - 2).fill(col);
+    const meter = Math.max(0, Math.min(1, p.chargeMeter));
+    const meterCol = meter >= cfg.charge.maxThreshold ? 0xffe06a : meter >= cfg.charge.lv2Threshold ? 0xff8a3d : 0xff4400;
+    if (meter > 0) cg.rect(1, 5, (gw - 2) * meter, gh - 2).fill(meterCol);
+    // "1 / 2 / MAX" notch dividers
+    for (const mark of [cfg.charge.meterLv1Mark, cfg.charge.lv2Threshold]) {
+      cg.rect(Math.round(mark * gw), 3, 1, gh + 2).fill(0xfff0c0);
     }
-    // section dividers at Lv1 / Lv2(MAX)
-    cg.rect(Math.round((lv1 / lv2) * gw), 3, 1, gh + 2).fill(0xfff0c0);
+    // live hold-charge cursor (blue → orange Lv1 → gold Lv2 → white MAX)
+    if (p.chargeTicks >= 0) {
+      const hold = Math.min(1, p.chargeTicks / p.chargeMax);
+      const cxp = Math.round(1 + (gw - 2) * hold);
+      const lvCol = p.chargeTicks >= p.chargeMax ? 0xffffff
+        : p.chargeTicks >= p.chargeLv2 ? 0xffe06a
+        : p.chargeTicks >= p.chargeLv1 ? 0xff8a3d : 0x9fe8ff;
+      cg.rect(cxp - 1, 2, 2, gh + 4).fill(lvCol);
+    }
     // fever meter as a thin underline of the gauge (our meter-based fever stand-in)
     const fever = p.feverTicks > 0 ? 1 : p.feverMeter / 100;
     cg.rect(0, 4 + gh + 1, gw * Math.min(1, fever), 2).fill(p.feverTicks > 0 ? 0xffe06a : 0xb38aff);
@@ -664,16 +740,4 @@ function cssOf(n: number): string {
 
 function numStr(n: number): string {
   return String(Math.floor(n)).padStart(6, '0');
-}
-
-// Deterministic-ish per-zako durability tier purely for VISUALS (sim kills in 1 hit).
-// Uses the zako id so a given critter keeps its colour across frames.
-function zakoTier(id: number): number {
-  const r = (id * 2654435761) >>> 0;
-  const roll = r % 100;
-  if (roll < 50) return 1; // red (most common)
-  if (roll < 74) return 2; // yellow
-  if (roll < 89) return 3; // green
-  if (roll < 97) return 4; // blue
-  return 5; // purple (rare)
 }

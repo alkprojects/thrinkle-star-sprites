@@ -20,9 +20,9 @@ interface AiParams {
 }
 
 const PARAMS: Record<Difficulty, AiParams> = {
-  easy: { decideEvery: 26, aimJitter: 14, beamAppetite: 0.1, bombPanicDist: 18, bombHpFrac: 0.2, lookahead: 30 },
-  normal: { decideEvery: 14, aimJitter: 7, beamAppetite: 0.25, bombPanicDist: 26, bombHpFrac: 0.3, lookahead: 50 },
-  hard: { decideEvery: 7, aimJitter: 3, beamAppetite: 0.4, bombPanicDist: 34, bombHpFrac: 0.45, lookahead: 70 },
+  easy: { decideEvery: 22, aimJitter: 14, beamAppetite: 0.1, bombPanicDist: 18, bombHpFrac: 0.2, lookahead: 36 },
+  normal: { decideEvery: 9, aimJitter: 6, beamAppetite: 0.2, bombPanicDist: 28, bombHpFrac: 0.3, lookahead: 64 },
+  hard: { decideEvery: 6, aimJitter: 3, beamAppetite: 0.35, bombPanicDist: 34, bombHpFrac: 0.45, lookahead: 80 },
 };
 
 /**
@@ -41,6 +41,7 @@ export class AiController implements Controller {
   private goalY = 190;
   private holdTicks = 0;
   private charging = false;
+  private chargeGoal = 0;
   private releaseFrames = 0;
 
   constructor(private cfg: BalanceConfig, difficulty: Difficulty, seed: number) {
@@ -65,7 +66,14 @@ export class AiController implements Controller {
       const reflectTarget = this.bestReflectTarget(me.incoming);
       const cluster = this.bestCluster(me.zako);
 
-      if (threats.imminent) {
+      if (me.death && dist(me.death.x, me.death.y, me.x, me.y) < 80) {
+        // Circle Death (tangential to its pursuit) while drifting toward centre so we
+        // never get pinned to a wall — every character can out-circle him (§7).
+        const dx = me.x - me.death.x;
+        const dy = me.y - me.death.y;
+        this.goalX = me.x + -dy * 0.7 + (cfg.field.width / 2 - me.x) * 0.4;
+        this.goalY = me.y + dx * 0.7 + (cfg.field.height * 0.55 - me.y) * 0.4;
+      } else if (threats.imminent) {
         // Flee to the safest column
         this.goalX = dangerX.safestX;
         this.goalY = cfg.field.height - 30;
@@ -73,6 +81,11 @@ export class AiController implements Controller {
         // Line up under an incoming attack to reflect it
         this.goalX = reflectTarget.x + this.jitter();
         this.goalY = cfg.field.height - 36;
+      } else if (me.orbs.length > 0) {
+        // Chase the fever orb — sit just below it and fire so a chain detonates it
+        const o = me.orbs[0]!;
+        this.goalX = o.x + this.jitter();
+        this.goalY = Math.min(cfg.field.height - 30, o.y + 22);
       } else if (cluster) {
         this.goalX = cluster.x + this.jitter();
         this.goalY = cfg.field.height - 40;
@@ -81,11 +94,18 @@ export class AiController implements Controller {
         this.goalY = cfg.field.height - 34;
       }
 
-      // Commit to a charge beam when the field is busy and we feel like it
+      // Charge intent: spend banked meter on specials (Lv2) or a boss (MAX); otherwise an
+      // occasional plain beam when the field is busy. Don't charge while circling Death.
       const busy = me.zako.length >= 6 || me.incoming.length >= 3;
-      if (!this.charging && busy && this.rng.next() < this.p.beamAppetite) {
-        this.charging = true;
-        this.holdTicks = 0;
+      const safeToCharge = !(me.death && dist(me.death.x, me.death.y, me.x, me.y) < 90);
+      if (!this.charging && safeToCharge) {
+        if (me.chargeMeter >= cfg.charge.maxThreshold && this.rng.next() < 0.6) {
+          this.charging = true; this.holdTicks = 0; this.chargeGoal = me.chargeMax;
+        } else if (me.chargeMeter >= cfg.charge.lv2Threshold && this.rng.next() < 0.5) {
+          this.charging = true; this.holdTicks = 0; this.chargeGoal = me.chargeLv2;
+        } else if (busy && this.rng.next() < this.p.beamAppetite) {
+          this.charging = true; this.holdTicks = 0; this.chargeGoal = me.chargeLv1 + 5;
+        }
       }
     }
 
@@ -94,8 +114,8 @@ export class AiController implements Controller {
     if (this.charging) {
       this.holdTicks++;
       fire = true;
-      if (this.holdTicks >= cfg.shot.chargeTicksLv2 + 4) {
-        fire = false; // release the beam
+      if (this.holdTicks >= this.chargeGoal + 4) {
+        fire = false; // release at the intended level (Lv1 beam / Lv2 specials / MAX boss)
         this.charging = false;
         this.releaseFrames = 2;
       }
@@ -109,23 +129,60 @@ export class AiController implements Controller {
 
     // --- Bomb panic ---
     let bomb = false;
-    if (me.bombs > 0 && me.iframes <= 0 && me.hp <= cfg.player.maxHp * this.p.bombHpFrac) {
-      const close = me.incoming.some(
-        (a) => a.tier !== 'boss' && dist(a.x, a.y, me.x, me.y) < this.p.bombPanicDist,
-      );
-      if (close) bomb = true;
+    if (me.bombs > 0 && me.iframes <= 0) {
+      if (me.death && dist(me.death.x, me.death.y, me.x, me.y) < this.p.bombPanicDist * 0.7) {
+        bomb = true; // a bomb one-shots Death — escape a closing reaper
+      } else if (me.hp <= cfg.player.maxHp * this.p.bombHpFrac) {
+        const close = me.incoming.some(
+          (a) => a.tier !== 'boss' && dist(a.x, a.y, me.x, me.y) < this.p.bombPanicDist,
+        );
+        if (close) bomb = true;
+      }
     }
 
-    // --- Steer toward the goal ---
-    const dx = this.goalX - me.x;
-    const dy = this.goalY - me.y;
-    return {
-      moveX: dx > 1.5 ? 1 : dx < -1.5 ? -1 : 0,
-      moveY: dy > 1.5 ? 1 : dy < -1.5 ? -1 : 0,
-      fire,
-      bomb,
-      targetToggle: false,
+    // --- Movement: a per-tick emergency sidestep overrides the goal when something is
+    // about to hit (the slow decideEvery cadence alone gets the AI killed too fast). ---
+    const dodge = this.emergencyDodge(me);
+    let moveX: -1 | 0 | 1;
+    let moveY: -1 | 0 | 1;
+    if (dodge) {
+      moveX = dodge.x;
+      moveY = dodge.y;
+    } else {
+      const dx = this.goalX - me.x;
+      const dy = this.goalY - me.y;
+      moveX = dx > 1.5 ? 1 : dx < -1.5 ? -1 : 0;
+      moveY = dy > 1.5 ? 1 : dy < -1.5 ? -1 : 0;
+    }
+    return { moveX, moveY, fire, bomb, targetToggle: false };
+  }
+
+  /** Reactive sidestep run EVERY tick: flee Death, then the nearest closing threat. */
+  private emergencyDodge(me: SimState['players'][number]): { x: -1 | 0 | 1; y: -1 | 0 | 1 } | null {
+    const W = this.cfg.field.width;
+    const H = this.cfg.field.height;
+    const fleeX = (fromX: number): -1 | 0 | 1 => {
+      if (me.x < 12) return 1;
+      if (me.x > W - 12) return -1;
+      return me.x <= fromX ? -1 : 1;
     };
+    // Death is an instant KO — give it the widest berth.
+    if (me.death && dist(me.death.x, me.death.y, me.x, me.y) < 26) {
+      const ay = me.death.y < me.y ? 1 : -1; // move away vertically from the reaper
+      return { x: fleeX(me.death.x), y: me.y > 12 && me.y < H - 12 ? (ay as -1 | 0 | 1) : 0 };
+    }
+    let best: { x: number } | null = null;
+    let bestT = 999;
+    const consider = (x: number, y: number, vy: number, r: number): void => {
+      const t = vy > 0 ? (me.y - y) / vy : 999;
+      if (t > 0 && t < 24 && Math.abs(x - me.x) < r) {
+        if (t < bestT) { bestT = t; best = { x }; }
+      }
+    };
+    for (const a of me.incoming) consider(a.x, a.y, a.speed || 0.6, a.tier === 'boss' ? 22 : 14);
+    for (const z of me.zako) consider(z.x, z.y, z.vy || 0.5, 12);
+    if (!best) return null;
+    return { x: fleeX((best as { x: number }).x), y: me.y < H - 10 ? 1 : 0 };
   }
 
   private jitter(): number {

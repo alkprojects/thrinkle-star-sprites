@@ -23,6 +23,7 @@ type Axis = -1 | 0 | 1;
 /** Hold a direction until the player stops moving (reaches the wall). Returns ticks taken. */
 function ticksToCross(moveX: Axis, moveY: Axis, settleFirst: { moveX: Axis; moveY: Axis }): number {
   const sim = createSim(cfg, 1234);
+  sim.waveTimer = 1e9; // measure pure movement — no zako to collide with (which would cause dizzy slow)
   const p = sim.players[0]!;
   // Park against the starting wall
   for (let i = 0; i < 200; i++) tickSim(sim, inputs(settleFirst), cfg);

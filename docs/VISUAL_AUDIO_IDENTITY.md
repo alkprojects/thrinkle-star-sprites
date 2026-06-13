@@ -107,15 +107,15 @@ Bright fantasy sky per seat, banded into soft pixel gradients on upscale, with o
 
 ---
 
-## 7. Character design language (3 original chibi sprites)
+## 7. Character design language (3 original caricature humans)
 
-Three archetypes, 24×28px, one construction grammar: round cream head (~1/3 height), navy 1px outline, flat fills + one shadow tone, dot eyes (`#3a2150`), short smile, ±1px idle bob.
+_Updated 2026-06-13: the roster is now three ORIGINAL caricature humans (owner's cast), replacing the earlier chibi witch/comet/firefly placeholders._ Same construction grammar: 24×28px, big round cream head (~1/3 height), navy 1px outline (`#2a1a3a`), flat fills + one shadow / one highlight tone, dot eyes (`#3a2150`), ±1px idle bob. Each carries a signature **object** (its attack theme) and a gameplay **power/speed tier**.
 
-- **Stella — pink star-witch (dawn):** dress `#ff6fb7`, hair `#fff0a8`, accent `#ffd1e8`. Pointed witch hat + pale band, wand sparkle. **Underslung broom** (brown handle, gold bristles) — under her, never hand-held `[EVOKE — copyright-distancing]`.
-- **Komet — cyan comet-kid (day):** suit `#4fd2ff`, spiky hair `#2a6cff`, accent `#c9f2ff`. Goggles instead of a hat; **double-star stardust tail** from upper-left. No counterpart in the original — our invention.
-- **Lumen — golden firefly-sprite (dusk):** body `#ffd75e`, antennae/glow `#ff9e3d`, accent `#fff3c4`. Glowing abdomen; **large translucent layered wings** (the color-doubling trick); antennae with tiny star tips.
+- **Danny Donkey — frisbees, power 2 / speed 2 (the baseline):** chubby, blonde bowl-cut hair (`#ffd24a`), green tee (`#3fb56b`), rosy cheeks; an orange spinning frisbee (`#ff7a3d`) at his side. His "ghost" projectiles are flat spinning discs; extra = an angry grey donkey head; boss = a giant donkey. Terrain = **meadow** (bright green forest).
+- **Heavy Tyleru — film reels / movie monsters, power 1 / speed 1:** heavyset, thinning dark hair (`#3a2c1e`) with a receding hairline + stubble, dark-burgundy tee (`#8a2f44`), tired eyes; an amber film reel (`#e6cf63`) at his side. Ghosts = film reels with hub + holes; extra = a green one-eyed kaiju; boss = a green movie-monster with film-reel eyes + film-strip dorsal fins. Terrain = **cinema** (moody dusk backlot). Tanky 25-HP boss.
+- **Senseitional Alex — weights, power 3 / speed 3:** tall, ripped, tan (`#f0c290`), brown hair (`#6a4628`), black sunglasses, shirtless (pec/ab shading), blue shorts (`#2a6cff`); a dumbbell with a chrome bar in hand. Ghosts = weight plates; extra = a flexed muscle-fist; boss = a muscle golem with shades hoisting a dumbbell. Terrain = **sunny** (beach/boardwalk). Glass-cannon: fast hard shots, 4 specials, 18-HP boss.
 
-> **Roster note:** the original's 13 characters are cute witch/wizard/creature archetypes. There is **no comet-kid** in the original. Do not present any of our three as a renamed original character.
+> **Roster note:** these are the owner's own caricature characters (inside-joke humans), drawn fresh as original pixel art — not derived from or renamed after any ADK character. The copyright line in §12 still holds: evoke the *kind* of game, never copy ADK assets.
 
 ---
 

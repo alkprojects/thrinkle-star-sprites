@@ -4,7 +4,12 @@ import { hashState } from '../src/sim/hash';
 import { createSim, tickSim } from '../src/sim/sim';
 import { NEUTRAL_INPUT, type PlayerInput, type SimState } from '../src/sim/types';
 
-const cfg = DEFAULT_BALANCE;
+// Logic tests run at NEUTRAL pacing (full density / unit speed) so chain-normal counts
+// and routing are deterministic; the density/speed valves have their own tests below.
+const cfg: BalanceConfig = {
+  ...DEFAULT_BALANCE,
+  routing: { ...DEFAULT_BALANCE.routing, incomingSpeedScale: 1, incomingDensityScale: 1 },
+};
 
 function inputs(overrides: Partial<PlayerInput>[] = []): PlayerInput[] {
   return [0, 1, 2].map((i) => ({ ...NEUTRAL_INPUT, ...(overrides[i] ?? {}) }));
@@ -96,6 +101,18 @@ describe('chains and attack generation', () => {
     expect(s.transit.length).toBe(0);
   });
 
+  it('deeper combo hits send bigger/tougher fireballs (§3.3 size tiers)', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    plantCluster(s, 0, 8, 40, 100);
+    shootAt(s, 0, 40, 100);
+    run(s, cfg, settleTicks(8));
+    const hps = s.transit.filter((t) => t.target === 1 && t.tier === 'normal').map((t) => t.hp);
+    expect(hps.length).toBeGreaterThan(1);
+    expect(Math.min(...(hps as number[]))).toBe(2);          // first fireball is small
+    expect(Math.max(...(hps as number[]))).toBeGreaterThan(2); // a later one is bigger
+  });
+
   it('round-robin mode alternates targets between chains', () => {
     const c: BalanceConfig = { ...cfg, routing: { ...cfg.routing, normalMode: 'round-robin' } };
     const s = createSim(c, 7);
@@ -145,6 +162,32 @@ describe('reflection ladder', () => {
     expect(reflected!.originalSender).toBe(0);
     expect(reflected!.lastSender).toBe(1);
     expect(reflected!.speed).toBeCloseTo(cfg.attacks.baseSpeed * cfg.attacks.reverseSpeedScale);
+  });
+
+  it('a fireball shot down returns one SIZE larger (§4 edge case)', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    placeIncoming(s, 1, 0, 'normal');
+    s.players[1]!.incoming[0]!.maxHp = 3; // a medium (3-HP) fireball
+    s.players[1]!.incoming[0]!.hp = 1;    // one shot downs it for the test
+    shootAt(s, 1, 80, 100);
+    run(s, cfg, 2);
+    const rev = s.transit.find((t) => t.tier === 'reverse');
+    expect(rev!.hp).toBe(4); // 3 + 1
+  });
+
+  it('a fireball caught in a chain explosion reflects at the chain-size tier (not one-larger, §4.1)', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    placeIncoming(s, 0, 1, 'normal', 80, 100); // a normal parked where a blast will catch it
+    s.players[0]!.incoming[0]!.maxHp = 5;       // a big fireball (shot-path would give 5)
+    s.players[0]!.incoming[0]!.hp = 5;
+    s.players[0]!.zako.push({ id: s.nextId++, x: 80, y: 100, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
+    shootAt(s, 0, 80, 100); // shot detonates the zako; the blast catches the fireball
+    run(s, cfg, settleTicks(2));
+    const rev = s.transit.find((t) => t.tier === 'reverse');
+    expect(rev).toBeDefined();
+    expect(rev!.hp).toBe(2); // ~2-hit chain → small reverse, not min(5, 5+1)
   });
 
   it('a small fireball takes attackHp shots to bring down', () => {
@@ -284,6 +327,19 @@ describe('life economy', () => {
     run(s, cfg, 1);
     expect(p0.hp).toBe(cfg.player.maxHp);
   });
+
+  it('a zako collision leaves you dizzy: reduced movement speed (§5.4)', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    p0.iframes = 0;
+    p0.zako.push({ id: s.nextId++, x: p0.x, y: p0.y, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
+    run(s, cfg, 1);
+    expect(p0.dizzyTicks).toBeGreaterThan(0);
+    const x0 = p0.x;
+    run(s, cfg, 1, inputs([{ moveX: 1 }]));
+    expect(p0.x - x0).toBeCloseTo(p0.moveSpeed * cfg.player.dizzyMoveScale, 5);
+  });
 });
 
 describe('elimination and win', () => {
@@ -324,13 +380,26 @@ describe('elimination and win', () => {
 });
 
 describe('fever', () => {
-  it('full meter triggers fever mode and resets the meter', () => {
-    const s = createSim(cfg, 7);
+  it("orb mode (default): a chain explosion detonating the fever orb starts fever", () => {
+    const s = createSim(cfg, 7); // cfg.fever.mode === 'orb'
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    p0.orbs.push({ id: s.nextId++, x: 80, y: 100, vy: 0, age: 0 });
+    p0.zako.push({ id: s.nextId++, x: 80, y: 100, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0 });
+    shootAt(s, 0, 80, 100); // detonate the zako → blast catches the orb
+    run(s, cfg, settleTicks(2));
+    expect(p0.feverTicks).toBeGreaterThan(0);
+    expect(p0.orbs.length).toBe(0);
+  });
+
+  it('meter mode: full meter triggers fever and resets the meter', () => {
+    const c: BalanceConfig = { ...cfg, fever: { ...cfg.fever, mode: 'meter' } };
+    const s = createSim(c, 7);
     s.waveTimer = 100000;
     s.players[0]!.feverMeter = 99;
-    plantCluster(s, 0, cfg.chain.minChainToAttack);
+    plantCluster(s, 0, c.chain.minChainToAttack);
     shootAt(s, 0, 80, 100);
-    run(s, cfg, settleTicks(cfg.chain.minChainToAttack));
+    run(s, c, settleTicks(c.chain.minChainToAttack));
     expect(s.players[0]!.feverTicks).toBeGreaterThan(0);
     expect(s.players[0]!.feverMeter).toBe(0);
   });
@@ -352,6 +421,180 @@ describe('fever', () => {
     shootAt(normal, 0, 80, 100);
     run(normal, cfg, settleTicks(4));
     expect(normal.transit.filter((t) => t.target === 1 && t.tier === 'normal').length).toBe(1);
+  });
+});
+
+describe('zako durability tiers', () => {
+  function tierZako(s: SimState, seat: number, x: number, y: number, tier: number): void {
+    s.players[seat]!.zako.push({ id: s.nextId++, x, y, vx: 0, vy: 0, swayPhase: 0, swayAmp: 0, hp: tier, maxHp: tier });
+  }
+
+  it('a tougher zako needs more shots to destroy (color = remaining HP)', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    tierZako(s, 0, 80, 100, 3);
+    for (let k = 0; k < 2; k++) { shootAt(s, 0, 80, 100); run(s, cfg, 1); }
+    expect(s.players[0]!.zako.length).toBe(1); // survives 2 shots
+    expect(s.players[0]!.zako[0]!.hp).toBe(1);
+    shootAt(s, 0, 80, 100); run(s, cfg, 1);
+    expect(s.players[0]!.zako.length).toBe(0); // 3rd shot detonates it
+  });
+
+  it('a small blast only chips a tough zako; a big (purple) blast wipes it', () => {
+    const small = createSim(cfg, 7);
+    small.waveTimer = 100000;
+    tierZako(small, 0, 74, 100, 1); // red source
+    tierZako(small, 0, 86, 100, 3); // green neighbour
+    shootAt(small, 0, 74, 100);
+    run(small, cfg, settleTicks(2));
+    const survivors = small.players[0]!.zako.filter((z) => z.maxHp === 3);
+    expect(survivors.length).toBe(1);
+    expect(survivors[0]!.hp).toBe(2); // took 1 blast damage, survived
+
+    const big = createSim(cfg, 7);
+    big.waveTimer = 100000;
+    tierZako(big, 0, 74, 100, 5); // purple source
+    tierZako(big, 0, 90, 100, 3);
+    for (let k = 0; k < 5; k++) { shootAt(big, 0, 74, 100); run(big, cfg, 1); }
+    run(big, cfg, settleTicks(2));
+    expect(big.players[0]!.zako.length).toBe(0); // purple blast cascaded through the green
+  });
+});
+
+describe('charge-meter economy', () => {
+  it('the charge meter fills as zako are destroyed', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    expect(p0.chargeMeter).toBe(0);
+    plantCluster(s, 0, 3);
+    shootAt(s, 0, 80, 100);
+    run(s, cfg, settleTicks(3));
+    expect(p0.chargeMeter).toBeGreaterThan(0);
+  });
+
+  it('a Lv2 release with ≥2/3 meter sends exCount specials to BOTH opponents and spends a notch', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    p0.chargeTicks = p0.chargeLv2; // exactly Lv2, below MAX
+    p0.chargeMeter = cfg.charge.lv2Threshold;
+    tickSim(s, inputs([{ fire: false }]), cfg);
+    const extras = s.transit.filter((t) => t.tier === 'extra');
+    expect(extras.filter((t) => t.target === 1).length).toBe(p0.exCount);
+    expect(extras.filter((t) => t.target === 2).length).toBe(p0.exCount);
+    expect(p0.chargeMeter).toBeCloseTo(cfg.charge.lv2Threshold - cfg.charge.lv2Cost);
+  });
+
+  it('a Lv2 release with too little meter sends nothing (just the free beam)', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    p0.chargeTicks = p0.chargeLv2;
+    p0.chargeMeter = cfg.charge.lv2Threshold - 0.05;
+    tickSim(s, inputs([{ fire: false }]), cfg);
+    expect(s.transit.length).toBe(0);
+    expect(p0.beams.length).toBe(1); // the beam still fires
+  });
+
+  it('a MAX release with full meter sends a Boss to both opponents and spends two notches', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    p0.chargeTicks = p0.chargeMax;
+    p0.chargeMeter = cfg.charge.maxThreshold;
+    tickSim(s, inputs([{ fire: false }]), cfg);
+    expect(s.transit.filter((t) => t.tier === 'boss').map((t) => t.target).sort()).toEqual([1, 2]);
+    expect(p0.chargeMeter).toBeCloseTo(cfg.charge.maxThreshold - cfg.charge.maxCost);
+  });
+
+  it('a MAX release with a boss already in YOUR field reverses it: clears it, sends your boss out', () => {
+    const s = createSim(cfg, 7);
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    p0.incoming.push({
+      id: s.nextId++, tier: 'boss', originalSender: 1, lastSender: 1,
+      x: 80, y: cfg.attacks.bossHoverY, anchorX: 80, age: 5,
+      speed: cfg.attacks.bossSpeed, reflectCount: 0, hp: cfg.attacks.bossHp,
+    });
+    p0.chargeTicks = p0.chargeMax;
+    p0.chargeMeter = cfg.charge.maxThreshold;
+    tickSim(s, inputs([{ fire: false }]), cfg);
+    expect(s.events.some((e) => e.type === 'boss-reversed')).toBe(true);
+    expect(p0.incoming.filter((a) => a.tier === 'boss').length).toBe(0);
+    expect(s.transit.filter((t) => t.tier === 'boss').length).toBeGreaterThan(0);
+  });
+});
+
+describe('death (the reaper)', () => {
+  function earlyDeath(): BalanceConfig {
+    return { ...cfg, death: { ...cfg.death, startTicks: 5 } };
+  }
+
+  it('spawns on a living field once match time passes startTicks', () => {
+    const c = earlyDeath();
+    const s = createSim(c, 7);
+    s.waveTimer = 100000;
+    expect(s.players[0]!.death).toBeNull();
+    run(s, c, 7);
+    expect(s.players[0]!.death).not.toBeNull();
+  });
+
+  it('contact with Death is an instant KO regardless of hearts', () => {
+    const c = earlyDeath();
+    const s = createSim(c, 7);
+    s.waveTimer = 100000;
+    run(s, c, 7);
+    const p0 = s.players[0]!;
+    p0.hp = 5;
+    p0.iframes = 0;
+    p0.death!.x = p0.x;
+    p0.death!.y = p0.y;
+    run(s, c, 1);
+    expect(p0.alive).toBe(false);
+  });
+
+  it('i-frames let you pass through Death unharmed', () => {
+    const c = earlyDeath();
+    const s = createSim(c, 7);
+    s.waveTimer = 100000;
+    run(s, c, 7);
+    const p0 = s.players[0]!;
+    p0.iframes = 30;
+    p0.death!.x = p0.x;
+    p0.death!.y = p0.y;
+    run(s, c, 1);
+    expect(p0.alive).toBe(true);
+  });
+
+  it('a bomb kills Death in one hit; it then respawns after the gap', () => {
+    const c = earlyDeath();
+    const s = createSim(c, 7);
+    s.waveTimer = 100000;
+    run(s, c, 7);
+    const p0 = s.players[0]!;
+    expect(p0.death).not.toBeNull();
+    expect(p0.death!.permanent).toBe(true); // time-triggered Death respawns
+    run(s, c, 1, inputs([{ bomb: true }]));
+    expect(p0.death).toBeNull();
+    expect(p0.deathArmTimer).toBeGreaterThan(0);
+  });
+
+  it('an inactivity Death appears early when a player fires nothing, and does NOT respawn after a kill', () => {
+    const c: BalanceConfig = {
+      ...cfg,
+      death: { ...cfg.death, startTicks: 100000, inactivityTicks: 5, respawnTicks: 10 },
+    };
+    const s = createSim(c, 7);
+    s.waveTimer = 100000;
+    const p0 = s.players[0]!;
+    run(s, c, 7); // nobody fired for >5 ticks
+    expect(p0.death).not.toBeNull();
+    expect(p0.death!.permanent).toBe(false); // the one-shot inactivity Death
+    run(s, c, 1, inputs([{ bomb: true }]));
+    expect(p0.inactivityDeathDone).toBe(true);
+    run(s, c, 30);
+    expect(p0.death).toBeNull(); // used up — no respawn before the 100s time Death
   });
 });
 

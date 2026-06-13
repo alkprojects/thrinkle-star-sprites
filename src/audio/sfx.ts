@@ -92,11 +92,27 @@ export class Sfx {
         case 'charge-fired':
           this.chargeShot(e.level);
           break;
+        case 'charge-special':
+          if (e.tier === 'boss') this.bossRumble();
+          else this.whoosh(240);
+          break;
+        case 'boss-reversed':
+          this.fever();
+          break;
         case 'bomb':
           this.bomb();
           break;
         case 'fever-start':
           this.fever();
+          break;
+        case 'death-spawn':
+          this.deathSpawn();
+          break;
+        case 'death-killed':
+          this.bell();
+          break;
+        case 'death-ko':
+          this.jingle([330, 262, 196, 131], 'sawtooth');
           break;
         case 'eliminated':
           this.jingle([392, 330, 262, 196], 'square');
@@ -203,10 +219,17 @@ export class Sfx {
     this.tone(120, 0.18, 'sine', 0.4, 0, 60);
   }
 
-  private chargeShot(level: 1 | 2): void {
-    const base = level === 2 ? 180 : 300;
+  private chargeShot(level: 1 | 2 | 3): void {
+    const base = level >= 3 ? 130 : level === 2 ? 180 : 300;
     this.tone(base, 0.28, 'sawtooth', 0.22, 0, base * 6);
     this.noise(0.2, 0.16, 'highpass', 1200);
+  }
+
+  private deathSpawn(): void {
+    // ominous low knell under a dark bell — the reaper arrives
+    this.tone(58, 0.7, 'sine', 0.4, 0, 40);
+    this.fmBell(440, 0.5, 1.5, 1.2, 0.22, 0.05);
+    this.noise(0.5, 0.12, 'lowpass', 400);
   }
 
   private bomb(): void {

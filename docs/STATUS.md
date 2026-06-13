@@ -1,8 +1,45 @@
 # Status
 
-_Last updated: 2026-06-12, lane-view + real-ROM-measurement session_
+_Last updated: 2026-06-13, big fidelity pass — new roster + charge economy + Death + scrolling terrain_
 
-## This session (2026-06-12)
+## This session (2026-06-13)
+
+Owner: "make the look and gameplay as close to the original as possible," described the ghost/charge/Death mechanics, and named **three playable characters**. Started by watching the real ROM (MAME capture, CHARACTER mode, ~74s) — the headline look gap was the background. Full rationale in DECISIONS.md.
+
+**New playable roster** (replaces the chibi placeholders), with per-character stats baked at `createSim`:
+- **Danny Donkey** — frisbees, power 2 / speed 2 (= Load-Ran baseline).
+- **Heavy Tyleru** — film reels / movie monsters, 1 / 1, tanky boss.
+- **Senseitional Alex** — weights, 3 / 3, fast hard-hitting glass cannon.
+Human-caricature sprites + themed projectiles ("ghosts"), specials, and bosses in `src/render/sprites.ts`; `src/config/characters.ts` holds the stats + themes.
+
+**New mechanics (both were top FIDELITY_GAPS):**
+- **Charge-meter economy** — the gauge fills from kills; a Lv2 release with ≥2/3 meter sends specials, a MAX release with a full meter sends a boss, and a MAX release with a boss in your own lane reverses it back. (`balance.charge`)
+- **Death the reaper** — appears at 100s, hunts you (deterministic sqrt-only steering), contact = instant loss, killable, respawns tougher, corpse feeds chains. (`balance.death`)
+
+**Look:** the static sky is gone — each lane now flies over **scrolling top-down terrain** (meadow / dusk-cinema / beach) with a parallax canopy layer (`src/render/backgrounds.ts`). Charge HUD shows the banked meter with 1/2/MAX notches + a live hold cursor; title screen shows the roster with power/speed tiers.
+
+**Pacing:** 3-player pressure made rounds end in ~20s (Death unreachable). Tuned `damage.attackHit` 3→2 (3P-ADAPT), `routing.incomingDensityScale` 0.35, `incomingSpeedScale` 0.85, slower meter fill, and a per-tick AI emergency-dodge → rounds now ~30–90s (humans reach Death). **These four are the top playtest knobs.**
+
+57 sim tests green (9 new); clean build; verified in-browser. Sim stays pure/deterministic.
+
+### Autonomous deepening (same night, owner asleep)
+
+After the above, owner said "work autonomously for the rest of the session." A 6-agent adversarial review of the first pass came back essentially clean (one missing sub-feature). Then closed five more gameplay gaps, each tested + visually verified + kept deterministic:
+
+- **Inactivity Death** (§7) — a one-shot Death now also appears if a player fires nothing for ~30s.
+- **Fireball size tiers** (#6) — fireballs are sized by combo hit-index (small→biggest, 2–5 HP); a shot-down fireball returns one size larger.
+- **Zako durability tiers** (#5) — zako carry HP 1–5 by colour; basic shots drop one tier; big (purple) zako make big cascading blasts. Colour/size now truthful.
+- **Flight patterns** (#7) — fireballs fly 3 cycling baitable patterns (parabola / diagonal-bounce / stop-and-track) instead of one sway.
+- **Dizzy debuff** (§5.4) — a zako clip slows your move/shot speed for ~5s (circling stars).
+- **Orb-based fever** (#1) — a spinning blue orb crosses each field; a chain (or bomb) detonating it grants ~10s fever. `fever.mode` flag keeps the old meter trigger as a fallback. The AI chases orbs, so fever now fires in **6/6** all-AI matches. Two review fixes also landed (bomb radius consistency; explosion-caught reflections sized by chain, not +1).
+
+Combined, these pushed all-AI rounds to **~48–117s** (the original's 30s–3min band) — and **Death is now reached in normal AI play** (≈2/6 matches passed its 100s spawn; a human reaches it reliably). **65 sim tests green** (18 new this session); clean build. Top pacing knobs: `damage.attackHit`, `routing.incomingDensityScale`/`incomingSpeedScale`, `charge.gainPerZako`, `death.startTicks`, `fever.mode`. Remaining big gaps: best-of-3 rounds (#3), the 36 fixed formations (#10), bomb/star coin items (#13), per-character extra/boss movesets (#9).
+
+---
+
+_Earlier: 2026-06-12, lane-view + real-ROM-measurement session_
+
+## Prior session (2026-06-12)
 
 Both items from the prior session's plan landed (details in DECISIONS.md):
 
