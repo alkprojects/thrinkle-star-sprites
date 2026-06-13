@@ -2,6 +2,17 @@
 
 Newest first. Each entry: what, why, how to change it later.
 
+## 2026-06-12 — Self-centered 3-lane view BUILT + real-ROM measurement (Claude)
+
+Two threads from the prior session's plan, both landed this session.
+
+- **Self-centered 3-lane view is implemented** (the decision below, now code). Pure renderer change in `src/render/renderer.ts` (sim untouched, 48 tests green): `Renderer` gains a `localSeat`; `laneOf()` maps seats→columns rotationally (centre=localSeat, left=(localSeat+2)%3, right=(localSeat+1)%3); the `(YOU)` header + a gold frame accent follow the local lane to centre. Bonus fidelity shipped: incoming attacks slide in from the screen-side of their `originalSender`'s lane over `SIDE_ENTRY_TICKS` then settle on their true sim x (cosmetic only — hitboxes use sim coords). Solo build passes `localSeat=0`. Verified all three perspectives + the side-entry effect via the preview harness. `__game.setLocalSeat(n)` cycles perspectives in DEV.
+- **2P / real-ROM measurement (MAME) — the menu map was wrong; the player-address note was wrong; the timing checks out.** Findings (full detail in `tools/mame/README.md` + harness comments):
+  - **Menu map corrected.** This MVS `twinspri` does NOT open SELECT MODE from "2 Players Start" (that was a bad guess). Real path: coin → **1 Player Start** → a long scripted how-to-play intro → **press A to skip** → **SELECT MODE** (CHARACTER | STORY | COMPETITIVE, COMPETITIVE rightmost = 2P VS). Mashing A lands on CHARACTER MODE = a split-screen 1-on-1 vs CPU with **Load Ran as a fully human-controlled P1** — a clean, unscripted measurement field.
+  - **`0x10BC38` is NOT the player X** — it (and `0x10C22E`) are background-scroll counters (+~3/frame, wrap at 256, drift when idle). The earlier "player horizontal @0x10BC38 (8.8 fixed)" note was the scroll counter all along. Work RAM is dominated by the sprite display list + double-buffered per-object temps (value V / V+0x100 alternating each frame), so blind Lua RAM-diffing for the player position is unreliable; use MAME's debugger memory-search next time, or the visual method.
+  - **Measurement (visual, the bible's own method): Load Ran horizontal ≈ 2.5 px/frame steady, ~52–56 frames wall-to-wall** — confirms GAME_MECHANICS.md §8.2 (56f) and `tests/feel.test.ts`. Sim `player.speed` (2.75) is within eyeball error; **no balance change made**.
+  - To change later: harness + reusable navigation live in `tools/mame/`; re-run for finer numbers (debugger memory-search for sub-pixel precision, or extend the harness to stop at SELECT MODE and pick COMPETITIVE for a P2-idle field).
+
 ## 2026-06-12 — Self-centered 3-lane view (owner decision)
 
 Owner: "in Thrinkle the player's lane should always be in the middle — each of the three players, in their own browser, sees their lane as the center one."

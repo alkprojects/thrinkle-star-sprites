@@ -1,6 +1,17 @@
 # Status
 
-_Last updated: 2026-06-11, game-vision session (after the presentation overhaul)_
+_Last updated: 2026-06-12, lane-view + real-ROM-measurement session_
+
+## This session (2026-06-12)
+
+Both items from the prior session's plan landed (details in DECISIONS.md):
+
+- **Self-centered 3-lane view BUILT** — each client renders its own seat as the centre lane, opponents flanking; `(YOU)` + gold frame follow the local lane; incoming attacks slide in from the screen-side of their sender's lane (cosmetic). Pure renderer change in `src/render/renderer.ts`; sim untouched; 48 tests green; verified all 3 perspectives + side-entry via the preview harness. `__game.setLocalSeat(n)` cycles views in DEV.
+- **Real-ROM (MAME) 2P measurement done.** Corrected the menu map (coin → **1 Player Start** → press **A** to skip the intro → **SELECT MODE**: CHARACTER/STORY/**COMPETITIVE**; "2 Players Start" does NOT open it). Reached a clean human-controlled Load Ran field (CHARACTER mode) and **visually measured horizontal wall-to-wall ≈ 52–56 frames / ~2.5 px/frame → confirms GAME_MECHANICS.md §8.2 (56f) and `tests/feel.test.ts`; sim is well-calibrated, no balance change.** Also debunked the old `0x10BC38` "player X" note — it's a background-scroll counter (see `tools/mame/README.md`). Harness `enter_character_match()` automates reaching the field.
+
+---
+
+_Earlier: 2026-06-11, game-vision session (after the presentation overhaul)_
 
 ## NEW: We can now SEE the original game (and measure it)
 
@@ -36,8 +47,8 @@ Headless preview pages are `document.hidden`, which **pauses requestAnimationFra
 
 ## Next steps (pick by interest)
 
-- **Self-centered 3-lane view (DECIDED 2026-06-12, see DECISIONS.md — not yet built).** Each player sees THEIR OWN field as the centre lane, with the two opponents flanking left/right; in netplay every browser is self-centered over the same shared sim. This is a pure **renderer/presentation** change (sim stays seat-symmetric → determinism/netplay intact). Work: (1) `renderer` takes a `localSeat`; map seats→lanes as centre=localSeat, left=(localSeat+2)%3, right=(localSeat+1)%3; (2) HUD emphasis (YOU) moves to the centre lane; (3) bonus fidelity — render incoming attacks ENTERING from the screen side of their `originalSender`'s lane (left-opponent attacks slide in from the left, etc.) so 3-way pressure is legible. Keep all three fields the SAME internal orientation (no gameplay mirroring — fairness/readability); any mirroring is cosmetic only. Local solo build just passes `localSeat=0`.
-- **2P calibration from the real ROM (in progress).** MAME harness reaches gameplay + reads RAM (`tools/mame/`). The original has a **Competitive (2P VS)** mode: coin → 2 Players Start → SELECT MODE → Competitive (rightmost) → 2P char-select → VS. Reach it robustly by **detecting the screen via a RAM/pixel signature** (fixed `wait()` delays drift because the attract loop + demo cutscenes shift timing). Then confirm the player-X address in that unscripted field and measure wall-to-wall crossing → check `tests/feel.test.ts` (asserts the bible's 56f/80f). Story-mode stage 1 scripts player movement, so it's NOT a clean measurement env — use 2P VS.
+- **Deploy the lane view** — this session's renderer change is committed but not yet pushed live. `npx wrangler pages deploy dist --project-name=thrinkle-star-sprites --branch=main` (from a worktree, the plain `npm run deploy` only makes a branch preview — see project memory). Optional first: a quick browser playtest of the new centre-lane layout at speed.
+- **Finer ROM calibration (optional).** Horizontal is confirmed (56f). To add vertical (80f) / shot-travel (34f) / charge checks at sub-pixel precision, find the player struct via MAME's **debugger memory-search** — blind Lua RAM-diffing is defeated by the sprite-list + double-buffer noise (see `tools/mame/README.md`). Or extend the harness to stop at SELECT MODE → COMPETITIVE for a P2-idle, boss-free field.
 - **Playtest the feel** in a real browser (`npm run dev`) — confirm BGM/SFX land and the look reads at speed. Retune palettes in `sprites.ts`/`backgrounds.ts`, BGM in `music.ts`.
 - **Deeper mechanics fidelity** — the remaining gaps in [FIDELITY_GAPS.md](FIDELITY_GAPS.md) are now mostly *gameplay* (orb-based fever, charge-meter Lv2/MAX economy, best-of-3 rounds, Death reaper, zako durability tiers in the SIM — currently visual-only). These change how it *plays*, complementing this look/sound pass.
 - **Balance knobs** (all in `balance.ts`): `lifeSteal.split`, `routing.incoming*Scale`, `damage.attackHit`/`maxHp` for pacing.

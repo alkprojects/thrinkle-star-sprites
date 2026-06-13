@@ -30,15 +30,31 @@ Headless + `-nothrottle` runs ~6–8× real time. Edit the `scenario()` function
 `tss_harness.lua` to script inputs / capture / memory reads, then re-run.
 Snapshots write to `snap/<name>`; logs to `tss_run.log`.
 
-## What works (proven)
+## What works (proven, 2026-06-12)
 
-- **Boot → menu navigation → live gameplay**, fully scripted (coin, start).
+- **Boot → menu navigation → live, unscripted gameplay**, fully scripted from Lua.
+  `enter_character_match()` reaches a controllable Load Ran field (see menu map).
 - **Input injection** (8-way stick + A/B), re-asserted each frame.
-- **Frame capture** at native 320×224 — view the PNGs directly.
-- **Memory reads** of 68k work RAM `0x100000–0x10FFFF`. RAM-diffing while moving
-  located the player object struct at **~0x10A000**; `0x10BC38` tracks horizontal
-  input (8.8 fixed-point, observed +0x300/frame = 3.0 px/f) — needs final
-  confirmation in an unscripted match (the story-mode tutorial scripts movement).
+- **Frame capture** at native 320×224 — view the PNGs directly (works under `-video none`).
+- **`scr:pixel(x,y)`** reads work too (handy for screen-signature detection).
+- **Memory reads** of 68k work RAM `0x100000–0x10FFFF`.
+- **Measurement done (visual):** Load Ran horizontal **≈ 2.5 px/frame**, wall-to-wall
+  **≈ 52–56 frames** → confirms GAME_MECHANICS.md §8.2 (56f) and `tests/feel.test.ts`.
+
+## ⚠️ Memory-map corrections (don't re-learn these)
+
+- **`0x10BC38` is the BACKGROUND-SCROLL counter, NOT the player X.** So is `0x10C22E`.
+  Both step ~+3/frame, wrap at 256, and drift when idle. The earlier note calling
+  `0x10BC38` the player's 8.8-fixed horizontal position was wrong (it was the scroll
+  counter the whole time; that's why story-stage-1 "movement" looked scripted).
+- Work RAM is dominated by the **NeoGeo sprite display list** (0/0x100 attribute
+  words) and **double-buffered per-object temps** that alternate `V / V+0x100`
+  (field offset) every frame. Blind Lua RAM-diffing for the player position is
+  therefore noisy and unreliable. To find the authoritative player struct, use
+  MAME's debugger memory **search** (`-debug`, `cheatinit`/`cheatnext`) or watch
+  sprite VRAM. Until then the **visual method** (crop the player out of snapshots
+  and read its pixel X) is the reliable measurement — it's how the bible's frame
+  data was derived anyway.
 
 ## Gotchas (baked into the harness comments — read them before editing)
 
@@ -51,28 +67,41 @@ Snapshots write to `snap/<name>`; logs to `tss_run.log`.
    mid-run tears down notifiers. Just re-navigate the menu each run (~3 s at 8×).
 5. **Re-assert held inputs every frame** (one `set_value` lasts a single poll).
 
-## Menu map (observed)
+## Menu map (CORRECTED — observed 2026-06-12)
+
+The earlier map was wrong: **"2 Players Start" does NOT open SELECT MODE** on this
+MVS romset. The real flow:
 
 ```
-attract (INSERT COIN, ~frame 900) --coin x2-4--> title (PUSH START)
-  --1 Player Start--> story stage 1 (scripts player movement; NOT clean for measuring)
-  --2 Players Start--> SELECT MODE screen:
-       CHARACTER MODE | STORY MODE | COMPETITIVE MODE
-       (cursor starts on CHARACTER; COMPETITIVE = rightmost = the 2P VS we want)
-       --right,right,A--> 2P character select --A (both)--> VS match (split-screen)
+BIOS white screen ("LEVEL n / CREDIT", ~f900) --coin xN--> game TITLE
+  (blinking PUSH START, with a countdown into the attract how-to-play demo)
+  --1 Player Start--> long scripted how-to-play intro (LOAD RAN + instruction
+        text boxes; looks like "story stage 1", auto-plays/cycles tips)
+     --press A repeatedly (skips the intro)--> SELECT MODE (yellow/gold bg):
+          CHARACTER MODE | STORY MODE | COMPETITIVE MODE
+          (COMPETITIVE = rightmost = 2P VS; A selects the highlighted mode)
+  CHARACTER MODE (where mashing A lands) --> split-screen 1-on-1 vs CPU:
+        LOADRAN = P1, LEFT field (~150px), FULLY HUMAN-CONTROLLED, unscripted.
+        Each round has a ~45-frame intro before control begins.
 ```
 
-Fixed-`wait()` navigation DRIFTS: the attract loop and demo cutscenes shift where
-a given delay lands, so you'll sometimes catch the wrong screen. **Make it robust
-by detecting the current screen** (a RAM byte or a pixel signature that's unique to
-SELECT MODE / char-select / in-match) and branching on it, rather than trusting
-frame counts.
+`enter_character_match()` in the harness automates this (coin → 1P start → mash A
+to ~f1950 → settle). Over-mashing A in-match just fires shots (harmless). Fixed
+`wait()` timing held up across runs here, but for COMPETITIVE you must STOP at
+SELECT MODE — detect it by its yellow bg via `scr:pixel()` (it's a static, low-
+volatility screen after the busy intro), then `P1 Right` x2 + `P1 A`.
 
-## Next (to finish calibration)
+## Done this session
 
-- Get into a **2P VS match** (or past the tutorial) for an unscripted field, then
-  confirm the X-coordinate address and measure wall-to-wall crossing in frames →
-  compare to `tests/feel.test.ts` (currently asserts the bible's 56f/80f).
-- Find Y, HP/heart, charge-gauge, and fireball-position addresses the same way
-  (RAM-diff a controlled action). A community cheat/RAM map for `twinspri`, if one
-  exists, would shortcut this.
+- Reached an unscripted, human-controlled field (CHARACTER mode, Load Ran).
+- Measured horizontal wall-to-wall ≈ 52–56f / ~2.5 px/f (visual) → matches the
+  bible's 56f; sim's `player.speed` 2.75 is within measurement error, no change.
+
+## Next (to refine)
+
+- For sub-pixel precision, find the player struct via MAME's debugger memory
+  **search** (the work-RAM diff approach is defeated by sprite-list noise + the
+  V/V+0x100 double-buffering — see corrections above). Then measure X/Y/charge/
+  fireball addresses directly and add vertical (80f) + shot-travel (34f) checks.
+- Optionally extend the harness to stop at SELECT MODE and pick **COMPETITIVE**
+  (P2 idle) for an even cleaner, boss-free field at round start.
