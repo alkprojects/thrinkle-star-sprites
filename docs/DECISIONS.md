@@ -2,6 +2,15 @@
 
 Newest first. Each entry: what, why, how to change it later.
 
+## 2026-06-12 — Self-centered 3-lane view (owner decision)
+
+Owner: "in Thrinkle the player's lane should always be in the middle — each of the three players, in their own browser, sees their lane as the center one."
+
+- **Adopted.** Every client renders the same shared 3-seat sim but arranges the lanes so the LOCAL player is centre, opponents flank left/right. Rationale: centre = the natural focal point; both opponents are symmetric in the periphery (no edge-seat disadvantage); generalises the original's "focus on your own field" to three players; and the side an attack enters from can encode which opponent sent it.
+- **Sim stays seat-symmetric and untouched** — this is purely renderer/presentation, so determinism/replays/netplay are unaffected. The renderer gains a `localSeat`; lane map = centre:`localSeat`, left:`(localSeat+2)%3`, right:`(localSeat+1)%3` (rotational, consistent for all viewers). Local solo build passes `localSeat=0` (YOU centre, the 2 AI flank).
+- **No gameplay mirroring** of the side fields (keep identical internal orientation for fairness + readability); any mirroring stays cosmetic. **Bonus fidelity:** draw incoming attacks entering from the screen-side of their `originalSender`'s lane so 3-way pressure reads at a glance (attacks already carry `originalSender`).
+- To change later: it's all in the renderer's seat→lane mapping + HUD emphasis; the sim has no notion of screen position, so nothing downstream breaks.
+
 ## 2026-06-11 — Measurement-driven fidelity loop (Claude, after owner feedback)
 
 Owner: "this won't work unless you can SEE the actual game — speed, animations, everything; explaining the nuance isn't feasible." Agreed. Built a vision/measurement loop instead of iterating blind (details in STATUS.md):

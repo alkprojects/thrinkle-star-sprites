@@ -51,6 +51,23 @@ Snapshots write to `snap/<name>`; logs to `tss_run.log`.
    mid-run tears down notifiers. Just re-navigate the menu each run (~3 s at 8×).
 5. **Re-assert held inputs every frame** (one `set_value` lasts a single poll).
 
+## Menu map (observed)
+
+```
+attract (INSERT COIN, ~frame 900) --coin x2-4--> title (PUSH START)
+  --1 Player Start--> story stage 1 (scripts player movement; NOT clean for measuring)
+  --2 Players Start--> SELECT MODE screen:
+       CHARACTER MODE | STORY MODE | COMPETITIVE MODE
+       (cursor starts on CHARACTER; COMPETITIVE = rightmost = the 2P VS we want)
+       --right,right,A--> 2P character select --A (both)--> VS match (split-screen)
+```
+
+Fixed-`wait()` navigation DRIFTS: the attract loop and demo cutscenes shift where
+a given delay lands, so you'll sometimes catch the wrong screen. **Make it robust
+by detecting the current screen** (a RAM byte or a pixel signature that's unique to
+SELECT MODE / char-select / in-match) and branching on it, rather than trusting
+frame counts.
+
 ## Next (to finish calibration)
 
 - Get into a **2P VS match** (or past the tutorial) for an unscripted field, then
