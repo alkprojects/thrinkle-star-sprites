@@ -12,7 +12,9 @@ const TICK_MS = 1000 / 60;
 type Screen = 'title' | 'playing' | 'gameover';
 
 async function start(): Promise<void> {
-  const renderer = new Renderer(cfg);
+  // Self-centered view: solo build is seat 0 (YOU centre, the 2 AI flank). In netplay
+  // each client passes its own seat. Sim is seat-symmetric — this is presentation only.
+  const renderer = new Renderer(cfg, 0);
   await renderer.init(document.getElementById('app')!);
 
   const sfx = new Sfx();
@@ -63,6 +65,8 @@ async function start(): Promise<void> {
         newMatch();
         controllers[0] = new AiController(cfg, 'normal', 0x1337c0de);
       },
+      /** Re-point the self-centered view at a different seat (verify the lane mapping). */
+      setLocalSeat: (seat: number): void => renderer.setLocalSeat(seat),
       step(n = 1): void {
         if (!sim || screen !== 'playing') return;
         for (let i = 0; i < n; i++) {

@@ -27,6 +27,12 @@ const MAX_BOMBS = 3; // original caps the bomb-stock display at 3
 
 const BEZEL = 0x0b0820;
 
+// Self-centered 3-lane view: an attack incoming to a field slides in from the
+// screen-side of its sender's lane (left-opponent attacks from the left, etc.)
+// over its first SIDE_ENTRY_TICKS, then sits on its true sim x. Pure cosmetics.
+const SIDE_ENTRY = true;
+const SIDE_ENTRY_TICKS = 18;
+
 interface Popup {
   sprite: Sprite;
   ticks: number;
@@ -45,6 +51,8 @@ interface Field {
   bombs: Sprite[];
   score: Label;
   koLabel: Label;
+  frame: Graphics; // field "walls" — restyled to emphasise the local lane
+  name: Sprite; // "<char> (YOU)" / "(CPU)" label — rebuilt when localSeat changes
   anim: number;
 }
 
@@ -59,9 +67,27 @@ export class Renderer {
   private overlayDim = new Graphics();
   private overlayItems = new Container();
   private tickCount = 0;
+  /** The seat this client "is": its field renders in the centre lane, opponents flank.
+   *  Sim is seat-symmetric and untouched — this is pure presentation (see DECISIONS.md). */
+  private localSeat: number;
 
-  constructor(cfg: BalanceConfig) {
+  constructor(cfg: BalanceConfig, localSeat = 0) {
     this.cfg = cfg;
+    this.localSeat = ((localSeat % 3) + 3) % 3;
+  }
+
+  /** Column index (0=left, 1=centre, 2=right) a seat's field is drawn in.
+   *  Rotational so it's consistent for every viewer: centre=localSeat,
+   *  left=(localSeat+2)%3, right=(localSeat+1)%3. */
+  private laneOf(seat: number): number {
+    if (seat === this.localSeat) return 1;
+    if (seat === (this.localSeat + 2) % 3) return 0;
+    return 2; // (localSeat + 1) % 3
+  }
+
+  /** Internal-pixel x of the left edge of a seat's column. */
+  private colXOf(seat: number): number {
+    return MARGIN + this.laneOf(seat) * (FW + GAP);
   }
 
   async init(parent: HTMLElement): Promise<void> {
@@ -131,7 +157,7 @@ export class Renderer {
 
   private buildField(seat: number): Field {
     const ch = CHARACTERS[seat]!;
-    const colX = MARGIN + seat * (FW + GAP);
+    const colX = this.colXOf(seat);
     const col = new Container();
     col.position.set(colX, MARQUEE);
     this.root.addChild(col);
@@ -156,10 +182,9 @@ export class Renderer {
     play.addChild(gfx);
     const pool = new SpritePool(play);
 
-    // Frame border (the field "walls")
+    // Frame border (the field "walls"); the local lane gets a brighter accent.
     const frame = new Graphics();
-    frame.rect(0, 0, FW, FH).stroke({ width: 2, color: 0x2a1a4a, alignment: 0 });
-    frame.rect(-1, -1, FW + 2, FH + 2).stroke({ width: 1, color: 0x6a4a9a, alignment: 0 });
+    this.styleFrame(frame, seat === this.localSeat);
     col.addChild(frame);
 
     // --- Top HUD: portrait, name, score, hearts ---
@@ -179,7 +204,7 @@ export class Renderer {
     portrait.addChild(pHead);
     col.addChild(portrait);
 
-    const name = new Sprite(textTexture(`${ch.name}${seat === 0 ? ' (YOU)' : ' (CPU)'}`, { color: cssOf(ch.color), shadow: '#1a0a2a' }));
+    const name = new Sprite(this.nameTex(ch, seat));
     name.position.set(24, 3);
     col.addChild(name);
 
@@ -214,7 +239,33 @@ export class Renderer {
     koLabel.at(FW / 2, HUD_TOP + FH / 2);
     koLabel.visible = false;
 
-    return { col, play, clouds, gfx, pool, popups: [], hearts, bombs, score, koLabel, anim: 0 };
+    return { col, play, clouds, gfx, pool, popups: [], hearts, bombs, score, koLabel, frame, name, anim: 0 };
+  }
+
+  /** Build the "<name> (YOU)" / "<name> (CPU)" header texture for a seat. */
+  private nameTex(ch: (typeof CHARACTERS)[number], seat: number) {
+    const tag = seat === this.localSeat ? ' (YOU)' : ' (CPU)';
+    return textTexture(`${ch.name}${tag}`, { color: cssOf(ch.color), shadow: '#1a0a2a' });
+  }
+
+  /** Style a field's wall frame; the local lane gets a brighter gold-tinted accent. */
+  private styleFrame(frame: Graphics, local: boolean): void {
+    frame.clear();
+    const inner = local ? 0x6a4a2a : 0x2a1a4a;
+    const outer = local ? 0xffd86a : 0x6a4a9a;
+    frame.rect(0, 0, FW, FH).stroke({ width: 2, color: inner, alignment: 0 });
+    frame.rect(-1, -1, FW + 2, FH + 2).stroke({ width: 1, color: outer, alignment: 0 });
+  }
+
+  /** Re-point the view at a different local seat (netplay: each client its own; DEV: cycle to verify).
+   *  Repositioning happens in draw(); here we refresh the per-lane chrome (YOU label + frame accent). */
+  setLocalSeat(seat: number): void {
+    this.localSeat = ((seat % 3) + 3) % 3;
+    for (let s = 0; s < 3; s++) {
+      const f = this.fields[s]!;
+      f.name.texture = this.nameTex(CHARACTERS[s]!, s);
+      this.styleFrame(f.frame, s === this.localSeat);
+    }
   }
 
   // ----------------------------------------------------------------------
@@ -360,7 +411,7 @@ export class Renderer {
     const s = new Sprite(tex);
     s.anchor.set(0.5);
     s.scale.set(scale);
-    s.position.set(Math.round(MARGIN + seat * (FW + GAP) + x), Math.round(MARQUEE + HUD_TOP + y));
+    s.position.set(Math.round(this.colXOf(seat) + x), Math.round(MARQUEE + HUD_TOP + y));
     this.root.addChild(s);
     f.popups.push({ sprite: s, ticks: 50, life: 50, vy: -0.5 });
   }
@@ -412,7 +463,7 @@ export class Renderer {
       const p = state.players[seat]!;
       const f = this.fields[seat]!;
       const ch = CHARACTERS[seat]!;
-      const colX = MARGIN + seat * (FW + GAP);
+      const colX = this.colXOf(seat);
       const sh = this.shake[seat]!;
       f.col.position.set(
         colX + (sh > 0 ? Math.round((Math.random() - 0.5) * sh) : 0),
@@ -479,7 +530,7 @@ export class Renderer {
       }
 
       // Incoming attacks
-      for (const a of p.incoming) this.drawAttack(f, a);
+      for (const a of p.incoming) this.drawAttack(f, a, seat);
 
       // Player
       const flick = p.iframes > 0 && Math.floor(this.tickCount / 3) % 2 === 0;
@@ -504,10 +555,14 @@ export class Renderer {
     }
   }
 
-  private drawAttack(f: Field, a: IncomingAttack): void {
+  private drawAttack(f: Field, a: IncomingAttack, seat: number): void {
     const senderColor = CHARACTERS[a.originalSender]?.color ?? 0xffffff;
+    // Bonus fidelity: slide the attack in from the screen-side of its sender's lane
+    // during its first SIDE_ENTRY_TICKS so 3-way pressure reads at a glance. Cosmetic
+    // only — the sim x (a.x) is unchanged; hitboxes are unaffected.
+    const rx = this.entryX(a, seat);
     if (a.tier === 'boss') {
-      const bs = f.pool.put(bossTex(Math.floor(f.anim / 18) % 2), a.x, a.y);
+      const bs = f.pool.put(bossTex(Math.floor(f.anim / 18) % 2), rx, a.y);
       // Spawn telegraph: a brief white flash as the boss materialises (spec §6).
       if (a.age < 48 && Math.floor(this.tickCount / 4) % 2 === 0) {
         bs.tint = 0xffffff;
@@ -515,14 +570,26 @@ export class Renderer {
       }
       // HP bar
       const frac = Math.max(0, a.hp / this.cfg.attacks.bossHp);
-      f.gfx.rect(a.x - 18, a.y - 30, 36, 4).fill({ color: 0x2a0a1a, alpha: 0.8 });
-      f.gfx.rect(a.x - 17, a.y - 29, 34 * frac, 2).fill(0xff6b8a);
+      f.gfx.rect(rx - 18, a.y - 30, 36, 4).fill({ color: 0x2a0a1a, alpha: 0.8 });
+      f.gfx.rect(rx - 17, a.y - 29, 34 * frac, 2).fill(0xff6b8a);
     } else if (a.tier === 'extra') {
-      f.pool.put(extraTex(Math.floor(f.anim / 10) % 2), a.x, a.y);
+      f.pool.put(extraTex(Math.floor(f.anim / 10) % 2), rx, a.y);
     } else {
       const size = a.hp <= 2 ? 0 : a.hp <= 3 ? 1 : a.hp <= 4 ? 2 : 3;
-      f.pool.put(fireballTex(senderColor, size, a.tier === 'reverse'), a.x, a.y);
+      f.pool.put(fireballTex(senderColor, size, a.tier === 'reverse'), rx, a.y);
     }
+  }
+
+  /** Render x for an incoming attack: eased from the sender-side field edge to its sim x
+   *  over SIDE_ENTRY_TICKS, then exactly a.x. dir<0 → sender's lane is left of this field. */
+  private entryX(a: IncomingAttack, seat: number): number {
+    if (!SIDE_ENTRY || a.age >= SIDE_ENTRY_TICKS) return a.x;
+    const dir = Math.sign(this.laneOf(a.originalSender) - this.laneOf(seat));
+    if (dir === 0) return a.x;
+    const k = a.age / SIDE_ENTRY_TICKS;
+    const ease = 1 - (1 - k) * (1 - k); // ease-out
+    const edgeX = dir < 0 ? -6 : FW + 6; // just off the sender-side wall
+    return edgeX + (a.x - edgeX) * ease;
   }
 
   private drawHud(seat: number, p: PlayerSim): void {
