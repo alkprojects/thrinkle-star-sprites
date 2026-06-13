@@ -47,7 +47,7 @@ Headless preview pages are `document.hidden`, which **pauses requestAnimationFra
 
 ## Next steps (pick by interest)
 
-- **Deploy the lane view** — this session's renderer change is committed but not yet pushed live. `npx wrangler pages deploy dist --project-name=thrinkle-star-sprites --branch=main` (from a worktree, the plain `npm run deploy` only makes a branch preview — see project memory). Optional first: a quick browser playtest of the new centre-lane layout at speed.
+- **(Done 2026-06-13) Merged to `main` + deployed to production.** Branch fast-forwarded into `main`, pushed to `origin/main`, and live at https://thrinkle-star-sprites.pages.dev (verified serving the lane-view build). Nothing to do here unless you want a browser playtest of the new centre-lane layout at speed.
 - **Finer ROM calibration (optional).** Horizontal is confirmed (56f). To add vertical (80f) / shot-travel (34f) / charge checks at sub-pixel precision, find the player struct via MAME's **debugger memory-search** — blind Lua RAM-diffing is defeated by the sprite-list + double-buffer noise (see `tools/mame/README.md`). Or extend the harness to stop at SELECT MODE → COMPETITIVE for a P2-idle, boss-free field.
 - **Playtest the feel** in a real browser (`npm run dev`) — confirm BGM/SFX land and the look reads at speed. Retune palettes in `sprites.ts`/`backgrounds.ts`, BGM in `music.ts`.
 - **Deeper mechanics fidelity** — the remaining gaps in [FIDELITY_GAPS.md](FIDELITY_GAPS.md) are now mostly *gameplay* (orb-based fever, charge-meter Lv2/MAX economy, best-of-3 rounds, Death reaper, zako durability tiers in the SIM — currently visual-only). These change how it *plays*, complementing this look/sound pass.
